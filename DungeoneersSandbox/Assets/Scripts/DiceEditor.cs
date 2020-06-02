@@ -25,11 +25,16 @@ public class DiceEditor : MonoBehaviour
     EditorToolPanel toolPanel;
 
     String currentFilePath;
+    List<Texture2D> step_back_stack = new List<Texture2D>();
+    List<Texture2D> step_forward_stack = new List<Texture2D>();
+    bool in_step = false;
 
     private bool m_paintable = true;
 
     void Start()
     {
+        step_back_stack.Capacity = 5;
+        step_forward_stack.Capacity = 5;
         if (File.Exists("./player_profile/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("./player_profile/temp/die_to_paint.dstd", FileMode.Open));
@@ -47,6 +52,9 @@ public class DiceEditor : MonoBehaviour
                material.materials[i].SetTexture("_MainTex", newTex);
             }
         }
+        Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
+        _newText.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
+        step_back_stack.Insert(0, _newText);
     }
 
     // Update is called once per frame
@@ -73,10 +81,89 @@ public class DiceEditor : MonoBehaviour
             {
                 StartCoroutine(DrawBrushOnMesh(_toSend));
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
+                if (!in_step)
+                {
+                    in_step = true;
+                }
             }
             else
             {
                 Debug.Log("Not on top of object");
+            }
+
+        }
+
+        if(m_paintable && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.Z))
+        {
+            StepBackwards();
+        }
+
+        if (m_paintable && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.Y))
+        {
+            StepForwards();
+        }
+
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            for(int i = 0; i < step_back_stack.Count; i++)
+            {
+                BinaryWriter file = new BinaryWriter(File.Open("./player_profile/temp/step_back_" + i.ToString() + ".png", FileMode.OpenOrCreate));
+                file.Write(step_back_stack[i].EncodeToPNG());
+                file.Close();
+            }
+        }
+
+        if (in_step && !Input.GetMouseButton(0))
+        {
+            Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
+            _newText.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
+            step_back_stack.Insert(0, _newText);
+            if (step_back_stack.Count > 5) 
+            {
+                step_back_stack.RemoveAt(step_back_stack.Count - 1);
+            }
+            if(step_forward_stack.Count > 0)
+            {
+                step_forward_stack.Clear();
+            }
+            in_step = false;
+        }
+    }
+
+    public void StepForwards()
+    {
+        if (step_forward_stack.Count > 0)
+        {
+            Texture2D _oldText = new Texture2D(step_forward_stack[0].width, step_forward_stack[0].height);
+            _oldText.LoadImage(step_forward_stack[0].EncodeToPNG());
+            step_back_stack.Insert(0, _oldText);
+
+            for (int i = 0; i < material.materials.Length; i++)
+            {
+                Texture2D _newText = new Texture2D(step_forward_stack[0].width, step_forward_stack[0].height);
+                _newText.LoadImage(step_forward_stack[0].EncodeToPNG());
+                material.materials[i].SetTexture("_MainTex", _newText);
+            }
+
+            step_forward_stack.RemoveAt(0);
+        }
+    }
+
+    public void StepBackwards()
+    {
+        if (step_back_stack.Count > 1)
+        {
+            Texture2D _oldText = new Texture2D(step_back_stack[0].width, step_back_stack[0].height);
+            _oldText.LoadImage(step_back_stack[0].EncodeToPNG());
+            step_forward_stack.Insert(0, _oldText);
+
+            step_back_stack.RemoveAt(0);
+
+            for (int i = 0; i < material.materials.Length; i++)
+            {
+                Texture2D _newText = new Texture2D(step_back_stack[0].width, step_back_stack[0].height);
+                _newText.LoadImage(step_back_stack[0].EncodeToPNG());
+                material.materials[i].SetTexture("_MainTex", _newText);
             }
         }
     }
@@ -155,5 +242,23 @@ public class DiceEditor : MonoBehaviour
         //    }
         //}
         yield return null; 
+    }
+
+    public void SaveFile()
+    {
+        if(currentFilePath.Split('/')[2] == "temp")
+        {
+            currentFilePath = currentFilePath.Replace("temp", "dice/skins");
+        }
+        BinaryWriter file = new BinaryWriter(File.Open(currentFilePath, FileMode.OpenOrCreate));
+        
+        file.Write(true);
+        file.Write((int)currentDiceType);
+        file.Write(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG().Length);
+        file.Write(material.materials[0].mainTexture.width);
+        file.Write(material.materials[0].mainTexture.height);
+        file.Write(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
+
+        file.Close();
     }
 }
