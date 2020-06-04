@@ -8,6 +8,18 @@ using UnityEngine.UI;
 public class DiceEditor : MonoBehaviour
 {
     // Start is called before the first frame update
+
+    private class Stroke
+    {
+        public Queue<Vector3> points;
+        TrailRenderer trail;
+        public Stroke()
+        {
+            points = new Queue<Vector3>();
+            trail = new TrailRenderer();
+        }
+    }
+
     [SerializeField]
     MeshFilter currentModel;
     [SerializeField]
@@ -21,7 +33,7 @@ public class DiceEditor : MonoBehaviour
     [SerializeField]
     DiceAxisMovement diceMover;
     [SerializeField]
-    Sprite brush;
+    Brush brush;
     [SerializeField]
     EditorToolPanel toolPanel;
     [SerializeField]
@@ -205,28 +217,34 @@ public class DiceEditor : MonoBehaviour
 
     private IEnumerator DrawBrushOnMesh(Vector3 vec)
     {
-        for(int y = -5; y < 5; y++)
+        for(float y = -(brush.Size*0.5f); y < (brush.Size * 0.5f); y++)
         {
-            for(int x = -5; x < 5; x++)
+            for(float x = -(brush.Size * 0.5f); x < (brush.Size * 0.5f); x++)
             {
                 Ray ray = Camera.main.ScreenPointToRay(vec + new Vector3(x, y, 0.0f));
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
+                   
+                    bool draw = (brush.Square) ? true : (Mathf.Sqrt(((vec.x - (x+vec.x))*(vec.x - (x + vec.x))) + ((vec.y - (y + vec.y)) *(vec.y - (y + vec.y)))) <= (brush.Size * 0.5f));
                     //StartCoroutine(PaintPointOnTexture(hit.textureCoord.x, hit.textureCoord.y));
-                    for (int i = 0; i < material.materials.Length; i++)
-                    {
-                        ((Texture2D)(material.materials[i].mainTexture)).SetPixel((int)(hit.textureCoord.x * material.materials[i].mainTexture.width), (int)(hit.textureCoord.y * material.materials[i].mainTexture.height), toolPanel.PrimaryColor);
-                        
+                    if (draw)
+                    { 
+                        //Debug.Log("(" + x.ToString() + ", " + y.ToString() + ") Printing");
+                        for (int i = 0; i < material.materials.Length; i++)
+                        {
+                            ((Texture2D)(material.materials[i].mainTexture)).SetPixel((int)(hit.textureCoord.x * material.materials[i].mainTexture.width), (int)(hit.textureCoord.y * material.materials[i].mainTexture.height), toolPanel.PrimaryColor);
+
+                        }
                     }
                 }
             }
+            yield return null;
         }
         for (int j = 0; j < material.materials.Length; j++)
         {
             ((Texture2D)(material.materials[j].mainTexture)).Apply();
         }
-        yield return null;
     }
 
     private IEnumerator PaintPointOnTexture(float x, float y)

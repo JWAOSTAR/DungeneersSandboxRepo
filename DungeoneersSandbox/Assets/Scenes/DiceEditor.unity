@@ -2825,7 +2825,7 @@ MonoBehaviour:
   - {fileID: 4300000, guid: 2c7dc816c84cf314faece90de7b84ad2, type: 3}
   - {fileID: 4300000, guid: 6fb51f97b44161c4a96145f154d9c85e, type: 3}
   diceMover: {fileID: 294157308}
-  brush: {fileID: 0}
+  brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
   toolPanel: {fileID: 456885608}
   m_saveDialog: {fileID: 2530622472418212890}
 --- !u!1 &771137040
@@ -3226,7 +3226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93.9, y: -50}
+  m_AnchoredPosition: {x: 94, y: -50}
   m_SizeDelta: {x: 190, y: 250}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &823259229
