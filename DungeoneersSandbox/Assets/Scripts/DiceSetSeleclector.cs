@@ -29,9 +29,9 @@ public class DiceSetSeleclector : MonoBehaviour
             BinaryReader file = new BinaryReader(File.Open(files[j], FileMode.Open));
             Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
             skinToAdd.isTexture = file.ReadBoolean();
+            skinToAdd.diceType = (Dice.DiceType)file.ReadInt32();
             if (!skinToAdd.isTexture)
             {
-                skinToAdd.diceType = (Dice.DiceType)file.ReadInt32();
                 skinToAdd.numbers = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
                 skinToAdd.die = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
             }
@@ -85,6 +85,8 @@ public class DiceSetSeleclector : MonoBehaviour
             
             if (!skinList[currentSkins[die]].isTexture)
             {
+                dice[die].materials[0].SetTexture("_MainTex", null);
+                dice[die].materials[1].SetTexture("_MainTex", null);
                 dice[die].materials[0].color = skinList[currentSkins[die]].numbers;
                 dice[die].materials[1].color = skinList[currentSkins[die]].die;
             }
@@ -105,6 +107,8 @@ public class DiceSetSeleclector : MonoBehaviour
             
             if (!skinList[currentSkins[die]].isTexture)
             {
+                dice[die].materials[0].SetTexture("_MainTex", null);
+                dice[die].materials[1].SetTexture("_MainTex", null);
                 dice[die].materials[0].color = skinList[currentSkins[die]].numbers;
                 dice[die].materials[1].color = skinList[currentSkins[die]].die;
             }

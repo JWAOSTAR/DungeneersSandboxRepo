@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DiceEditor : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class DiceEditor : MonoBehaviour
     Sprite brush;
     [SerializeField]
     EditorToolPanel toolPanel;
+    [SerializeField]
+    InputField m_saveDialog;
 
     String currentFilePath;
     List<Texture2D> step_back_stack = new List<Texture2D>();
@@ -79,7 +82,19 @@ public class DiceEditor : MonoBehaviour
 
             if(Physics.Raycast(ray, out hit))
             {
-                StartCoroutine(DrawBrushOnMesh(_toSend));
+                switch (toolPanel.CurrentTool)
+                {
+                    case EditorToolPanel.ToolType.Brush:
+                        StartCoroutine(DrawBrushOnMesh(_toSend));
+                        break;
+                    case EditorToolPanel.ToolType.Bucket:
+                        StartCoroutine(DrawFillBucketOnMesh());
+                        break;
+                    default:
+                        break;
+                }
+                
+                
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
                 if (!in_step)
                 {
@@ -244,8 +259,45 @@ public class DiceEditor : MonoBehaviour
         yield return null; 
     }
 
+    private IEnumerator DrawFillBucketOnMesh()
+    {
+        for(int y = 0; y < material.materials[0].mainTexture.height; y++)
+        {
+            for(int x = 0; x < material.materials[0].mainTexture.width; x++)
+            {
+                if (((Texture2D)(material.materials[0].mainTexture)).GetPixel(x, y).a != 0.0f) 
+                {
+                    ((Texture2D)(material.materials[0].mainTexture)).SetPixel(x, y, toolPanel.PrimaryColor);
+                }
+            }
+        }
+
+        ((Texture2D)(material.materials[0].mainTexture)).Apply();
+
+        for (int i = 1; i < material.materials.Length; i++)
+        {
+            Texture2D _newTex = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
+            _newTex.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
+
+            material.materials[i].SetTexture("_MainTex", _newTex);
+        }
+
+        yield return null;
+    }
+
     public void SaveFile()
     {
+        if(currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
+        {
+            if (m_saveDialog.text == "untitled") {
+                m_saveDialog.transform.parent.gameObject.SetActive(true);
+                return;
+            }
+            else
+            {
+                currentFilePath = currentFilePath.Replace("untitled", m_saveDialog.text);
+            }
+        }
         if(currentFilePath.Split('/')[2] == "temp")
         {
             currentFilePath = currentFilePath.Replace("temp", "dice/skins");

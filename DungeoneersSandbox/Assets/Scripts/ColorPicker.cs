@@ -332,6 +332,7 @@ public class ColorPicker : MonoBehaviour
     public void SetCurrentColorRed(float _color_values)
     {
         currentColor.r = _color_values;
+        colorSliders[0].SetValueWithoutNotify(currentColor.r);
         colorInputFields[0].text = _color_values.ToString("0.0000");
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
@@ -351,6 +352,7 @@ public class ColorPicker : MonoBehaviour
             currentColor.r = 0.0f;
             colorInputFields[0].text = currentColor.r.ToString("0.0000");
         }
+        colorSliders[0].SetValueWithoutNotify(currentColor.r);
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
         UpdateCoordinates();
@@ -359,6 +361,7 @@ public class ColorPicker : MonoBehaviour
     public void SetCurrentColorGreen(float _color_values)
     {
         currentColor.g = _color_values;
+        colorSliders[1].SetValueWithoutNotify(currentColor.g);
         colorInputFields[1].text = _color_values.ToString("0.0000");
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
@@ -378,6 +381,7 @@ public class ColorPicker : MonoBehaviour
             currentColor.g = 0.0f;
             colorInputFields[1].text = currentColor.g.ToString("0.0000");
         }
+        colorSliders[1].SetValueWithoutNotify(currentColor.g);
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
         UpdateCoordinates();
@@ -386,6 +390,7 @@ public class ColorPicker : MonoBehaviour
     public void SetCurrentColorBlue(float _color_values)
     {
         currentColor.b = _color_values;
+        colorSliders[2].SetValueWithoutNotify(currentColor.b);
         colorInputFields[2].text = _color_values.ToString("0.0000");
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
@@ -405,6 +410,7 @@ public class ColorPicker : MonoBehaviour
             currentColor.b = 0.0f;
             colorInputFields[2].text = currentColor.b.ToString("0.0000");
         }
+        colorSliders[2].SetValueWithoutNotify(currentColor.b);
         originColor = GetBaseColor(currentColor);
         UpdateColorPicker();
         UpdateCoordinates();
@@ -413,6 +419,7 @@ public class ColorPicker : MonoBehaviour
     public void SetCurrentColorAlpha(float _color_values)
     {
         currentColor.a = _color_values;
+        colorSliders[3].SetValueWithoutNotify(currentColor.a);
         colorInputFields[3].text = _color_values.ToString("0.0000");
         //originColor = GetBaseColor(currentColor);
         FillColorBlock(new Color(0.0f, currentColor.g, currentColor.b, 1.0f), new Color(1.0f, currentColor.g, currentColor.b, 1.0f), new Color(1.0f, currentColor.g, currentColor.b, 1.0f), new Color(0.0f, currentColor.g, currentColor.b, 1.0f), ref colorSlider[0].bar, false);
@@ -436,6 +443,7 @@ public class ColorPicker : MonoBehaviour
             currentColor.a = 0.0f;
             colorInputFields[3].text = currentColor.r.ToString("0.0000");
         }
+        colorSliders[3].SetValueWithoutNotify(currentColor.a);
         //originColor = GetBaseColor(currentColor);
         FillColorBlock(new Color(0.0f, currentColor.g, currentColor.b, 1.0f), new Color(1.0f, currentColor.g, currentColor.b, 1.0f), new Color(1.0f, currentColor.g, currentColor.b, 1.0f), new Color(0.0f, currentColor.g, currentColor.b, 1.0f), ref colorSlider[0].bar, false);
         FillColorBlock(new Color(currentColor.r, 0.0f, currentColor.b, 1.0f), new Color(currentColor.r, 1.0f, currentColor.b, 1.0f), new Color(currentColor.r, 1.0f, currentColor.b, 1.0f), new Color(currentColor.r, 0.0f, currentColor.b, 1.0f), ref colorSlider[1].bar, false);
@@ -451,6 +459,7 @@ public class ColorPicker : MonoBehaviour
         for (int j = 0; j < 4; j++)
         {
             colorSliders[j].SetValueWithoutNotify(currentColor[j]);
+            colorInputFields[j].text = currentColor[j].ToString("0.0000");
         }
         UpdateColorPicker();
         UpdateCoordinates();
@@ -477,6 +486,7 @@ public class ColorPicker : MonoBehaviour
             for (int j = 0; j < 4; j++)
             {
                 colorSliders[j].SetValueWithoutNotify(currentColor[j]);
+                colorInputFields[j].text = currentColor[j].ToString("0.0000");
             }
             currentColorPanel.color = currentColor;
             FillColorBlock(new Color(1.0f, 1.0f, 1.0f, 1.0f), originColor, new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 1.0f), ref colorBlock, false);

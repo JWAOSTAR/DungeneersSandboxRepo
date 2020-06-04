@@ -7,6 +7,13 @@ using UnityEngine.UI;
 
 public class EditorToolPanel : MonoBehaviour
 {
+    public enum ToolType
+    {
+        Brush = 0,
+        Bucket,
+        EyeDropper
+    }
+
     [SerializeField]
     Image m_primaryPanel;
     [SerializeField]
@@ -16,20 +23,27 @@ public class EditorToolPanel : MonoBehaviour
     Image m_secondaryPanel;
     [SerializeField]
     ColorPicker m_secondaryColorPicker;
+    ToolType m_tool;
 
     public Color PrimaryColor { get { return m_primaryPanel.color; } }
     public Color SecondaryColor { get { return m_secondaryPanel.color; } }
+
+    public ToolType CurrentTool { get { return m_tool; } }
     // Start is called before the first frame update
     void Start()
     {
         m_primaryColorPicker.gameObject.SetActive(false);
         m_secondaryColorPicker.gameObject.SetActive(false);
+        m_tool = ToolType.Brush;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (m_tool == ToolType.EyeDropper && Input.GetMouseButtonDown(0))
+        {
+            StartCoroutine(EyeDropperClicked());  
+        }
     }
 
     public void SetPanelsToDefault()
@@ -55,6 +69,7 @@ public class EditorToolPanel : MonoBehaviour
     public void SetPrimaryColor(Color _color)
     {
         m_primaryPanel.color = _color;
+        m_primaryColorPicker.SetCurrentColor(m_primaryPanel.color, true);
     }
 
     public void SetPrimaryColor(float _r, float _g, float _b, float _a)
@@ -65,10 +80,34 @@ public class EditorToolPanel : MonoBehaviour
     public void SetSecondaryColor(Color _color)
     {
         m_secondaryPanel.color = _color;
+        m_secondaryColorPicker.SetCurrentColor(m_secondaryPanel.color, true);
     }
 
     public void SetSecondaryColor(float _r, float _g, float _b, float _a)
     {
         m_secondaryPanel.color = new Color(_r, _g, _b, _a);
+    }
+
+    public void SetTool(int _tool)
+    {
+        m_tool = (ToolType)_tool;
+    }
+
+    IEnumerator EyeDropperClicked()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            SetPrimaryColor(((Texture2D)(hit.collider.gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture)).GetPixelBilinear(hit.textureCoord.x, hit.textureCoord.y));
+        }
+        else
+        {
+            Texture2D capture = ScreenCapture.CaptureScreenshotAsTexture();
+            SetPrimaryColor(capture.GetPixelBilinear(Input.mousePosition.x / (float)capture.width, Input.mousePosition.y / (float)capture.height));
+        }
+        yield return new WaitForSeconds(0.5f);
+        m_tool = ToolType.Brush;
     }
 }
