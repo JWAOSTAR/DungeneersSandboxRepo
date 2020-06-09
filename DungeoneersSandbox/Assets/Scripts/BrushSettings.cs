@@ -12,6 +12,10 @@ public class BrushSettings : MonoBehaviour
     [SerializeField]
     Toggle m_squareToggle;
 
+    [SerializeField]
+    Brush m_brush;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +25,10 @@ public class BrushSettings : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void BrushShapeToggle(int _sqr)
@@ -34,5 +41,15 @@ public class BrushSettings : MonoBehaviour
         {
             m_squareToggle.SetIsOnWithoutNotify(!m_squareToggle.isOn);
         }
+    }
+
+    public void SetBrushSize(float _size)
+    {
+        m_brush.Size = _size;
+    }
+
+    public void SetBrushHardness(float _hardness)
+    {
+        m_brush.Hardness = _hardness;
     }
 }

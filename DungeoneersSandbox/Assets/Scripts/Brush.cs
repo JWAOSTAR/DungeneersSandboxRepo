@@ -17,4 +17,5 @@ public class Brush : ScriptableObject
     public Texture2D BrushGraphic { get { return m_graphic; } set { m_graphic = value; } }
 
     public float Size { get { return m_size; } set { m_size = value; } }
+    public float Hardness { get { return m_hardness; } set { m_hardness = value; } }
 }

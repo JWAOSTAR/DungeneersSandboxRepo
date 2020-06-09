@@ -13,19 +13,18 @@ public class DiceEditor : MonoBehaviour
     {
         public Queue<Vector3> points;
         public List<Vector3> line_points;
+        public float brushSize;
         LineRenderer trail;
-        public bool generating_line;
         public Stroke()
         {
             points = new Queue<Vector3>();
             trail = new LineRenderer();
             line_points = new List<Vector3>();
-            generating_line = false;
+            brushSize = 1.0f;
         }
 
         public void GenerateTrail(LineRenderer _line)
         {
-            generating_line = true;
             trail = Instantiate(_line);
             trail.sortingLayerName = "FrontFacing";
             trail.positionCount = line_points.Count;
@@ -35,7 +34,6 @@ public class DiceEditor : MonoBehaviour
         public void DestroyLine()
         {
             Destroy(trail.gameObject);
-            generating_line = false;
         }
     }
 
@@ -59,6 +57,8 @@ public class DiceEditor : MonoBehaviour
     InputField m_saveDialog;
     [SerializeField]
     LineRenderer m_instnace_line;
+    [SerializeField]
+    GameObject m_notification_box;
 
     String currentFilePath;
     List<Texture2D> step_back_stack = new List<Texture2D>();
@@ -67,6 +67,7 @@ public class DiceEditor : MonoBehaviour
     Queue<Stroke> m_strokes_to_process = new Queue<Stroke>();
 
     private bool m_paintable = true;
+    bool CR_LINE_GEN = false;
 
     void Start()
     {
@@ -100,9 +101,13 @@ public class DiceEditor : MonoBehaviour
     {
         if(!diceMover.GetMobility() && Input.GetKey(KeyCode.LeftShift))
         {
-            if (!m_strokes_to_process.Peek().generating_line)
+            if (!CR_LINE_GEN)
             {
                 diceMover.SetMobility(true);
+            }
+            else
+            {
+                StartCoroutine(DisplayNotification());
             }
             m_paintable = false;
         }
@@ -111,6 +116,10 @@ public class DiceEditor : MonoBehaviour
             if (diceMover.GetMobility()) {
                 diceMover.SetMobility(false);
             }
+            m_paintable = true;
+        }
+        else if(!diceMover.GetMobility() && !Input.GetKey(KeyCode.LeftShift))
+        {
             m_paintable = true;
         }
 
@@ -124,6 +133,10 @@ public class DiceEditor : MonoBehaviour
             {
                 if (!m_strokes_to_process.Peek().points.Contains(_toSend))
                 {
+                    if(m_strokes_to_process.Peek().points.Count == 0)
+                    {
+                        m_strokes_to_process.Peek().brushSize = brush.Size;
+                    }
                     m_strokes_to_process.Peek().points.Enqueue(_toSend);
                     m_strokes_to_process.Peek().line_points.Add(hit.point + new Vector3(0.0f, 0.0f, -0.01f)); ;
                 }
@@ -245,6 +258,10 @@ public class DiceEditor : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 if (!m_strokes_to_process.Peek().points.Contains(_toSend)) {
+                    if (m_strokes_to_process.Peek().points.Count == 0)
+                    {
+                        m_strokes_to_process.Peek().brushSize = brush.Size;
+                    }
                     m_strokes_to_process.Peek().points.Enqueue(_toSend);
                     m_strokes_to_process.Peek().line_points.Add(hit.point);
                 }
@@ -268,16 +285,17 @@ public class DiceEditor : MonoBehaviour
             Stroke cur_stroke = m_strokes_to_process.Dequeue();
             for (int l = cur_stroke.points.Count; l > 0; l--)
             {
-                for (float y = -(brush.Size * 0.5f); y < (brush.Size * 0.5f); y++)
+                for (float y = -(cur_stroke.brushSize * 0.5f); y < (cur_stroke.brushSize * 0.5f); y++)
                 {
-                    for (float x = -(brush.Size * 0.5f); x < (brush.Size * 0.5f); x++)
+                    for (float x = -(cur_stroke.brushSize * 0.5f); x < (cur_stroke.brushSize * 0.5f); x++)
                     {
+                        CR_LINE_GEN = true;
                         Ray ray = Camera.main.ScreenPointToRay(cur_stroke.points.Peek() + new Vector3(x, y, 0.0f));
                         RaycastHit hit;
                         if (Physics.Raycast(ray, out hit))
                         {
 
-                            bool draw = (brush.Square) ? true : (Mathf.Sqrt(((cur_stroke.points.Peek().x - (x + cur_stroke.points.Peek().x)) * (cur_stroke.points.Peek().x - (x + cur_stroke.points.Peek().x))) + ((cur_stroke.points.Peek().y - (y + cur_stroke.points.Peek().y)) * (cur_stroke.points.Peek().y - (y + cur_stroke.points.Peek().y)))) <= (brush.Size * 0.5f));
+                            bool draw = (brush.Square) ? true : (Mathf.Sqrt(((cur_stroke.points.Peek().x - (x + cur_stroke.points.Peek().x)) * (cur_stroke.points.Peek().x - (x + cur_stroke.points.Peek().x))) + ((cur_stroke.points.Peek().y - (y + cur_stroke.points.Peek().y)) * (cur_stroke.points.Peek().y - (y + cur_stroke.points.Peek().y)))) <= (cur_stroke.brushSize * 0.5f));
                             //StartCoroutine(PaintPointOnTexture(hit.textureCoord.x, hit.textureCoord.y));
                             if (draw)
                             {
@@ -299,6 +317,7 @@ public class DiceEditor : MonoBehaviour
             {
                 ((Texture2D)(material.materials[k].mainTexture)).Apply();
             }
+            CR_LINE_GEN = false;
             TakeSnapshoot();
         }
     }
@@ -357,6 +376,13 @@ public class DiceEditor : MonoBehaviour
         }
         TakeSnapshoot();
         yield return null;
+    }
+
+    private IEnumerator DisplayNotification()
+    {
+        m_notification_box.SetActive(true);
+        yield return new WaitForSeconds(1.25f);
+        m_notification_box.SetActive(false);
     }
 
     public void SaveFile()

@@ -9,7 +9,7 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "zTest"="Always" "ZWrite" = "Off" "Queue"="Geometry+1"}
+        Tags { "RenderType"="Opaque" "zTest"="Always" "ZWrite" = "Off" "Queue"="Overlay"}
         LOD 200
 
         CGPROGRAM

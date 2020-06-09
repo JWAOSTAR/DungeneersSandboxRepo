@@ -41,6 +41,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Pop-Up 3D Models
+  - name: FrontFacing
     uniqueID: 3894432529
     locked: 0
