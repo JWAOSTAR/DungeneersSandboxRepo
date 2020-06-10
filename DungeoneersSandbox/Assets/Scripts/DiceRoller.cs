@@ -41,6 +41,7 @@ public class DiceRoller : MonoBehaviour
     List<int> diceValues = new List<int>();
     int currentCamPos = 0;
     List<RollTypes> diceQueue = new List<RollTypes>();
+    List<List<Dice>> rollSets = new List<List<Dice>>();
     [SerializeField]
     Text[] diceAmounts = new Text[diceListSize];
     [SerializeField]
@@ -48,6 +49,7 @@ public class DiceRoller : MonoBehaviour
     [SerializeField]
     Sprite[] m_diceSprites = new Sprite[diceListSize];
     float m_init_bar_height;
+    Vector3 m_init_bar_pos;
 
     void OnValidate()
     {
@@ -81,7 +83,11 @@ public class DiceRoller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_init_bar_height = m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height;
+        m_init_bar_height = m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().rect.height;
+        m_init_bar_pos = new Vector3(m_chatDisplay.GetChild(0).localPosition.x, m_chatDisplay.GetChild(0).localPosition.y, m_chatDisplay.GetChild(0).localPosition.z);
+        m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
+        //m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(0).GetComponent<RectTransform>().sizeDelta.x, 0.0f);
+        // m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
         gameCamera.position = cameraPositions[currentCamPos].position;
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
         //RollDice((int)DiceType.D20);
@@ -141,14 +147,19 @@ public class DiceRoller : MonoBehaviour
             UpdateDiceValues();
         }
 
-        if(Input.GetKeyUp(KeyCode.G))
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.G))
+        {
+            UpdateLineSpace();
+        }
+        else if (!Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.G))
         {
             GenerateNewChatLine();
         }
 
-        if(Input.GetKeyUp(KeyCode.C))
+        if (Input.GetKeyUp(KeyCode.C))
         {
-            ClearChatDisplay();        }
+            ClearChatDisplay();        
+        }
     }
 
     public void SwitchCameraView()
@@ -232,6 +243,17 @@ public class DiceRoller : MonoBehaviour
 
     public void ClearDice()
     {
+        int cur_index = 0;
+        rollSets.Add(new List<Dice>());
+        foreach(GameObject d in instantiatedDice)
+        {
+            rollSets[rollSets.Count - 1].Add(new Dice());
+            (rollSets[rollSets.Count - 1])[cur_index].AdvDAdv = d.GetComponent<Dice>().AdvDAdv;
+            (rollSets[rollSets.Count - 1])[cur_index].currentValue = d.GetComponent<Dice>().currentValue;
+            (rollSets[rollSets.Count - 1])[cur_index].diceType = d.GetComponent<Dice>().diceType;
+
+            cur_index++;
+        }
         foreach(GameObject c in instantiatedDice)
         {
             Destroy(c);
@@ -337,12 +359,21 @@ public class DiceRoller : MonoBehaviour
 
     public void UpdateChatDisplay()
     {
+        if(rollSets.Count > 1)
+        {
+
+        }
         if (instantiatedDice.Count > 0)
         {
             ClearChatDisplay();
+            if (!m_chatDisplay.GetChild(0).GetChild(0).gameObject.activeSelf)
+            {
+                m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(true);
+            }
             bool[] active_die_in_line = { false, false, false };
-            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height + 5.0f)  * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1)) - 5.0f);
-            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().margin = new Vector4(m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.x, -((m_init_bar_height + 5.0f) * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1) - 1)), m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.z, m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.w);
+            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height)  * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1)));
+            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().margin = new Vector4(m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.x, -((m_init_bar_height) * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1) - 1)), m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.z, m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.w);
+            m_chatDisplay.transform.parent.GetComponent<ScrollRect>().normalizedPosition = new Vector2(1.0f, 0.0f);
             //int currentLine = 0;
             //if (m_chatDisplay.childCount < ((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1))
             //{
@@ -438,26 +469,47 @@ public class DiceRoller : MonoBehaviour
 
     void GenerateNewChatLine()
     {
-        m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height* m_chatDisplay.childCount);
+        //m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height* m_chatDisplay.childCount);
+        //Instantiate(m_chatDisplay.GetChild(m_chatDisplay.childCount - 1), m_chatDisplay);
+        //for (int i = 0; i < (m_chatDisplay.childCount-1); i++)
+        //{
+        //    m_chatDisplay.GetChild(i).localPosition = new Vector3(m_chatDisplay.GetChild(i).localPosition.x, m_chatDisplay.GetChild(i).localPosition.y + m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height + 5.0f, 0.0f);
+        //    if (i + 1 < m_chatDisplay.childCount - 1)
+        //    {
+        //        m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = m_chatDisplay.GetChild(i + 1).GetChild(1).GetComponent<TextMeshProUGUI>().text;
+        //    }
+        //}
+        //m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
         Instantiate(m_chatDisplay.GetChild(m_chatDisplay.childCount - 1), m_chatDisplay);
-        for (int i = 0; i < (m_chatDisplay.childCount-1); i++)
+        m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, m_init_bar_height);
+        m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).localPosition = new Vector3(m_init_bar_pos.x, m_init_bar_pos.y, m_init_bar_pos.z);
+        float chatDisplaySize = 0.0f;
+        for(int i = (m_chatDisplay.childCount - 1); i >= 0; i--)
         {
-            m_chatDisplay.GetChild(i).localPosition = new Vector3(m_chatDisplay.GetChild(i).localPosition.x, m_chatDisplay.GetChild(i).localPosition.y + m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height + 5.0f, 0.0f);
-            if (i + 1 < m_chatDisplay.childCount - 1)
-            {
-                m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = m_chatDisplay.GetChild(i + 1).GetChild(1).GetComponent<TextMeshProUGUI>().text;
-            }
+            m_chatDisplay.GetChild(i).localPosition = new Vector3(m_init_bar_pos.x, m_init_bar_pos.y + chatDisplaySize, m_init_bar_pos.z);
+            chatDisplaySize += m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().rect.height + 5.0f;
         }
-        m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+        m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, chatDisplaySize);
+    }
+
+    void UpdateLineSpace()
+    {
+        float chatDisplaySize = 0.0f;
+        for (int i = (m_chatDisplay.childCount - 1); i >= 0; i--)
+        {
+            m_chatDisplay.GetChild(i).localPosition = new Vector3(m_init_bar_pos.x, m_init_bar_pos.y + chatDisplaySize, m_init_bar_pos.z);
+            chatDisplaySize += m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().rect.height + 5.0f;
+        }
+        m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, chatDisplaySize);
     }
 
     public void ClearChatDisplay()
     {
-        m_chatDisplay.GetChild(0).localPosition = m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).localPosition;
         for (int i = m_chatDisplay.childCount - 1; i > 0; i--)
         {
             DestroyImmediate(m_chatDisplay.GetChild(i).gameObject);
         }
+        m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
         m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
     }
 
