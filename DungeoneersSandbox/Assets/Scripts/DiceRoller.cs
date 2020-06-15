@@ -359,21 +359,129 @@ public class DiceRoller : MonoBehaviour
 
     public void UpdateChatDisplay()
     {
-        if(rollSets.Count > 1)
+        ClearChatDisplay();
+        if (rollSets.Count > 0)
         {
+            for(int i = 0; i < rollSets.Count; i++)
+            {
+                GenerateNewChatLine();
+                if (!m_chatDisplay.GetChild(i).GetChild(0).gameObject.activeSelf)
+                {
+                    m_chatDisplay.GetChild(i).GetChild(0).gameObject.SetActive(true);
+                }
+                m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height) * (((rollSets[i].Count + 1) / 3) + ((((rollSets[i].Count + 1) % 3) == 0) ? 0 : 1)));
+                m_chatDisplay.GetChild(i).GetChild(1).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.y);
+                m_chatDisplay.transform.parent.GetComponent<ScrollRect>().normalizedPosition = new Vector2(0.0f, 0.0f);
+                int dice_sum = 0;
+                for (int j = 0; j < rollSets[i].Count; j++)
+                {
+                    //for (int k = 0; k < active_die_in_line.Length; k++)
+                    //{
+                    //    if (!active_die_in_line[k])
+                    //    {
+                    String dieSprite = "<sprite=";
+                    switch ((rollSets[i])[j].diceType)
+                    {
+                        case Dice.DiceType.D4:
+                            {
+                                dieSprite += ((rollSets[i])[j].currentValue - 1).ToString() + ">";
+                            }
+                            break;
+                        case Dice.DiceType.D6:
+                            {
+                                dieSprite += ((rollSets[i])[j].currentValue + 3).ToString() + ">";
+                            }
+                            break;
+                        case Dice.DiceType.D8:
+                            {
+                                dieSprite += ((rollSets[i])[j].currentValue + 9).ToString() + ">";
+                            }
+                            break;
+                        case Dice.DiceType.D10:
+                            {
+                                dieSprite += ((rollSets[i])[j].currentValue + 18).ToString() + ">";
+                                ///active_die_in_line[k] = true;
+                                //k++;
+                                if ((j + 1) != (rollSets[i]).Count && (rollSets[i])[j + 1].diceType == Dice.DiceType.D10_10s)
+                                {
+                                    int trueVal = ((((rollSets[i])[j + 1].currentValue / 10) % 10) == 0) ? 0 : (((rollSets[i])[j + 1].currentValue / 10) % 10);
+                                    dieSprite += "+<sprite=" + ((trueVal) + 27).ToString() + ">";
+                                    j++;
 
+                                }
+                            }
+                            break;
+                        case Dice.DiceType.D12:
+                            {
+                                dieSprite += ((rollSets[i])[j].currentValue + 37).ToString() + ">";
+                            }
+                            break;
+                        case Dice.DiceType.D20:
+                            {
+
+                                dieSprite += ((rollSets[i])[j].currentValue + 49).ToString() + ">";
+                            }
+                            break;
+                    }
+                    m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += dieSprite;
+
+                    //active_die_in_line[k] = true;
+                    dice_sum += (rollSets[i])[j].currentValue;
+                    if ((j + 1) != (rollSets[i]).Count)
+                    {
+                        if ((rollSets[i])[j].AdvDAdv == 0 || ((rollSets[i])[j].AdvDAdv & 1) == 1)
+                        {
+                            m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += "+";
+                        }
+                        else
+                        {
+                            if(((rollSets[i])[j].AdvDAdv & 6) == 6)
+                            {
+                                m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += "<sprite=70>";
+                            }
+                            else
+                            {
+                                m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += "<sprite=71>";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += "=";
+                        //if (active_die_in_line[2])
+                        //{
+                        //    currentLine++;
+                        //    active_die_in_line[0] = false;
+                        //    active_die_in_line[1] = false;
+                        //    active_die_in_line[2] = false;
+                        //    k = 0;
+                        //}
+                        m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += dice_sum.ToString();
+                    }
+                    //break;
+                    //}
+                    //else if(k == (active_die_in_line.Length - 1))
+                    //{
+                    //    currentLine++;
+                    //    active_die_in_line[0] = false;
+                    //    active_die_in_line[1] = false;
+                    //    active_die_in_line[2] = false;
+                    //    k = 0;
+                    //}
+                    //}
+                }
+            }
         }
         if (instantiatedDice.Count > 0)
         {
-            ClearChatDisplay();
-            if (!m_chatDisplay.GetChild(0).GetChild(0).gameObject.activeSelf)
+            if (!m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).gameObject.activeSelf)
             {
-                m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(true);
+                m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).gameObject.SetActive(true);
             }
             bool[] active_die_in_line = { false, false, false };
-            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height)  * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1)));
-            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().margin = new Vector4(m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.x, -((m_init_bar_height) * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1) - 1)), m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.z, m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().margin.w);
-            m_chatDisplay.transform.parent.GetComponent<ScrollRect>().normalizedPosition = new Vector2(1.0f, 0.0f);
+            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height)  * (((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1)));
+            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(0).GetComponent<RectTransform>().sizeDelta.y);
+            //m_chatDisplay.transform.parent.GetComponent<ScrollRect>().normalizedPosition = new Vector2(0.0f, 0.0f);
             //int currentLine = 0;
             //if (m_chatDisplay.childCount < ((instantiatedDice.Count + 1) / 3) + ((((instantiatedDice.Count + 1) % 3) == 0) ? 0 : 1))
             //{
@@ -437,7 +545,21 @@ public class DiceRoller : MonoBehaviour
                         //active_die_in_line[k] = true;
                         if ((j + 1) != instantiatedDice.Count)
                         {
-                            m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text += "+";
+                            if (instantiatedDice[j].GetComponent<Dice>().AdvDAdv == 0 || (instantiatedDice[j].GetComponent<Dice>().AdvDAdv & 1) == 1)
+                            {
+                                m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text += "+";
+                            }
+                            else
+                            {
+                                if ((instantiatedDice[j].GetComponent<Dice>().AdvDAdv & 6) == 6)
+                                {
+                                    m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text += "<sprite=70>";
+                                }
+                                else
+                                {
+                                    m_chatDisplay.GetChild(m_chatDisplay.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text += "<sprite=71>";
+                                }
+                            }
                         }
                         else
                         {
@@ -465,6 +587,7 @@ public class DiceRoller : MonoBehaviour
                 //}
             }
         }
+        UpdateLineSpace();
     }
 
     void GenerateNewChatLine()

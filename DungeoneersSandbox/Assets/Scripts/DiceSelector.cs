@@ -161,6 +161,15 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveData()
     {
+        if (!Directory.Exists("./player_profile/dice/skins/"))
+        {
+            Directory.CreateDirectory("./player_profile/dice/skins/");
+        }
+        if (!Directory.Exists("./player_profile/temp/"))
+        {
+            Directory.CreateDirectory("./player_profile/temp/");
+        }
+
         if (isSavedFile)
         {
             SaveData("./player_profile/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
