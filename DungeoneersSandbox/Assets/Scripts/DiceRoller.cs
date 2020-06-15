@@ -86,6 +86,7 @@ public class DiceRoller : MonoBehaviour
         m_init_bar_height = m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().rect.height;
         m_init_bar_pos = new Vector3(m_chatDisplay.GetChild(0).localPosition.x, m_chatDisplay.GetChild(0).localPosition.y, m_chatDisplay.GetChild(0).localPosition.z);
         m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
+        m_chatDisplay.GetComponent<Image>().enabled = false;
         //m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(0).GetComponent<RectTransform>().sizeDelta.x, 0.0f);
         // m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
         gameCamera.position = cameraPositions[currentCamPos].position;
@@ -368,6 +369,7 @@ public class DiceRoller : MonoBehaviour
                 if (!m_chatDisplay.GetChild(i).GetChild(0).gameObject.activeSelf)
                 {
                     m_chatDisplay.GetChild(i).GetChild(0).gameObject.SetActive(true);
+                    m_chatDisplay.GetComponent<Image>().enabled = true;
                 }
                 m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, (m_init_bar_height) * (((rollSets[i].Count + 1) / 3) + ((((rollSets[i].Count + 1) % 3) == 0) ? 0 : 1)));
                 m_chatDisplay.GetChild(i).GetChild(1).GetComponent<RectTransform>().sizeDelta = new Vector2(m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.x, m_chatDisplay.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta.y);
@@ -385,21 +387,25 @@ public class DiceRoller : MonoBehaviour
                         case Dice.DiceType.D4:
                             {
                                 dieSprite += ((rollSets[i])[j].currentValue - 1).ToString() + ">";
+                                dice_sum += (rollSets[i])[j].currentValue;
                             }
                             break;
                         case Dice.DiceType.D6:
                             {
                                 dieSprite += ((rollSets[i])[j].currentValue + 3).ToString() + ">";
+                                dice_sum += (rollSets[i])[j].currentValue;
                             }
                             break;
                         case Dice.DiceType.D8:
                             {
                                 dieSprite += ((rollSets[i])[j].currentValue + 9).ToString() + ">";
+                                dice_sum += (rollSets[i])[j].currentValue;
                             }
                             break;
                         case Dice.DiceType.D10:
                             {
                                 dieSprite += ((rollSets[i])[j].currentValue + 18).ToString() + ">";
+                                dice_sum += (rollSets[i])[j].currentValue;
                                 ///active_die_in_line[k] = true;
                                 //k++;
                                 if ((j + 1) != (rollSets[i]).Count && (rollSets[i])[j + 1].diceType == Dice.DiceType.D10_10s)
@@ -414,19 +420,35 @@ public class DiceRoller : MonoBehaviour
                         case Dice.DiceType.D12:
                             {
                                 dieSprite += ((rollSets[i])[j].currentValue + 37).ToString() + ">";
+                                dice_sum += (rollSets[i])[j].currentValue;
                             }
                             break;
                         case Dice.DiceType.D20:
                             {
 
                                 dieSprite += ((rollSets[i])[j].currentValue + 49).ToString() + ">";
+                                if ((rollSets[i])[j].AdvDAdv != 0)
+                                {
+                                    if (((rollSets[i])[j].AdvDAdv & 7) == 7)
+                                    {
+                                        dice_sum += ((rollSets[i])[j].currentValue < (rollSets[i])[j - 1].currentValue)? (rollSets[i])[j].currentValue : (rollSets[i])[j - 1].currentValue;
+                                    }
+                                    else if(((rollSets[i])[j].AdvDAdv & 5) == 5)
+                                    {
+                                        dice_sum += ((rollSets[i])[j].currentValue > (rollSets[i])[j - 1].currentValue) ? (rollSets[i])[j].currentValue : (rollSets[i])[j - 1].currentValue;
+                                    }
+                                }
+                                else
+                                {
+                                    dice_sum += (rollSets[i])[j].currentValue;
+                                }
                             }
                             break;
                     }
                     m_chatDisplay.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text += dieSprite;
 
                     //active_die_in_line[k] = true;
-                    dice_sum += (rollSets[i])[j].currentValue;
+                    //dice_sum += (rollSets[i])[j].currentValue;
                     if ((j + 1) != (rollSets[i]).Count)
                     {
                         if ((rollSets[i])[j].AdvDAdv == 0 || ((rollSets[i])[j].AdvDAdv & 1) == 1)
