@@ -48,7 +48,7 @@ public class DiceSelector : MonoBehaviour
     List<Color> colorOptions = new List<Color>();
     int[] currentColorIndex = { -1, -1 };
     bool isSavedFile = false;
-
+    
     void OnValidate()
     {
         if (baseDiceColors.Length != SIZE)
@@ -161,22 +161,22 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveData()
     {
-        if (!Directory.Exists("./player_profile/dice/skins/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
-            Directory.CreateDirectory("./player_profile/dice/skins/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
-        if (!Directory.Exists("./player_profile/temp/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/"))
         {
-            Directory.CreateDirectory("./player_profile/temp/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/");
         }
 
         if (isSavedFile)
         {
-            SaveData("./player_profile/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            SaveData("C:/Users/"+Environment.UserName+ "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
         else
         {
-            SaveData("./player_profile/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            SaveData("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
     }
 
@@ -230,41 +230,44 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveDialogConfirmed()
     {
-        if (!Directory.Exists("./player_profile/"))
+        if (!Directory.Exists("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/"))
         {
-            Directory.CreateDirectory("./player_profile/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
         }
 
-        if (!Directory.Exists("./player_profile/dice/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/"))
         {
-            Directory.CreateDirectory("./player_profile/dice/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/");
         }
 
-        if (!Directory.Exists("./player_profile/dice/skins/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
-            Directory.CreateDirectory("./player_profile/dice/skins/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
 
         isSavedFile = true;
         
-        SaveData("./player_profile/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+        SaveData("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
     }
 
     public void SaveDialogCanceled()
     {
-        saveDialog.GetComponentInChildren<InputField>().text = "untitled";
+        if (!isSavedFile)
+        {
+            saveDialog.GetComponentInChildren<InputField>().text = "untitled";
+        }
     }
 
     public void GenerateTextureFromMaterial()
     {
-        if (!Directory.Exists("./player_profile/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/"))
         {
-            Directory.CreateDirectory("./player_profile/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
         }
 
-        if (!Directory.Exists("./player_profile/temp/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/"))
         {
-            Directory.CreateDirectory("./player_profile/temp/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/");
         }
 
 
@@ -285,20 +288,20 @@ public class DiceSelector : MonoBehaviour
             }
         }
 
-        BinaryWriter file = new BinaryWriter(File.Open("./player_profile/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".png", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".png", FileMode.OpenOrCreate));
 
         file.Write(newTexture.EncodeToPNG());
 
         file.Close();
 
-        file = new BinaryWriter(File.Open("./player_profile/temp/die_to_paint.dstd", FileMode.OpenOrCreate));
+        file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.OpenOrCreate));
         if (isSavedFile)
         {
-            file.Write("./player_profile/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            file.Write("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
         else
         {
-            file.Write("./player_profile/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            file.Write("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
 
         file.Close();

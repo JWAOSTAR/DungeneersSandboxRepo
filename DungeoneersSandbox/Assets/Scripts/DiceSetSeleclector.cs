@@ -20,11 +20,11 @@ public class DiceSetSeleclector : MonoBehaviour
     int[] currentSkins = { 0, 0, 0, 0, 0, 0, 0 };
     void Start()
     {
-        if(!Directory.Exists("./player_profile/dice/skins/"))
+        if(!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
-            Directory.CreateDirectory("./player_profile/dice/skins/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
-        string[] files = Directory.GetFiles("./player_profile/dice/skins/");
+        string[] files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         for (int j = 0; j < files.Length; j++) { 
             BinaryReader file = new BinaryReader(File.Open(files[j], FileMode.Open));
             Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
@@ -122,7 +122,7 @@ public class DiceSetSeleclector : MonoBehaviour
 
     public void SaveActiveDice()
     {
-        BinaryWriter file = new BinaryWriter(File.Open("./player_profile/dice/active_dice_set.dss", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.OpenOrCreate));
         for(int i = 0; i < dice.Length; i++)
         {
             bool isTexture = (skins.FindAll(searchFuncs[i]).Count > 0) ? skins.FindAll(searchFuncs[i])[currentSkins[i]].isTexture : false;

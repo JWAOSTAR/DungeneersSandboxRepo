@@ -3136,6 +3136,7 @@ MonoBehaviour:
   m_saveDialog: {fileID: 2530622472418212890}
   m_instnace_line: {fileID: 1096752378}
   m_notification_box: {fileID: 963181008}
+  m_manager: {fileID: 588412404}
 --- !u!1 &771137040
 GameObject:
   m_ObjectHideFlags: 0

@@ -92,9 +92,9 @@ public class DiceRoller : MonoBehaviour
         gameCamera.position = cameraPositions[currentCamPos].position;
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
         //RollDice((int)DiceType.D20);
-        if (File.Exists("./player_profile/dice/active_dice_set.dss"))
+        if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss"))
         {
-            BinaryReader file = new BinaryReader(File.Open("./player_profile/dice/active_dice_set.dss", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.Open));
             for (int i = 0; i < dice.Length; i++)
             {
                 if (!file.ReadBoolean())

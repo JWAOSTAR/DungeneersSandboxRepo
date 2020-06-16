@@ -59,6 +59,8 @@ public class DiceEditor : MonoBehaviour
     LineRenderer m_instnace_line;
     [SerializeField]
     GameObject m_notification_box;
+    [SerializeField]
+    SceneChanger m_manager;
 
     String currentFilePath;
     List<Texture2D> step_back_stack = new List<Texture2D>();
@@ -74,9 +76,9 @@ public class DiceEditor : MonoBehaviour
         step_back_stack.Capacity = 5;
         step_forward_stack.Capacity = 5;
         m_strokes_to_process.Enqueue(new Stroke());
-        if (File.Exists("./player_profile/temp/die_to_paint.dstd"))
+        if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
-            BinaryReader file = new BinaryReader(File.Open("./player_profile/temp/die_to_paint.dstd", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
             currentFilePath = file.ReadString();
             file = new BinaryReader(File.Open(currentFilePath, FileMode.Open));
             file.ReadBoolean();
@@ -85,7 +87,7 @@ public class DiceEditor : MonoBehaviour
             String imageName = currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1];
             imageName = imageName.Replace(".dsd", ".png");
             Texture2D newTex = new Texture2D(512, 512);
-            newTex.LoadImage(File.ReadAllBytes("./player_profile/temp/" + imageName));
+            newTex.LoadImage(File.ReadAllBytes("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + imageName));
             for (int i = 0; i < material.materials.Length; i++)
             {
                material.materials[i].SetTexture("_MainTex", newTex);
@@ -168,7 +170,7 @@ public class DiceEditor : MonoBehaviour
         {
             for(int i = 0; i < step_back_stack.Count; i++)
             {
-                BinaryWriter file = new BinaryWriter(File.Open("./player_profile/temp/step_back_" + i.ToString() + ".png", FileMode.OpenOrCreate));
+                BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/step_back_" + i.ToString() + ".png", FileMode.OpenOrCreate));
                 file.Write(step_back_stack[i].EncodeToPNG());
                 file.Close();
             }
@@ -398,7 +400,7 @@ public class DiceEditor : MonoBehaviour
                 currentFilePath = currentFilePath.Replace("untitled", m_saveDialog.text);
             }
         }
-        if(currentFilePath.Split('/')[2] == "temp")
+        if(currentFilePath.Split('/')[6] == "temp")
         {
             currentFilePath = currentFilePath.Replace("temp", "dice/skins");
         }
@@ -412,5 +414,7 @@ public class DiceEditor : MonoBehaviour
         file.Write(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
 
         file.Close();
+
+        m_manager.ChangeScene("Main");
     }
 }
