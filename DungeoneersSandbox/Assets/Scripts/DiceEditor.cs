@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 public class DiceEditor : MonoBehaviour
 {
@@ -61,6 +62,8 @@ public class DiceEditor : MonoBehaviour
     GameObject m_notification_box;
     [SerializeField]
     SceneChanger m_manager;
+    [SerializeField]
+    Shader m_shader;
 
     String currentFilePath;
     List<Texture2D> step_back_stack = new List<Texture2D>();
@@ -68,11 +71,15 @@ public class DiceEditor : MonoBehaviour
     bool in_step = false;
     Queue<Stroke> m_strokes_to_process = new Queue<Stroke>();
 
+    RenderTexture m_renderTarget;
+    CommandBuffer m_commandBuffer;
+
     private bool m_paintable = true;
     bool CR_LINE_GEN = false;
-
+    uint numFrams = 0;
     void Start()
     {
+
         step_back_stack.Capacity = 5;
         step_forward_stack.Capacity = 5;
         m_strokes_to_process.Enqueue(new Stroke());
@@ -96,12 +103,36 @@ public class DiceEditor : MonoBehaviour
         Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
         _newText.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
         step_back_stack.Insert(0, _newText);
+
+        m_renderTarget = new RenderTexture(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height, 0);
+        Graphics.Blit(material.materials[0].mainTexture, m_renderTarget);
+
+        m_commandBuffer = new CommandBuffer();
+        m_commandBuffer.name = "DicePainter";
+        m_commandBuffer.SetRenderTarget(m_renderTarget);
+        m_commandBuffer.DrawMesh(currentModel.mesh, Matrix4x4.identity, material.materials[0]);
+        Camera.main.AddCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
+
+        for (int i = 0; i < material.materials.Length; i++)
+        {
+            material.materials[i].SetTexture("_MainTex", m_renderTarget);
+        }
+
+        Shader.SetGlobalMatrix("_WorldMatrix", material.gameObject.transform.localToWorldMatrix);
+        Shader.SetGlobalVector("_BrushColor", toolPanel.PrimaryColor);
+        Shader.SetGlobalFloat("_BrushOpacity", toolPanel.PrimaryColor.a);
+        Shader.SetGlobalFloat("_BrushHardness", brush.Hardness);
+        Shader.SetGlobalFloat("_BrushSize", brush.Size);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!diceMover.GetMobility() && Input.GetKey(KeyCode.LeftShift))
+        //if (numFrams > 2)
+        //{
+        //    Camera.main.RemoveCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
+        //}
+        if (!diceMover.GetMobility() && Input.GetKey(KeyCode.LeftShift))
         {
             if (!CR_LINE_GEN)
             {
@@ -133,15 +164,19 @@ public class DiceEditor : MonoBehaviour
 
             if(Physics.Raycast(ray, out hit))
             {
-                if (!m_strokes_to_process.Peek().points.Contains(_toSend))
-                {
-                    if(m_strokes_to_process.Peek().points.Count == 0)
-                    {
-                        m_strokes_to_process.Peek().brushSize = brush.Size;
-                    }
-                    m_strokes_to_process.Peek().points.Enqueue(_toSend);
-                    m_strokes_to_process.Peek().line_points.Add(hit.point + new Vector3(0.0f, 0.0f, -0.01f)); ;
-                }
+                //if (!m_strokes_to_process.Peek().points.Contains(_toSend))
+                //{
+                //    if(m_strokes_to_process.Peek().points.Count == 0)
+                //    {
+                //        m_strokes_to_process.Peek().brushSize = brush.Size;
+                //    }
+                //    m_strokes_to_process.Peek().points.Enqueue(_toSend);
+                //    m_strokes_to_process.Peek().line_points.Add(hit.point + new Vector3(0.0f, 0.0f, -0.01f)); ;
+                //}
+
+                Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
+
+                Shader.SetGlobalVector("_Mouse", mouse_world_pos);
 
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
                 if (!in_step)
@@ -154,6 +189,13 @@ public class DiceEditor : MonoBehaviour
                 Debug.Log("Not on top of object");
             }
 
+        }
+        else
+        {
+            Vector4 mouse_world_pos = Vector4.positiveInfinity;
+            mouse_world_pos.w = 0.0f;
+
+            Shader.SetGlobalVector("_Mouse", mouse_world_pos);
         }
 
         if(m_paintable && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.Z))
@@ -176,24 +218,25 @@ public class DiceEditor : MonoBehaviour
             }
         }
 
-        if (in_step && !Input.GetMouseButton(0))
-        {
-            m_strokes_to_process.Peek().GenerateTrail(m_instnace_line);
-            switch (toolPanel.CurrentTool)
-            {
-                case EditorToolPanel.ToolType.Brush:
-                    StartCoroutine(DrawQueueedStroksOnMesh());
-                    break;
-                case EditorToolPanel.ToolType.Bucket:
-                    StartCoroutine(DrawFillBucketOnMesh());
-                    break;
-                default:
-                    break;
-            }
-            
-            m_strokes_to_process.Enqueue(new Stroke());
-            in_step = false;
-        }
+        //if (in_step && !Input.GetMouseButton(0))
+        //{
+        //    m_strokes_to_process.Peek().GenerateTrail(m_instnace_line);
+        //    switch (toolPanel.CurrentTool)
+        //    {
+        //        case EditorToolPanel.ToolType.Brush:
+        //            StartCoroutine(DrawQueueedStroksOnMesh());
+        //            break;
+        //        case EditorToolPanel.ToolType.Bucket:
+        //            StartCoroutine(DrawFillBucketOnMesh());
+        //            break;
+        //        default:
+        //            break;
+        //    }
+
+        //    m_strokes_to_process.Enqueue(new Stroke());
+        //    in_step = false;
+        //}
+        numFrams++;
     }
 
     private void TakeSnapshoot()
@@ -259,14 +302,18 @@ public class DiceEditor : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                if (!m_strokes_to_process.Peek().points.Contains(_toSend)) {
-                    if (m_strokes_to_process.Peek().points.Count == 0)
-                    {
-                        m_strokes_to_process.Peek().brushSize = brush.Size;
-                    }
-                    m_strokes_to_process.Peek().points.Enqueue(_toSend);
-                    m_strokes_to_process.Peek().line_points.Add(hit.point);
-                }
+                //if (!m_strokes_to_process.Peek().points.Contains(_toSend)) {
+                //    if (m_strokes_to_process.Peek().points.Count == 0)
+                //    {
+                //        m_strokes_to_process.Peek().brushSize = brush.Size;
+                //    }
+                //    m_strokes_to_process.Peek().points.Enqueue(_toSend);
+                //    m_strokes_to_process.Peek().line_points.Add(hit.point);
+                //}
+
+                Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
+
+                Shader.SetGlobalVector("_Mouse", mouse_world_pos);
 
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
                 if (!in_step)
@@ -279,6 +326,7 @@ public class DiceEditor : MonoBehaviour
                 Debug.Log("Not on top of object");
             }
         }
+
     }
 
     private IEnumerator DrawQueueedStroksOnMesh()

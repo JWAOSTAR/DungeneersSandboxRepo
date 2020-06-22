@@ -8,7 +8,7 @@ public class Brush : ScriptableObject
     [SerializeField]
     float m_size = 1.0f;
     [SerializeField]
-    float m_hardness = 0.0f; 
+    float m_hardness = 1.0f; 
     [SerializeField]
     bool m_square = false;
     [SerializeField]

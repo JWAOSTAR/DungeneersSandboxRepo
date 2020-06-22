@@ -9,8 +9,11 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "zTest"="Always" "ZWrite" = "Off" "Queue"="Overlay"}
+        Tags { "RenderType"="Opaque" "Queue"="Overlay"}
         LOD 200
+
+        ZWrite Off
+        ZTest Always
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types

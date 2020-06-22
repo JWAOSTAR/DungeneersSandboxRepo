@@ -3284,6 +3284,7 @@ MonoBehaviour:
   m_instnace_line: {fileID: 1096752378}
   m_notification_box: {fileID: 963181008}
   m_manager: {fileID: 588412404}
+  m_shader: {fileID: 4800000, guid: ee995522837b1474eb841453054f9a37, type: 3}
 --- !u!1 &771137040
 GameObject:
   m_ObjectHideFlags: 0
