@@ -104,25 +104,25 @@ public class DiceEditor : MonoBehaviour
         _newText.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
         step_back_stack.Insert(0, _newText);
 
-        m_renderTarget = new RenderTexture(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height, 0);
-        Graphics.Blit(material.materials[0].mainTexture, m_renderTarget);
+        //m_renderTarget = new RenderTexture(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height, 0);
+        //Graphics.Blit(material.materials[0].mainTexture, m_renderTarget);
 
-        m_commandBuffer = new CommandBuffer();
-        m_commandBuffer.name = "DicePainter";
-        m_commandBuffer.SetRenderTarget(m_renderTarget);
-        m_commandBuffer.DrawMesh(currentModel.mesh, Matrix4x4.identity, material.materials[0]);
-        Camera.main.AddCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
+        //m_commandBuffer = new CommandBuffer();
+        //m_commandBuffer.name = "DicePainter";
+        //m_commandBuffer.SetRenderTarget(m_renderTarget);
+        //m_commandBuffer.DrawMesh(currentModel.mesh, Matrix4x4.identity, material.materials[0]);
+        //Camera.main.AddCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
 
-        for (int i = 0; i < material.materials.Length; i++)
-        {
-            material.materials[i].SetTexture("_MainTex", m_renderTarget);
-        }
+        //for (int i = 0; i < material.materials.Length; i++)
+        //{
+        //    material.materials[i].SetTexture("_MainTex", m_renderTarget);
+        //}
 
-        Shader.SetGlobalMatrix("_WorldMatrix", material.gameObject.transform.localToWorldMatrix);
-        Shader.SetGlobalVector("_BrushColor", toolPanel.PrimaryColor);
-        Shader.SetGlobalFloat("_BrushOpacity", toolPanel.PrimaryColor.a);
-        Shader.SetGlobalFloat("_BrushHardness", brush.Hardness);
-        Shader.SetGlobalFloat("_BrushSize", brush.Size);
+        //Shader.SetGlobalMatrix("_WorldMatrix", material.gameObject.transform.localToWorldMatrix);
+        //Shader.SetGlobalVector("_BrushColor", toolPanel.PrimaryColor);
+        //Shader.SetGlobalFloat("_BrushOpacity", toolPanel.PrimaryColor.a);
+        //Shader.SetGlobalFloat("_BrushHardness", brush.Hardness);
+        //Shader.SetGlobalFloat("_BrushSize", brush.Size);
     }
 
     // Update is called once per frame
@@ -164,19 +164,19 @@ public class DiceEditor : MonoBehaviour
 
             if(Physics.Raycast(ray, out hit))
             {
-                //if (!m_strokes_to_process.Peek().points.Contains(_toSend))
-                //{
-                //    if(m_strokes_to_process.Peek().points.Count == 0)
-                //    {
-                //        m_strokes_to_process.Peek().brushSize = brush.Size;
-                //    }
-                //    m_strokes_to_process.Peek().points.Enqueue(_toSend);
-                //    m_strokes_to_process.Peek().line_points.Add(hit.point + new Vector3(0.0f, 0.0f, -0.01f)); ;
-                //}
+                if (!m_strokes_to_process.Peek().points.Contains(_toSend))
+                {
+                    if (m_strokes_to_process.Peek().points.Count == 0)
+                    {
+                        m_strokes_to_process.Peek().brushSize = brush.Size;
+                    }
+                    m_strokes_to_process.Peek().points.Enqueue(_toSend);
+                    m_strokes_to_process.Peek().line_points.Add(hit.point + new Vector3(0.0f, 0.0f, -0.01f)); ;
+                }
 
-                Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
+                //Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
 
-                Shader.SetGlobalVector("_Mouse", mouse_world_pos);
+                //Shader.SetGlobalVector("_Mouse", mouse_world_pos);
 
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
                 if (!in_step)
@@ -190,13 +190,13 @@ public class DiceEditor : MonoBehaviour
             }
 
         }
-        else
-        {
-            Vector4 mouse_world_pos = Vector4.positiveInfinity;
-            mouse_world_pos.w = 0.0f;
+        //else
+        //{
+        //    Vector4 mouse_world_pos = Vector4.positiveInfinity;
+        //    mouse_world_pos.w = 0.0f;
 
-            Shader.SetGlobalVector("_Mouse", mouse_world_pos);
-        }
+        //    Shader.SetGlobalVector("_Mouse", mouse_world_pos);
+        //}
 
         if(m_paintable && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.Z))
         {
@@ -218,25 +218,25 @@ public class DiceEditor : MonoBehaviour
             }
         }
 
-        //if (in_step && !Input.GetMouseButton(0))
-        //{
-        //    m_strokes_to_process.Peek().GenerateTrail(m_instnace_line);
-        //    switch (toolPanel.CurrentTool)
-        //    {
-        //        case EditorToolPanel.ToolType.Brush:
-        //            StartCoroutine(DrawQueueedStroksOnMesh());
-        //            break;
-        //        case EditorToolPanel.ToolType.Bucket:
-        //            StartCoroutine(DrawFillBucketOnMesh());
-        //            break;
-        //        default:
-        //            break;
-        //    }
+        if (in_step && !Input.GetMouseButton(0))
+        {
+            m_strokes_to_process.Peek().GenerateTrail(m_instnace_line);
+            switch (toolPanel.CurrentTool)
+            {
+                case EditorToolPanel.ToolType.Brush:
+                    StartCoroutine(DrawQueueedStroksOnMesh());
+                    break;
+                case EditorToolPanel.ToolType.Bucket:
+                    StartCoroutine(DrawFillBucketOnMesh());
+                    break;
+                default:
+                    break;
+            }
 
-        //    m_strokes_to_process.Enqueue(new Stroke());
-        //    in_step = false;
-        //}
-        numFrams++;
+            m_strokes_to_process.Enqueue(new Stroke());
+            in_step = false;
+        }
+        //numFrams++;
     }
 
     private void TakeSnapshoot()
@@ -302,18 +302,19 @@ public class DiceEditor : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                //if (!m_strokes_to_process.Peek().points.Contains(_toSend)) {
-                //    if (m_strokes_to_process.Peek().points.Count == 0)
-                //    {
-                //        m_strokes_to_process.Peek().brushSize = brush.Size;
-                //    }
-                //    m_strokes_to_process.Peek().points.Enqueue(_toSend);
-                //    m_strokes_to_process.Peek().line_points.Add(hit.point);
-                //}
+                if (!m_strokes_to_process.Peek().points.Contains(_toSend))
+                {
+                    if (m_strokes_to_process.Peek().points.Count == 0)
+                    {
+                        m_strokes_to_process.Peek().brushSize = brush.Size;
+                    }
+                    m_strokes_to_process.Peek().points.Enqueue(_toSend);
+                    m_strokes_to_process.Peek().line_points.Add(hit.point);
+                }
 
-                Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
+                //Vector4 mouse_world_pos = new Vector4(hit.point.x, hit.point.y, hit.point.z, 1.0f);
 
-                Shader.SetGlobalVector("_Mouse", mouse_world_pos);
+                //Shader.SetGlobalVector("_Mouse", mouse_world_pos);
 
                 Debug.Log("uv(" + hit.textureCoord.x.ToString("0.00") + ", " + hit.textureCoord.y.ToString("0.00") + ")");
                 if (!in_step)
@@ -326,6 +327,13 @@ public class DiceEditor : MonoBehaviour
                 Debug.Log("Not on top of object");
             }
         }
+        //else
+        //{
+        //    Vector4 mouse_world_pos = Vector4.positiveInfinity;
+        //    mouse_world_pos.w = 0.0f;
+
+        //    Shader.SetGlobalVector("_Mouse", mouse_world_pos);
+        //}
 
     }
 

@@ -1184,6 +1184,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: d6296fbc881508c43a3e38e245663614, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6296fbc881508c43a3e38e245663614, type: 3}
 --- !u!4 &294157306 stripped
@@ -2720,7 +2724,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 68555493}
   m_Direction: 0
   m_MinValue: 1
-  m_MaxValue: 50
+  m_MaxValue: 250
   m_WholeNumbers: 1
   m_Value: 50
   m_OnValueChanged:
@@ -3231,6 +3235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 768620380}
   - component: {fileID: 768620381}
+  - component: {fileID: 768620382}
   m_Layer: 0
   m_Name: Die
   m_TagString: Untagged
@@ -3260,7 +3265,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 768620379}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa2675d09fdf4294290ebaaabe702ae6, type: 3}
   m_Name: 
@@ -3285,6 +3290,36 @@ MonoBehaviour:
   m_notification_box: {fileID: 963181008}
   m_manager: {fileID: 588412404}
   m_shader: {fileID: 4800000, guid: ee995522837b1474eb841453054f9a37, type: 3}
+--- !u!114 &768620382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 768620379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7ade2fca7aa4041aaac7b03a020fe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texturePaintShader: {fileID: 4800000, guid: ee995522837b1474eb841453054f9a37, type: 3}
+  iShader: {fileID: 4800000, guid: ee995522837b1474eb841453054f9a37, type: 3}
+  oShader: {fileID: 4800000, guid: 96d1ff146c96fd24fa7f284fbc6339e0, type: 3}
+  colider: {fileID: 294157311}
+  currentDiceType: 0
+  currentModel: {fileID: 294157310}
+  diceModels:
+  - {fileID: -1213038667356813595, guid: eaa2e2962b3da234c988d4452ca7ba94, type: 3}
+  - {fileID: 2722449972857296610, guid: 2b94b1487593ba54f882e9cc5cadcb85, type: 3}
+  - {fileID: 578291741333493845, guid: a31ba7c7f5542b14aa08375172fc189c, type: 3}
+  - {fileID: 8161962347496955538, guid: a70d5f31e0ac5464591a95aa983f9fe4, type: 3}
+  - {fileID: -6682867018594333879, guid: 8e6122e644fac9e4cafb1625bde6adeb, type: 3}
+  - {fileID: 2038982201916422068, guid: ebc77e217fd65204a8b7abbf874aa33f, type: 3}
+  - {fileID: -5028228686344099254, guid: 071fb6d24a1799646af7c3e2d2a4dcc8, type: 3}
+  material: {fileID: 294157309}
+  brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
+  toolPanel: {fileID: 456885608}
+  diceMover: {fileID: 294157308}
 --- !u!1 &771137040
 GameObject:
   m_ObjectHideFlags: 0
