@@ -1818,7 +1818,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 768620381}
+      - m_Target: {fileID: 768620382}
         m_MethodName: StepForwards
         m_Mode: 1
         m_Arguments:
@@ -3320,6 +3320,8 @@ MonoBehaviour:
   brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
   toolPanel: {fileID: 456885608}
   diceMover: {fileID: 294157308}
+  m_saveDialog: {fileID: 2530622472418212890}
+  m_manager: {fileID: 588412404}
 --- !u!1 &771137040
 GameObject:
   m_ObjectHideFlags: 0
@@ -3482,7 +3484,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 768620381}
+      - m_Target: {fileID: 768620382}
         m_MethodName: SaveFile
         m_Mode: 1
         m_Arguments:
@@ -6627,7 +6629,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 768620381}
+      - m_Target: {fileID: 768620382}
         m_MethodName: StepBackwards
         m_Mode: 1
         m_Arguments:
@@ -8016,7 +8018,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 768620381}
+      - m_Target: {fileID: 768620382}
         m_MethodName: SaveFile
         m_Mode: 1
         m_Arguments:

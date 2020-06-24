@@ -100,7 +100,11 @@ public class EditorToolPanel : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
-            SetPrimaryColor(((Texture2D)(hit.collider.gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture)).GetPixelBilinear(hit.textureCoord.x, hit.textureCoord.y));
+            Texture2D _newText = new Texture2D((hit.collider.gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture).width, (hit.collider.gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture).height);
+            RenderTexture.active = (RenderTexture)(hit.collider.gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture);
+            _newText.ReadPixels(new Rect(0, 0, _newText.width, _newText.height), 0, 0);
+            _newText.Apply();
+            SetPrimaryColor(_newText.GetPixelBilinear(hit.textureCoord.x, hit.textureCoord.y));
         }
         else
         {

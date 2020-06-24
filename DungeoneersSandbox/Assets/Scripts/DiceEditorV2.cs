@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class DiceEditorV2 : MonoBehaviour
 {
@@ -41,14 +42,23 @@ public class DiceEditorV2 : MonoBehaviour
     EditorToolPanel toolPanel;
     [SerializeField]
     DiceAxisMovement diceMover;
+    [SerializeField]
+    InputField m_saveDialog;
+    [SerializeField]
+    SceneChanger m_manager;
 
     String currentFilePath;
+    int in_step = 0;
+    List<Texture2D> step_back_stack = new List<Texture2D>();
+    List<Texture2D> step_forward_stack = new List<Texture2D>();
+    int numFramsDown = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         cam = Camera.main;
-
+        step_back_stack.Capacity = 5;
+        step_forward_stack.Capacity = 5;
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
@@ -63,9 +73,10 @@ public class DiceEditorV2 : MonoBehaviour
             newTex.LoadImage(File.ReadAllBytes("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + imageName));
 
             originalTexture = newTex;
-            //originalTexture.width = newTex.width;
-            //originalTexture.height = newTex.height;
-            //((Texture2D)originalTexture).LoadImage(File.ReadAllBytes("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + imageName));
+
+            Texture2D _tex = new Texture2D(originalTexture.width, originalTexture.height);
+            _tex.LoadImage(((Texture2D)originalTexture).EncodeToPNG());
+            step_back_stack.Insert(0, _tex);
 
             m_renderTarget = new RenderTexture(originalTexture.width, originalTexture.height, 0, RenderTextureFormat.R8);
 
@@ -118,12 +129,52 @@ public class DiceEditorV2 : MonoBehaviour
             if(Physics.Raycast(ray, out hit))
             {
                 mouseWorldPos = hit.point;
+                in_step = 1;
+
+                switch (toolPanel.CurrentTool)
+                {
+                    case EditorToolPanel.ToolType.Brush:
+                        {
+                            //numFramsDown++;
+                            //if (numFramsDown%6 == 0) 
+                            //{
+                                mouseWorldPos.w = 1.0f;
+                            //}
+                            //else
+                            //{
+                            //    mouseWorldPos.w = 0.0f;
+                            //}
+                        }
+                        break;
+                    case EditorToolPanel.ToolType.Bucket:
+                        {
+                            mouseWorldPos.w = 0.0f;
+                            Graphics.SetRenderTarget(albedo.runTimeTexture);
+                            GL.Clear(false, true, toolPanel.PrimaryColor);
+                            Graphics.SetRenderTarget(albedo.outputTexture);
+                            GL.Clear(false, true, toolPanel.PrimaryColor);
+                        }
+                        break;
+                    default:
+                        mouseWorldPos.w = 0.0f;
+                        break;
+                }
             }
-            mouseWorldPos.w = 1.0f;
         }
         else
         {
+            //numFramsDown = 0;
             mouseWorldPos.w = 0.0f;
+            if (in_step == 1)
+            {
+                in_step = 2;
+            }
+        }
+
+        if(in_step == 2)
+        {
+            TakeSnapshot();
+            in_step = 0;
         }
 
         mousePos = mouseWorldPos;
@@ -133,5 +184,102 @@ public class DiceEditorV2 : MonoBehaviour
         Shader.SetGlobalFloat("_BrushOpacity", toolPanel.PrimaryColor.a);
         Shader.SetGlobalFloat("_BrushHardness", brush.Hardness);
         Shader.SetGlobalFloat("_BrushSize", brush.Size*0.004f);
+    }
+
+    public void SaveFile()
+    {
+        if (currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
+        {
+            if (m_saveDialog.text == "untitled")
+            {
+                m_saveDialog.transform.parent.gameObject.SetActive(true);
+                return;
+            }
+            else
+            {
+                currentFilePath = currentFilePath.Replace("untitled", m_saveDialog.text);
+            }
+        }
+        if (currentFilePath.Split('/')[6] == "temp")
+        {
+            currentFilePath = currentFilePath.Replace("temp", "dice/skins");
+        }
+        BinaryWriter file = new BinaryWriter(File.Open(currentFilePath, FileMode.OpenOrCreate));
+
+        file.Write(true);
+        file.Write((int)currentDiceType);
+
+        Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
+        RenderTexture.active = albedo.runTimeTexture;
+        _newText.ReadPixels(new Rect(0, 0, albedo.runTimeTexture.width, albedo.runTimeTexture.height), 0, 0);
+        _newText.Apply();
+
+        file.Write(_newText.EncodeToPNG().Length);
+        file.Write(albedo.runTimeTexture.width);
+        file.Write(albedo.runTimeTexture.height);
+        file.Write(_newText.EncodeToPNG());
+
+        file.Close();
+
+        m_manager.ChangeScene("Main");
+    }
+
+    public void StepForwards()
+    {
+        if (step_forward_stack.Count > 0)
+        {
+            Texture2D _oldText = new Texture2D(step_forward_stack[0].width, step_forward_stack[0].height);
+            _oldText.LoadImage(step_forward_stack[0].EncodeToPNG());
+            step_back_stack.Insert(0, _oldText);
+
+            for (int i = 0; i < material.materials.Length; i++)
+            {
+                Texture2D _newText = new Texture2D(step_forward_stack[0].width, step_forward_stack[0].height);
+                _newText.LoadImage(step_forward_stack[0].EncodeToPNG());
+                //material.materials[i].SetTexture("_MainTex", _newText);
+                Graphics.Blit(_newText, albedo.runTimeTexture);
+                Graphics.Blit(_newText, albedo.outputTexture);
+            }
+
+            step_forward_stack.RemoveAt(0);
+        }
+    }
+
+    public void StepBackwards()
+    {
+        if (step_back_stack.Count > 1)
+        {
+            Texture2D _oldText = new Texture2D(step_back_stack[0].width, step_back_stack[0].height);
+            _oldText.LoadImage(step_back_stack[0].EncodeToPNG());
+            step_forward_stack.Insert(0, _oldText);
+
+            step_back_stack.RemoveAt(0);
+
+            for (int i = 0; i < material.materials.Length; i++)
+            {
+                Texture2D _newText = new Texture2D(step_back_stack[0].width, step_back_stack[0].height);
+                _newText.LoadImage(step_back_stack[0].EncodeToPNG());
+                //material.materials[i].SetTexture("_MainTex", _newText);
+                Graphics.Blit(_newText, albedo.runTimeTexture);
+                Graphics.Blit(_newText, albedo.outputTexture);
+            }
+        }
+    }
+
+    private void TakeSnapshot()
+    {
+        Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
+        RenderTexture.active = albedo.runTimeTexture;
+        _newText.ReadPixels(new Rect(0, 0, albedo.runTimeTexture.width, albedo.runTimeTexture.height), 0, 0);
+        _newText.Apply();
+        step_back_stack.Insert(0, _newText);
+        if (step_back_stack.Count > 5)
+        {
+            step_back_stack.RemoveAt(step_back_stack.Count - 1);
+        }
+        if (step_forward_stack.Count > 0)
+        {
+            step_forward_stack.Clear();
+        }
     }
 }
