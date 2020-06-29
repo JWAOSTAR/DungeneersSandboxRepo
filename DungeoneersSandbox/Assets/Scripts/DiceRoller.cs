@@ -51,6 +51,8 @@ public class DiceRoller : MonoBehaviour
     float m_init_bar_height;
     Vector3 m_init_bar_pos;
 
+    bool in_roll = false;
+
     void OnValidate()
     {
         if (initialRollingTransforms.Length != rollingTransformsSize)
@@ -193,6 +195,11 @@ public class DiceRoller : MonoBehaviour
 
     public void RollDiceInQueue()
     {
+        if (!in_roll)
+        {
+            rollSets.Add(new List<Dice>());
+            in_roll = true;
+        }
         foreach (RollTypes d in diceQueue)
         {
             RollDice((int)d);
@@ -238,24 +245,31 @@ public class DiceRoller : MonoBehaviour
 
     public void RollAdvDAdv(bool disadvantage)
     {
+        if (!in_roll)
+        {
+            rollSets.Add(new List<Dice>());
+            in_roll = true;
+        }
         int AdvDAdv = (disadvantage) ? 2 : 1;
         RollDice((int)RollTypes.D20 + AdvDAdv);
     }
 
     public void ClearDice()
     {
+        in_roll = false;
         int cur_index = 0;
-        rollSets.Add(new List<Dice>());
-        foreach(GameObject d in instantiatedDice)
-        {
-            rollSets[rollSets.Count - 1].Add(new Dice());
-            (rollSets[rollSets.Count - 1])[cur_index].AdvDAdv = d.GetComponent<Dice>().AdvDAdv;
-            (rollSets[rollSets.Count - 1])[cur_index].currentValue = d.GetComponent<Dice>().currentValue;
-            (rollSets[rollSets.Count - 1])[cur_index].diceType = d.GetComponent<Dice>().diceType;
+        if (rollSets.Count > 0) {
+            foreach (GameObject d in instantiatedDice)
+            {
+                rollSets[rollSets.Count - 1].Add(new Dice());
+                (rollSets[rollSets.Count - 1])[cur_index].AdvDAdv = d.GetComponent<Dice>().AdvDAdv;
+                (rollSets[rollSets.Count - 1])[cur_index].currentValue = d.GetComponent<Dice>().currentValue;
+                (rollSets[rollSets.Count - 1])[cur_index].diceType = d.GetComponent<Dice>().diceType;
 
-            cur_index++;
+                cur_index++;
+            }
         }
-        foreach(GameObject c in instantiatedDice)
+        foreach (GameObject c in instantiatedDice)
         {
             Destroy(c);
         }
@@ -365,7 +379,9 @@ public class DiceRoller : MonoBehaviour
         {
             for(int i = 0; i < rollSets.Count; i++)
             {
-                GenerateNewChatLine();
+                if (m_chatDisplay.childCount < rollSets.Count) {
+                    GenerateNewChatLine();
+                }
                 if (!m_chatDisplay.GetChild(i).GetChild(0).gameObject.activeSelf)
                 {
                     m_chatDisplay.GetChild(i).GetChild(0).gameObject.SetActive(true);
@@ -656,6 +672,11 @@ public class DiceRoller : MonoBehaviour
         }
         m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
         m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+        rollSets.Clear();
+        if(in_roll)
+        {
+            rollSets.Add(new List<Dice>());
+        }
     }
 
     public void UpdateInstanceList()
