@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class DiceSetSeleclector : MonoBehaviour
@@ -18,12 +19,39 @@ public class DiceSetSeleclector : MonoBehaviour
     List<Dice.DiceSkin> skins = new List<Dice.DiceSkin>();
     Predicate<Dice.DiceSkin>[] searchFuncs = { FindD4, FindD6, FindD8, FindD10_1, FindD10_10, FindD12, FindD20};
     int[] currentSkins = { 0, 0, 0, 0, 0, 0, 0 };
+
+    [Space]
+    [SerializeField]
+    ColorPicker m_numberColor;
+    [SerializeField]
+    ColorPicker m_dieColor;
+    [SerializeField]
+    Image m_numberBlockColor;
+    [SerializeField]
+    Image m_dieBlockColor;
+
     void Start()
     {
-        if(!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
+        m_numberBlockColor.color = m_numberColor.CurrentColor;
+        m_dieBlockColor.color = m_dieColor.CurrentColor;
+        m_numberColor.gameObject.SetActive(false);
+        m_dieColor.gameObject.SetActive(false);
+
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
+
+        for(int k = 0; k < dice.Length; k++)
+        {
+            Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
+            skinToAdd.isTexture = false;
+            skinToAdd.diceType = (Dice.DiceType)k;
+            skinToAdd.numbers = Color.black; 
+            skinToAdd.die = Color.red;
+            skins.Add(skinToAdd);
+        }
+
         string[] files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         for (int j = 0; j < files.Length; j++) { 
             BinaryReader file = new BinaryReader(File.Open(files[j], FileMode.Open));
@@ -94,6 +122,8 @@ public class DiceSetSeleclector : MonoBehaviour
             {
                 dice[die].materials[0].SetTexture("_MainTex", skinList[currentSkins[die]].texture);
                 dice[die].materials[1].SetTexture("_MainTex", skinList[currentSkins[die]].texture);
+                dice[die].materials[0].color = Color.white;
+                dice[die].materials[1].color = Color.white;
             }
         }
     }
@@ -116,6 +146,8 @@ public class DiceSetSeleclector : MonoBehaviour
             {
                 dice[die].materials[0].SetTexture("_MainTex", skinList[currentSkins[die]].texture);
                 dice[die].materials[1].SetTexture("_MainTex", skinList[currentSkins[die]].texture);
+                dice[die].materials[0].color = Color.white;
+                dice[die].materials[1].color = Color.white;
             }
         }
     }
@@ -151,6 +183,38 @@ public class DiceSetSeleclector : MonoBehaviour
         file.Close();
     }
 
+    public void SetNumColor(Color _color)
+    {
+        for (int i = 0; i < dice.Length; i++)
+        {
+            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
+            ds.numbers = _color;
+            skins[skins.FindIndex(0, searchFuncs[i])] = ds;
+            if (currentSkins[i] == 0)
+            {
+                dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
+                dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+            }
+        }
+        m_numberBlockColor.color = _color;
+    }
+
+    public void SetDieColor(Color _color)
+    {
+        for (int i = 0; i < dice.Length; i++)
+        {
+            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
+            ds.die = _color;
+            skins[skins.FindIndex(0, searchFuncs[i])] = ds;
+            if(currentSkins[i] == 0)
+            {
+                dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
+                dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+            }
+        }
+        m_dieBlockColor.color = _color;
+    }
+
     private static bool FindD4(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D4); }
     private static bool FindD6(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D6); }
     private static bool FindD8(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D8); }
@@ -158,4 +222,6 @@ public class DiceSetSeleclector : MonoBehaviour
     private static bool FindD10_10(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D10_10s); }
     private static bool FindD12(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D12); }
     private static bool FindD20(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D20); }
+
+
 }

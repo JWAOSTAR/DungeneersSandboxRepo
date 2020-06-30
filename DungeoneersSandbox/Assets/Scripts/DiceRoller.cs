@@ -664,7 +664,7 @@ public class DiceRoller : MonoBehaviour
         m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, chatDisplaySize);
     }
 
-    public void ClearChatDisplay()
+    public void ClearChatDisplay(bool withRollSet = false)
     {
         for (int i = m_chatDisplay.childCount - 1; i > 0; i--)
         {
@@ -672,10 +672,13 @@ public class DiceRoller : MonoBehaviour
         }
         m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
         m_chatDisplay.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-        rollSets.Clear();
-        if(in_roll)
+        if (withRollSet)
         {
-            rollSets.Add(new List<Dice>());
+            rollSets.Clear();
+            //if (in_roll && (instantiatedDice.Count > 0))
+            //{
+            //    rollSets.Add(new List<Dice>());
+            //}
         }
     }
 
