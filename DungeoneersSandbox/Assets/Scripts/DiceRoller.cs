@@ -50,6 +50,12 @@ public class DiceRoller : MonoBehaviour
     Sprite[] m_diceSprites = new Sprite[diceListSize];
     float m_init_bar_height;
     Vector3 m_init_bar_pos;
+    [SerializeField]
+    Mesh[] m_trayMeshes;
+    [SerializeField]
+    MeshRenderer m_trayMaterilas;
+    [SerializeField]
+    MeshFilter m_trayMesh;
 
     bool in_roll = false;
 
@@ -130,6 +136,7 @@ public class DiceRoller : MonoBehaviour
 
             //    }
             //}
+            file.Close();
         }
         else
         {
@@ -139,6 +146,15 @@ public class DiceRoller : MonoBehaviour
                 dice[i].GetChild(1).GetComponent<MeshRenderer>().materials[0].color = Color.red;
                 dice[i].GetChild(1).GetComponent<MeshRenderer>().materials[1].color = Color.black;
             }
+        }
+        if(File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss"))
+        {
+            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.Open));
+            int trayType = file.ReadInt32();
+            m_trayMesh.mesh = m_trayMeshes[trayType];
+            m_trayMaterilas.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+            m_trayMaterilas.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+            file.Close();
         }
     }
 

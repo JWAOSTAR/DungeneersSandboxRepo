@@ -13046,6 +13046,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 15cfb88e661211b4babfb22e57a5a65f, type: 3}
   - {fileID: 21300000, guid: ac053eaa763d26744920a7ab029e3ee7, type: 3}
   - {fileID: 21300000, guid: e98ac47da0a0101428577ddbd22e0cc0, type: 3}
+  m_trayMeshes:
+  - {fileID: -3153014974416642496, guid: ddcab177aca67054da959d82cc8f6986, type: 3}
+  - {fileID: -4823266969027199758, guid: 6db982b0ee44e744d9eddfef49c7518a, type: 3}
+  m_trayMaterilas: {fileID: 1169014924}
+  m_trayMesh: {fileID: 1169014925}
 --- !u!1 &1158278448
 GameObject:
   m_ObjectHideFlags: 0
@@ -13267,6 +13272,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6db982b0ee44e744d9eddfef49c7518a, type: 3}
+--- !u!23 &1169014924 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: 6db982b0ee44e744d9eddfef49c7518a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1169014923}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &1169014925 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: -5178661895559278292, guid: 6db982b0ee44e744d9eddfef49c7518a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1169014923}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1203700541 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8325114274238436320, guid: b8156d92295062c4da3a52fc8f84d799,

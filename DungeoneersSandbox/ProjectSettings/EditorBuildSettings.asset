@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 7fa38b85256ffcf42aeaeddd69813039
   - enabled: 1
+    path: Assets/Scenes/DiceTraySelection.unity
+    guid: e44f1f4fbe8b9704fa85ac8926ae7949
+  - enabled: 1
     path: Assets/Scenes/DiceSetSelector.unity
     guid: 92d3d5225f81cc64aaa63bf54be7afa6
   - enabled: 1
