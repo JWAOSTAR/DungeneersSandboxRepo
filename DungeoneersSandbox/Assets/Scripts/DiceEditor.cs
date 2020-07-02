@@ -76,7 +76,6 @@ public class DiceEditor : MonoBehaviour
 
     private bool m_paintable = true;
     bool CR_LINE_GEN = false;
-    uint numFrams = 0;
     void Start()
     {
 

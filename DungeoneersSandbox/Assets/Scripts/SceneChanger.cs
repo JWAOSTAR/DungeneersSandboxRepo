@@ -7,7 +7,8 @@ public class SceneChanger : MonoBehaviour
 {
     public void ChangeScene(string _scene)
     {
-        SceneManager.LoadScene(_scene, LoadSceneMode.Single);
+        //SceneManager.LoadScene(_scene, LoadSceneMode.Single);
+        SceneManager.LoadSceneAsync(_scene);
     }
 
     public void Quit()

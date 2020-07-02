@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+
 
 public class DiceEditorV2 : MonoBehaviour
 {
@@ -51,7 +53,7 @@ public class DiceEditorV2 : MonoBehaviour
     int in_step = 0;
     List<Texture2D> step_back_stack = new List<Texture2D>();
     List<Texture2D> step_forward_stack = new List<Texture2D>();
-    int numFramsDown = 0;
+    //int numFramsDown = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -220,6 +222,25 @@ public class DiceEditorV2 : MonoBehaviour
         file.Write(_newText.EncodeToPNG());
 
         file.Close();
+
+        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents";
+        saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
+        saveFileDialog1.FilterIndex = 0;
+        saveFileDialog1.RestoreDirectory = false;
+        saveFileDialog1.FileName = m_saveDialog.text + ".dsd";
+
+        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            file = new BinaryWriter(saveFileDialog1.OpenFile());
+            file.Write(true);
+            file.Write((int)currentDiceType);
+            file.Write(_newText.EncodeToPNG().Length);
+            file.Write(albedo.runTimeTexture.width);
+            file.Write(albedo.runTimeTexture.height);
+            file.Write(_newText.EncodeToPNG());
+            file.Close();
+        }
 
         m_manager.ChangeScene("Main");
     }

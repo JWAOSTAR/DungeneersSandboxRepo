@@ -306,7 +306,7 @@ public class DiceRoller : MonoBehaviour
     {
         diceValues.Clear();
         //Transform topNum = null;
-        bool onAdv = false;
+        //bool onAdv = false;
         bool nullError = false;
         foreach(GameObject d in instantiatedDice)
         {

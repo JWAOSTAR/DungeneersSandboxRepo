@@ -47,19 +47,19 @@ public class RollerCameraMover : MonoBehaviour
         if (Input.GetMouseButton(2)) {
             if (Input.GetAxis("Mouse Y") > 0)
             {
-                Camera.main.transform.RotateAroundLocal(Camera.main.transform.right, 0.01f);
+                Camera.main.transform.Rotate(Camera.main.transform.right, 0.01f);
             }
             if (Input.GetAxis("Mouse Y") < 0)
             {
-                Camera.main.transform.RotateAroundLocal(Camera.main.transform.right, -0.01f);
+                Camera.main.transform.Rotate(Camera.main.transform.right, -0.01f);
             }
             if (Input.GetAxis("Mouse X") > 0)
             {
-                Camera.main.transform.RotateAroundLocal(Camera.main.transform.up, -0.01f);
+                Camera.main.transform.Rotate(Camera.main.transform.up, -0.01f);
             }
             if (Input.GetAxis("Mouse X") < 0)
             {
-                Camera.main.transform.RotateAroundLocal(Camera.main.transform.up, 0.01f);
+                Camera.main.transform.Rotate(Camera.main.transform.up, 0.01f);
             }
         }
 
