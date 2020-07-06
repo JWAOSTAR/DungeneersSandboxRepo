@@ -889,8 +889,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: NextNumColor
+      - m_Target: {fileID: 402294781}
+        m_MethodName: NextActiveDie
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1714,6 +1714,7 @@ MonoBehaviour:
   m_dieColor: {fileID: 1062799995}
   m_numberBlockColor: {fileID: 22117520}
   m_dieBlockColor: {fileID: 93861714}
+  m_textActiveDieType: {fileID: 1172753081}
 --- !u!23 &420297758 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2300000, guid: 6fb51f97b44161c4a96145f154d9c85e,
@@ -3682,7 +3683,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Numbers
+  m_Text: All
 --- !u!222 &1172753082
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5462,8 +5463,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrevNumColor
+      - m_Target: {fileID: 402294781}
+        m_MethodName: PrevActiveDie
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

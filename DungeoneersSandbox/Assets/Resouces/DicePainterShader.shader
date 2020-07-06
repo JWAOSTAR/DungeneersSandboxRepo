@@ -46,6 +46,7 @@
             float _BrushOpacity;
             float _BrushHardness;
             float _BrushSize;
+            int _isSquare;
 
             v2f vert (appdata v)
             {
@@ -66,10 +67,13 @@
                 float b_hardness = _BrushHardness;
                 /*float4 b_color = _BrushColor;
                 b_color.w = 1.0;*/
-                float multiplier = distance(_Mouse.xyz, i.worldPos);
-                multiplier = 1.0 - smoothstep(b_size * b_hardness, b_size, multiplier);
+                /*float multiplier = distance(_Mouse.xyz, i.worldPos);
+                multiplier = 1.0 - smoothstep(b_size * b_hardness, b_size, distance(_Mouse.xyz, i.worldPos));*/
+                float multiplier = (_isSquare == 1) ? step(distance(_Mouse.x, i.worldPos.x), b_size) * step(distance(_Mouse.y, i.worldPos.y), b_size) : 1.0 - smoothstep(b_size * b_hardness, b_size, distance(_Mouse.xyz, i.worldPos));
+                
                 col = lerp(col, /*b_color*/_BrushColor, multiplier * _Mouse.w * _BrushOpacity);
                 col = saturate(col);
+                
                 return col;
             }
             ENDCG

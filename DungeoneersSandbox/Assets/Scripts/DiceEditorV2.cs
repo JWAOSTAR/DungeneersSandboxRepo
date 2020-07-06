@@ -48,6 +48,14 @@ public class DiceEditorV2 : MonoBehaviour
     InputField m_saveDialog;
     [SerializeField]
     SceneChanger m_manager;
+    [SerializeField]
+    Slider m_brushSizeSlider;
+    [SerializeField]
+    Slider m_brushSoftnessSlider;
+    [SerializeField]
+    Toggle m_circleToggle;
+    [SerializeField]
+    Toggle m_squareToggle;
 
     String currentFilePath;
     int in_step = 0;
@@ -58,9 +66,14 @@ public class DiceEditorV2 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         cam = Camera.main;
         step_back_stack.Capacity = 5;
         step_forward_stack.Capacity = 5;
+        m_brushSizeSlider.SetValueWithoutNotify(brush.Size);
+        m_brushSoftnessSlider.SetValueWithoutNotify(brush.Hardness);
+        m_circleToggle.SetIsOnWithoutNotify(!brush.Square);
+        m_squareToggle.SetIsOnWithoutNotify(brush.Square);
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
@@ -186,6 +199,7 @@ public class DiceEditorV2 : MonoBehaviour
         Shader.SetGlobalFloat("_BrushOpacity", toolPanel.PrimaryColor.a);
         Shader.SetGlobalFloat("_BrushHardness", brush.Hardness);
         Shader.SetGlobalFloat("_BrushSize", brush.Size*0.004f);
+        Shader.SetGlobalInt("_isSquare", (brush.Square) ? 1 : 0);
     }
 
     public void SaveFile()

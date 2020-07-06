@@ -29,4 +29,9 @@ public class HideOnMouseExit : MonoBehaviour
     {
         int i = 0;
     }
+
+    public void ToggleActive()
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
+    }
 }

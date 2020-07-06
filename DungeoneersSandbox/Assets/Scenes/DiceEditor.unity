@@ -216,6 +216,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 0130f6618e4991a4f871c509604fc9ae, type: 2}
+        m_MethodName: set_Square
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &43700389
 GameObject:
@@ -326,8 +337,8 @@ RectTransform:
   m_Father: {fileID: 2039064585}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.19678715, y: 0}
+  m_AnchorMax: {x: 0.19678715, y: 1}
   m_AnchoredPosition: {x: -3.4000034, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2413,9 +2424,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 823259227}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 823259231}
+        m_MethodName: ToggleActive
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2724,7 +2735,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 68555493}
   m_Direction: 0
   m_MinValue: 1
-  m_MaxValue: 250
+  m_MaxValue: 50
   m_WholeNumbers: 1
   m_Value: 50
   m_OnValueChanged:
@@ -3224,6 +3235,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 0130f6618e4991a4f871c509604fc9ae, type: 2}
+        m_MethodName: set_Square
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &768620379
 GameObject:
@@ -3283,7 +3305,7 @@ MonoBehaviour:
   - {fileID: 4300000, guid: 2c7dc816c84cf314faece90de7b84ad2, type: 3}
   - {fileID: 4300000, guid: 6fb51f97b44161c4a96145f154d9c85e, type: 3}
   diceMover: {fileID: 294157308}
-  brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
+  brush: {fileID: 11400000, guid: 0130f6618e4991a4f871c509604fc9ae, type: 2}
   toolPanel: {fileID: 456885608}
   m_saveDialog: {fileID: 2530622472418212890}
   m_instnace_line: {fileID: 1096752378}
@@ -3317,11 +3339,15 @@ MonoBehaviour:
   - {fileID: 2038982201916422068, guid: ebc77e217fd65204a8b7abbf874aa33f, type: 3}
   - {fileID: -5028228686344099254, guid: 071fb6d24a1799646af7c3e2d2a4dcc8, type: 3}
   material: {fileID: 294157309}
-  brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
+  brush: {fileID: 11400000, guid: 0130f6618e4991a4f871c509604fc9ae, type: 2}
   toolPanel: {fileID: 456885608}
   diceMover: {fileID: 294157308}
   m_saveDialog: {fileID: 2530622472418212890}
   m_manager: {fileID: 588412404}
+  m_brushSizeSlider: {fileID: 616555917}
+  m_brushSoftnessSlider: {fileID: 71626826}
+  m_circleToggle: {fileID: 37702724}
+  m_squareToggle: {fileID: 745974129}
 --- !u!1 &771137040
 GameObject:
   m_ObjectHideFlags: 0
@@ -3438,7 +3464,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -255.3, y: 30}
+  m_AnchoredPosition: {x: -255, y: 30}
   m_SizeDelta: {x: 180, y: 45}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &798645199
@@ -3692,9 +3718,10 @@ GameObject:
   - component: {fileID: 823259228}
   - component: {fileID: 823259229}
   - component: {fileID: 823259230}
+  - component: {fileID: 823259231}
   m_Layer: 5
   m_Name: Brush Settings Ui
-  m_TagString: Untagged
+  m_TagString: HideOnMouseExit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3739,7 +3766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_circleToggle: {fileID: 37702724}
   m_squareToggle: {fileID: 745974129}
-  m_brush: {fileID: 11400000, guid: e37dfc01e0d9eb84499ed158f49065a7, type: 2}
+  m_brush: {fileID: 11400000, guid: 0130f6618e4991a4f871c509604fc9ae, type: 2}
 --- !u!61 &823259230
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3750,7 +3777,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 104.022, y: -125.05464}
@@ -3766,6 +3793,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 199, y: 250}
   m_EdgeRadius: 0
+--- !u!114 &823259231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823259227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 655217255a26a3a44b7bb950050f9e59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &835956878
 GameObject:
   m_ObjectHideFlags: 0

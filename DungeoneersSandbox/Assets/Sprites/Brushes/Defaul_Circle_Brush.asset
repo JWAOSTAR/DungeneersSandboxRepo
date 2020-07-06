@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa90112414c992479b37455df56b52e, type: 3}
   m_Name: Defaul_Circle_Brush
   m_EditorClassIdentifier: 
-  m_size: 10
+  m_size: 25
   m_hardness: 1
-  m_square: 0
+  m_square: 1
   m_graphic: {fileID: 0}

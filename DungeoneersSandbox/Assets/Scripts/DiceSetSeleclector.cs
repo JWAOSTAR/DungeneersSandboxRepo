@@ -29,11 +29,17 @@ public class DiceSetSeleclector : MonoBehaviour
     Image m_numberBlockColor;
     [SerializeField]
     Image m_dieBlockColor;
+    [SerializeField]
+    Text m_textActiveDieType;
+
+    Color[] m_lastGlobalColor = new Color[2];
+
+    int activeDiceType = -1;
 
     void Start()
     {
-        m_numberBlockColor.color = m_numberColor.CurrentColor;
-        m_dieBlockColor.color = m_dieColor.CurrentColor;
+        m_lastGlobalColor[0] = m_numberBlockColor.color = m_numberColor.CurrentColor;
+        m_lastGlobalColor[1] = m_dieBlockColor.color = m_dieColor.CurrentColor;
         m_numberColor.gameObject.SetActive(false);
         m_dieColor.gameObject.SetActive(false);
 
@@ -185,15 +191,30 @@ public class DiceSetSeleclector : MonoBehaviour
 
     public void SetNumColor(Color _color)
     {
-        for (int i = 0; i < dice.Length; i++)
+        if (activeDiceType == -1) 
         {
-            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
-            ds.numbers = _color;
-            skins[skins.FindIndex(0, searchFuncs[i])] = ds;
-            if (currentSkins[i] == 0)
+            for (int i = 0; i < dice.Length; i++)
             {
-                dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
-                dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+                Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
+                ds.numbers = _color;
+                skins[skins.FindIndex(0, searchFuncs[i])] = ds;
+                if (currentSkins[i] == 0)
+                {
+                    dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
+                    dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+                }
+            }
+            m_lastGlobalColor[0] = _color;
+        }
+        else
+        {
+            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[activeDiceType])];
+            ds.numbers = _color;
+            skins[skins.FindIndex(0, searchFuncs[activeDiceType])] = ds;
+            if (currentSkins[activeDiceType] == 0)
+            {
+                dice[activeDiceType].materials[0].color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers;
+                dice[activeDiceType].materials[1].color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die;
             }
         }
         m_numberBlockColor.color = _color;
@@ -201,18 +222,125 @@ public class DiceSetSeleclector : MonoBehaviour
 
     public void SetDieColor(Color _color)
     {
-        for (int i = 0; i < dice.Length; i++)
+        if (activeDiceType == -1)
         {
-            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
-            ds.die = _color;
-            skins[skins.FindIndex(0, searchFuncs[i])] = ds;
-            if(currentSkins[i] == 0)
+            for (int i = 0; i < dice.Length; i++)
             {
-                dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
-                dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+                Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[i])];
+                ds.die = _color;
+                skins[skins.FindIndex(0, searchFuncs[i])] = ds;
+                if (currentSkins[i] == 0)
+                {
+                    dice[i].materials[0].color = skins[skins.FindIndex(0, searchFuncs[i])].numbers;
+                    dice[i].materials[1].color = skins[skins.FindIndex(0, searchFuncs[i])].die;
+                }
+            }
+            m_lastGlobalColor[1] = _color;
+        }
+        else
+        {
+            Dice.DiceSkin ds = skins[skins.FindIndex(0, searchFuncs[activeDiceType])];
+            ds.die = _color;
+            skins[skins.FindIndex(0, searchFuncs[activeDiceType])] = ds;
+            if (currentSkins[activeDiceType] == 0)
+            {
+                dice[activeDiceType].materials[0].color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers;
+                dice[activeDiceType].materials[1].color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die;
             }
         }
         m_dieBlockColor.color = _color;
+    }
+
+    public void PrevActiveDie()
+    {
+        activeDiceType = (activeDiceType - 1 >= -1) ? activeDiceType - 1 : 6;
+        switch(activeDiceType)
+        {
+            case -1:
+                m_textActiveDieType.text = "All";
+                break;
+            case 0:
+                m_textActiveDieType.text = "D4";
+                break;
+            case 1:
+                m_textActiveDieType.text = "D6";
+                break;
+            case 2:
+                m_textActiveDieType.text = "D8";
+                break;
+            case 3:
+                m_textActiveDieType.text = "D10(1s)";
+                break;
+            case 4:
+                m_textActiveDieType.text = "D10(10s)";
+                break;
+            case 5:
+                m_textActiveDieType.text = "D12";
+                break;
+            case 6:
+                m_textActiveDieType.text = "D20";
+                break;
+            default:
+                break;
+        }
+        if (activeDiceType == -1)
+        {
+            m_numberBlockColor.color = m_lastGlobalColor[0];
+            m_dieBlockColor.color = m_lastGlobalColor[1];
+        }
+        else
+        {
+            m_numberBlockColor.color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers;
+            m_numberColor.SetCurrentColor(skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers, true);
+            m_dieBlockColor.color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die;
+            m_dieColor.SetCurrentColor(skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die, true);
+        }
+    }
+
+    public void NextActiveDie()
+    {
+        activeDiceType = (activeDiceType + 1 <= 6) ? activeDiceType + 1 : -1;
+        switch (activeDiceType)
+        {
+            case -1:
+                m_textActiveDieType.text = "All";
+                break;
+            case 0:
+                m_textActiveDieType.text = "D4";
+                break;
+            case 1:
+                m_textActiveDieType.text = "D6";
+                break;
+            case 2:
+                m_textActiveDieType.text = "D8";
+                break;
+            case 3:
+                m_textActiveDieType.text = "D10(1s)";
+                break;
+            case 4:
+                m_textActiveDieType.text = "D10(10s)";
+                break;
+            case 5:
+                m_textActiveDieType.text = "D12";
+                break;
+            case 6:
+                m_textActiveDieType.text = "D20";
+                break;
+            default:
+                break;
+        }
+        if(activeDiceType == -1)
+        {
+            m_numberBlockColor.color = m_lastGlobalColor[0];
+            m_dieBlockColor.color = m_lastGlobalColor[1];
+        }
+        else
+        {
+            m_numberBlockColor.color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers;
+            m_numberColor.SetCurrentColor(skins[skins.FindIndex(0, searchFuncs[activeDiceType])].numbers, true);
+            m_dieBlockColor.color = skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die;
+            m_dieColor.SetCurrentColor(skins[skins.FindIndex(0, searchFuncs[activeDiceType])].die, true);
+        }
     }
 
     private static bool FindD4(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D4); }

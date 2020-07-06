@@ -32,6 +32,7 @@
             sampler2D _MainTex;
             uniform float4 _MainTex_UV_Unit;
             sampler2D _EdgeMap;
+            int _isSquare;
 
             v2f vert (appdata v)
             {
@@ -49,7 +50,7 @@
 
                 float3 avg = col;
 
-                if (map.x < 0.2) 
+                if (map.x < 0.2)
                 {
                     int num = 0;
 
