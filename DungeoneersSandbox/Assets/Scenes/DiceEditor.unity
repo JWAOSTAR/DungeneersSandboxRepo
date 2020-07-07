@@ -1225,6 +1225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c291a725afb98044bb54f235430b97a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1.75
 --- !u!23 &294157309 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2300000, guid: d6296fbc881508c43a3e38e245663614,

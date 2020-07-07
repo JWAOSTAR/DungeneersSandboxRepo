@@ -237,24 +237,24 @@ public class DiceEditorV2 : MonoBehaviour
 
         file.Close();
 
-        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-        saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents";
-        saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
-        saveFileDialog1.FilterIndex = 0;
-        saveFileDialog1.RestoreDirectory = false;
-        saveFileDialog1.FileName = m_saveDialog.text + ".dsd";
+        //SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        //saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents/";
+        //saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
+        //saveFileDialog1.FilterIndex = 0;
+        //saveFileDialog1.RestoreDirectory = false;
+        //saveFileDialog1.FileName = m_saveDialog.text + ".dsd";
 
-        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-        {
-            file = new BinaryWriter(saveFileDialog1.OpenFile());
-            file.Write(true);
-            file.Write((int)currentDiceType);
-            file.Write(_newText.EncodeToPNG().Length);
-            file.Write(albedo.runTimeTexture.width);
-            file.Write(albedo.runTimeTexture.height);
-            file.Write(_newText.EncodeToPNG());
-            file.Close();
-        }
+        //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+        //{
+        //    file = new BinaryWriter(saveFileDialog1.OpenFile());
+        //    file.Write(true);
+        //    file.Write((int)currentDiceType);
+        //    file.Write(_newText.EncodeToPNG().Length);
+        //    file.Write(albedo.runTimeTexture.width);
+        //    file.Write(albedo.runTimeTexture.height);
+        //    file.Write(_newText.EncodeToPNG());
+        //    file.Close();
+        //}
 
         m_manager.ChangeScene("Main");
     }
