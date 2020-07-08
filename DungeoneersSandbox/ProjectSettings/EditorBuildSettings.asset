@@ -23,4 +23,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DiceEditor.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Dice Galery.unity
+    guid: 76a32f520a5bdbd468aca765df1eff3c
+  - enabled: 1
+    path: Assets/Scenes/StudioMenu.unity
+    guid: 3b82d8b1a520bd24498cb6e927fd4707
+  - enabled: 1
+    path: Assets/Scenes/PlaygroundMenu.unity
+    guid: 1225a29add5055448af63565bcb9a0b1
   m_configObjects: {}

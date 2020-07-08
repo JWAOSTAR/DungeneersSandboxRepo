@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Permissions;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -60,7 +61,7 @@ public class DiceTraySelector : MonoBehaviour
 
     public void PrevModel()
     {
-        currentModel = ((currentModel - 1) > 0) ? currentModel - 1 : m_meshOptions.Length - 1;
+        currentModel = ((currentModel - 1) >= 0) ? currentModel - 1 : m_meshOptions.Length - 1;
         m_currentMesh.mesh = m_meshOptions[currentModel];
         m_modelName.text = "Model " + currentModel;
     }
@@ -75,6 +76,7 @@ public class DiceTraySelector : MonoBehaviour
     {
         m_trayMaterials.materials[0].color = _color;
         m_outterColorBlock.color = _color;
+        
     }
 
     public void SaveDiceTray()

@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 122307149}
   - component: {fileID: 122307148}
   m_Layer: 5
-  m_Name: Dice Studio
+  m_Name: Sand Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -669,7 +669,7 @@ GameObject:
   - component: {fileID: 596067660}
   - component: {fileID: 596067659}
   m_Layer: 5
-  m_Name: Map Builder
+  m_Name: Settings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1008,7 +1008,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Dice Studio
+  m_Text: Sand Box
 --- !u!222 &889873943
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1353,7 +1353,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Dice Roller
+  m_Text: Playground
 --- !u!222 &1285066329
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1448,7 +1448,7 @@ GameObject:
   - component: {fileID: 1399012701}
   - component: {fileID: 1399012700}
   m_Layer: 5
-  m_Name: Dice Roller
+  m_Name: Playground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1526,7 +1526,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: DiceTraySelection
+          m_StringArgument: PlaygroundMenu
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1399012701
@@ -1633,7 +1633,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Map Builder
+  m_Text: Settings
 --- !u!222 &1950971183
 CanvasRenderer:
   m_ObjectHideFlags: 0
