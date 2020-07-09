@@ -58,6 +58,8 @@ public class DiceRoller : MonoBehaviour
     MeshFilter m_trayMesh;
 
     bool in_roll = false;
+    bool CR_CDT = false;
+    Coroutine CR_Running;
 
     void OnValidate()
     {
@@ -216,10 +218,23 @@ public class DiceRoller : MonoBehaviour
             rollSets.Add(new List<Dice>());
             in_roll = true;
         }
+
         foreach (RollTypes d in diceQueue)
         {
             RollDice((int)d);
         }
+
+        if (!CR_CDT)
+        {
+            CR_CDT = true;
+            CR_Running = StartCoroutine(ClearTimer());
+        }
+        else
+        {
+            StopCoroutine(CR_Running);
+            CR_Running = StartCoroutine(ClearTimer());
+        }
+
     }
 
     void RollDice(int die)
@@ -273,6 +288,11 @@ public class DiceRoller : MonoBehaviour
     public void ClearDice()
     {
         in_roll = false;
+        if(CR_CDT)
+        {
+            CR_CDT = false;
+            StopCoroutine(CR_Running);
+        }
         int cur_index = 0;
         if (rollSets.Count > 0) {
             foreach (GameObject d in instantiatedDice)
@@ -707,5 +727,11 @@ public class DiceRoller : MonoBehaviour
                 instantiatedDice.RemoveAt(i);
             }
         }
+    }
+
+    IEnumerator ClearTimer()
+    {
+        yield return new WaitForSeconds(30);
+        ClearDice();
     }
 }

@@ -95,7 +95,7 @@ public class DiceGalary : MonoBehaviour
     {
         for(int i = 1; i < m_scrollContent.childCount + 1; i++)
         {
-            m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position = new Vector3(m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.x, ((m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().sizeDelta.y + 13) * i), m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position.z);
+            m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position = new Vector3(m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.x, ((m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().sizeDelta.y + (m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().sizeDelta.y)) * i), m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position.z);
         }
     }
 
@@ -172,6 +172,7 @@ public class DiceGalary : MonoBehaviour
 
     public void ExportSkin()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         SaveFileDialog saveFileDialog1 = new SaveFileDialog();
         saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents/";
         saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
@@ -206,5 +207,6 @@ public class DiceGalary : MonoBehaviour
             }
             file.Close();
         }
+#endif
     }
 }
