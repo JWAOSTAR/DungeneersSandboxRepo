@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class MapBuilder : MonoBehaviour
 {
+
+    struct Tile
+    {
+        public int id;
+        public GameObject tile;
+    }
+
     [SerializeField]
     InputField m_widthInput;
     [SerializeField]
@@ -15,6 +22,12 @@ public class MapBuilder : MonoBehaviour
     GameObject m_newMapMenu;
     [SerializeField]
     GameObject m_baseTile;
+    [SerializeField]
+    Transform m_startingPos;
+    [SerializeField]
+    MapBuilderCameraController m_cameraController;
+
+    Tile[,,] m_map;
 
     int m_width;
     int m_height;
@@ -30,7 +43,14 @@ public class MapBuilder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && !m_cameraController.GetMobility())
+        {
+            m_cameraController.SetMobility(true);
+        }
+        else if(m_cameraController.GetMobility())
+        {
+            m_cameraController.SetMobility(false);
+        }
     }
 
     public void OnWidthInputChange()
@@ -74,18 +94,24 @@ public class MapBuilder : MonoBehaviour
 
     public void OnNewMapConfirm()
     {
+
+        m_map = new Tile[m_width,m_height,m_level];
+
         for (float z = 0.0f; z < m_level; z++)
         {
             for (float y = 0.0f; y < m_height; y++)
             {
                 for (float x = 0.0f; x < m_width; x++)
                 {
-                    Instantiate(m_baseTile, m_baseTile.transform.parent).transform.position = new Vector3(x, z, y);
+                    m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+                    m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                 }
             }
         }
-
+        m_baseTile.SetActive(false);
         m_newMapMenu.SetActive(false);
+
+        Camera.main.transform.position = new Vector3(0.0f, 0.75f, 0.0f);
     }
 
     public void OnNewMapCancel()
