@@ -22,8 +22,8 @@ public class MapBuilder : MonoBehaviour
     GameObject m_newMapMenu;
     [SerializeField]
     GameObject m_baseTile;
-    [SerializeField]
-    Transform m_startingPos;
+    //[SerializeField]
+    //Transform m_startingPos;
     [SerializeField]
     MapBuilderCameraController m_cameraController;
 
@@ -35,6 +35,8 @@ public class MapBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        OBJImporter.OBJ model;
+        OBJImporter.LoadOBJ("C:/Users/JWAOSTAR/Desktop/Blender/test_cube.obj", out model);
         m_width = 1;
         m_height = 1;
         m_level = 1;
@@ -116,7 +118,12 @@ public class MapBuilder : MonoBehaviour
 
     public void OnNewMapCancel()
     {
-
+        m_width = 1;
+        m_height = 1;
+        m_level = 1;
+        m_widthInput.text = "";
+        m_heightInput.text = "";
+        m_levelInput.text = "";
     }
 
     void SetWidth(int _width)

@@ -33,23 +33,33 @@ public class MapBuilderCameraController : MonoBehaviour
                 {
                     transform.localPosition = transform.localPosition - transform.right * speed;
                 }
+
+                if(Input.mouseScrollDelta.y > 0)
+                {
+                    transform.localPosition = transform.localPosition + transform.forward * speed * 4.0f;
+                }
+                else if(Input.mouseScrollDelta.y < 0)
+                {
+                    transform.localPosition = transform.localPosition - transform.forward * speed * 4.0f;
+                }
+
                 if (Input.GetMouseButton(2))
                 {
-                    if (Input.GetAxis("Mouse Y") > 0)
-                    {
-                        Camera.main.transform.Rotate(Camera.main.transform.right * 0.2f, Space.World);
-                    }
-                    if (Input.GetAxis("Mouse Y") < 0)
-                    {
-                        Camera.main.transform.Rotate(Camera.main.transform.right*-0.2f, Space.World);
-                    }
                     if (Input.GetAxis("Mouse X") > 0)
                     {
-                        Camera.main.transform.Rotate(Camera.main.transform.up*-0.2f, Space.World);
+                        Camera.main.transform.Rotate(Camera.main.transform.up*-0.3f, Space.World);
+                    }
+                    else if (Input.GetAxis("Mouse Y") > 0)
+                    {
+                        Camera.main.transform.Rotate(Camera.main.transform.right * 0.3f, Space.World);
                     }
                     if (Input.GetAxis("Mouse X") < 0)
                     {
-                        Camera.main.transform.Rotate(Camera.main.transform.up*0.2f, Space.World);
+                        Camera.main.transform.Rotate(Camera.main.transform.up*0.3f, Space.World);
+                    }
+                    else if (Input.GetAxis("Mouse Y") < 0)
+                    {
+                        Camera.main.transform.Rotate(Camera.main.transform.right*-0.3f, Space.World);
                     }
                 }
             

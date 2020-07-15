@@ -23,6 +23,7 @@ public class OnHoverHighlight : MonoBehaviour
             {
                 //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
                 m_meshRenderer.materials[i].shader = Shader.Find("DS/OutlineShader");
+                m_meshRenderer.materials[i].SetFloat("_OutlineThickness", 0.02f);
             }
         }
         else if (m_meshRenderer.material.shader == Shader.Find("DS/OutlineShader"))
