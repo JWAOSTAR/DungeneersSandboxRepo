@@ -10,9 +10,10 @@ public static class OBJImporter
         public List<Vector3> verticies;
         public List<Vector2> uvs;
         public List<Vector3> normals;
-        public List<uint> vertexIndices;
-        public List<uint> uvIndices;
-        public List<uint> normalIndices;
+        public List<int> vertexIndices;
+        public List<int> uvIndices;
+        public List<int> normalIndices;
+        public MeshTopology topology;
     }
 
     public static bool LoadOBJ(string _path, out OBJ _obj)
@@ -23,9 +24,9 @@ public static class OBJImporter
         _obj.uvs = new List<Vector2>();
         _obj.normals = new List<Vector3>();
 
-        _obj.vertexIndices = new List<uint>();
-        _obj.uvIndices = new List<uint>();
-        _obj.normalIndices = new List<uint>();
+        _obj.vertexIndices = new List<int>();
+        _obj.uvIndices = new List<int>();
+        _obj.normalIndices = new List<int>();
 
         List<Vector3> temp_vertices = new List<Vector3>();
         List<Vector2> temp_uvs = new List<Vector2>();
@@ -34,17 +35,12 @@ public static class OBJImporter
         if (File.Exists(_path))
         {
             StreamReader _file = File.OpenText(_path);
-
+            int sides = 0;
             while(true)
-            {
+            { 
                 string line = string.Empty;
 
                 line = _file.ReadLine();
-
-                if(_file.EndOfStream)
-                {
-                    break;
-                }
 
                 if(line.StartsWith("vn"))
                 {
@@ -73,14 +69,14 @@ public static class OBJImporter
                     _obj.verticies.Add(vertex);
                 }
                 else if(line.StartsWith("f"))
-                {
-                    uint[] vertexIndecies = new uint[3];
-                    uint[] uvIndecies = new uint[3];
-                    uint[] normalIndecies = new uint[3];
+               {
+                    int[] vertexIndecies = new int[line.Split(' ').Length - 1];
+                    int[] uvIndecies = new int[line.Split(' ').Length - 1];
+                    int[] normalIndecies = new int[line.Split(' ').Length - 1];
                     for (int i = 1; i < line.Split(' ').Length; i++) {
-                        if (!uint.TryParse(line.Split(' ')[i].Split('/')[0], out vertexIndecies[i-1])) { return false; }
-                        if (!uint.TryParse(line.Split(' ')[i].Split('/')[1], out uvIndecies[i-1])) { return false; }
-                        if (!uint.TryParse(line.Split(' ')[i].Split('/')[2], out normalIndecies[i-1])) { return false; }
+                        if (!int.TryParse(line.Split(' ')[i].Split('/')[0], out vertexIndecies[i-1])) { return false; }
+                        if (!int.TryParse(line.Split(' ')[i].Split('/')[1], out uvIndecies[i-1])) { return false; }
+                        if (!int.TryParse(line.Split(' ')[i].Split('/')[2], out normalIndecies[i-1])) { return false; }
                     }
                     for(int iv = 0; iv < vertexIndecies.Length; iv++)
                     {
@@ -94,8 +90,41 @@ public static class OBJImporter
                     {
                         _obj.normalIndices.Add(normalIndecies[ip]);
                     }
+
+                    if(sides == 0)
+                    {
+                        sides = vertexIndecies.Length;
+                        switch(sides)
+                        {
+                            case 1:
+                                _obj.topology = MeshTopology.Points;
+                                break;
+                            case 2:
+                                _obj.topology = MeshTopology.Lines;
+                                break;
+                            case 3:
+                                _obj.topology = MeshTopology.Triangles;
+                                break;
+                            case 4:
+                                _obj.topology = MeshTopology.Quads;
+                                break;
+                            default:
+                                return false;
+                        }
+                    }
+                    else if (sides != vertexIndecies.Length)
+                    {
+                       return false;
+                    }
+
+                }
+                if (_file.EndOfStream)
+                {
+                    break;
                 }
             }
+
+            _file.Close();
 
             //for(int i = 0; i < _obj.vertexIndices.Count; i++)
             //{
@@ -112,6 +141,149 @@ public static class OBJImporter
             return false;
         }
 
+        return true;
+    }
+
+    public static void OBJToMesh(OBJ _obj, out Mesh _mesh)
+    {
+        _mesh = new Mesh();
+
+        //_mesh.vertices = _obj.verticies.ToArray();
+        //_mesh.normals = _obj.normals.ToArray();
+        //_mesh.uv = _obj.uvs.ToArray();
+        //_mesh.triangles = _obj.vertexIndices.ToArray();
+
+        List<Vector3> vertecies = new List<Vector3>();
+        List<Vector2> uvs = new List<Vector2>();
+        List<Vector3> normals = new List<Vector3>();
+        List<int> tris = new List<int>();
+
+        for (int i = 0; i < _obj.vertexIndices.Count; i++)
+        {
+            Vector3 vertex = new Vector3(_obj.verticies[_obj.vertexIndices[i] - 1].x, _obj.verticies[_obj.vertexIndices[i] - 1].y, _obj.verticies[_obj.vertexIndices[i] - 1].z);
+            Vector2 uv = new Vector2(_obj.uvs[(int)(_obj.uvIndices[i] - 1)].x, _obj.uvs[(int)(_obj.uvIndices[i] - 1)].y);
+            Vector3 normal = new Vector3(_obj.normals[(int)(_obj.normalIndices[i] - 1)].x, _obj.normals[(int)(_obj.normalIndices[i] - 1)].y, _obj.normals[(int)(_obj.normalIndices[i] - 1)].z);
+            vertecies.Add(vertex);
+            uvs.Add(uv);
+            normals.Add(normal);
+            tris.Add(i);
+        }
+
+        _mesh.vertices = vertecies.ToArray();
+        _mesh.uv = uvs.ToArray();
+        _mesh.normals = normals.ToArray();
+        //_mesh.triangles = tris.ToArray();
+        _mesh.SetIndices(tris.ToArray(), _obj.topology, 0);
+
+        _mesh.RecalculateBounds();
+        _mesh.Optimize();
+    }
+
+    public static bool LoadMaterials(string _path, out Material[] _materials)
+    {
+        if (File.Exists(_path))
+        {
+            StreamReader _file = File.OpenText(_path);
+            string _mtlFilePath = string.Empty;
+
+            while(true)
+            {
+                string line = string.Empty;
+
+                line = _file.ReadLine();
+
+                if(line.StartsWith("mtllib"))
+                {
+                    _mtlFilePath = _path.Replace(_path.Split('/')[_path.Split('/').Length - 1], line.Replace("mtllib ", ""));
+                    break;
+                }
+
+                if (_file.EndOfStream)
+                {
+                    break;
+                }
+            }
+            _file.Close();
+            if(_mtlFilePath == string.Empty || !File.Exists(_mtlFilePath))
+            {
+                _materials = null;
+                return false;
+            }
+            else
+            {
+                _file = File.OpenText(_mtlFilePath);
+                List<Material> materials = new List<Material>();
+                while(true)
+                {
+                    string line = string.Empty;
+
+                    line = _file.ReadLine();
+
+                    if(line.StartsWith("newmtl"))
+                    {
+                        Material newmtl = new Material(Shader.Find("Standard (Specular setup)"));
+                        newmtl.name = line.Replace("newmtl", "");
+                        materials.Add(newmtl);
+                    }
+                    else if(line.StartsWith("Ka"))
+                    {
+                        Color col = new Color();
+                        if(!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null;  return false; }
+                        if(!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null;  return false; }
+                        if(!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null;  return false; }
+                        col.a = 1.0f;
+
+                        materials[materials.Count - 1].SetColor("_EmissionColor", col);
+                    }
+                    else if (line.StartsWith("Kd"))
+                    {
+                        Color col = new Color();
+                        if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null; return false; }
+                        col.a = 1.0f;
+
+                        materials[materials.Count - 1].SetColor("_Color", col);
+                    }
+                    else if (line.StartsWith("Ks"))
+                    {
+
+                    }
+                    else if (line.StartsWith("Ns"))
+                    {
+
+                    }
+                    else if (line.StartsWith("d"))
+                    {
+
+                    }
+                    else if (line.StartsWith("Tr"))
+                    {
+
+                    }
+                    else if (line.StartsWith("Ni"))
+                    {
+
+                    }
+                    else if (line.StartsWith("illum"))
+                    {
+
+                    }
+
+                    if (_file.EndOfStream)
+                    {
+                        _materials = materials.ToArray();
+                        break;
+                    }
+                }
+            }
+            _file.Close();
+        }
+        else
+        {
+            _materials = null;
+            return false;
+        }
         return true;
     }
 }

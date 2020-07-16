@@ -36,7 +36,12 @@ public class MapBuilder : MonoBehaviour
     void Start()
     {
         OBJImporter.OBJ model;
-        OBJImporter.LoadOBJ("C:/Users/JWAOSTAR/Desktop/Blender/test_cube.obj", out model);
+        OBJImporter.LoadOBJ("C:/Users/JWAOSTAR/Desktop/Blender/test_cube_nt.obj", out model);
+        Mesh test_mesh;
+        OBJImporter.OBJToMesh(model, out test_mesh);
+        test_mesh.name = "Test Mesh";
+        m_baseTile.GetComponentInChildren<MeshFilter>().mesh = test_mesh;
+        m_baseTile.GetComponentInChildren<MeshCollider>().sharedMesh = test_mesh;
         m_width = 1;
         m_height = 1;
         m_level = 1;
