@@ -255,7 +255,7 @@ public class DiceEditorV2 : MonoBehaviour
         //    file.Write(_newText.EncodeToPNG());
         //    file.Close();
         //}
-
+        UnityEngine.Cursor.SetCursor(null, new Vector2(0.0f, 0.0f), CursorMode.Auto);
         m_manager.ChangeScene("Main");
     }
 
@@ -316,5 +316,10 @@ public class DiceEditorV2 : MonoBehaviour
         {
             step_forward_stack.Clear();
         }
+    }
+
+    public void Cancel()
+    {
+        UnityEngine.Cursor.SetCursor(null, new Vector2(0.0f, 0.0f), CursorMode.Auto);
     }
 }

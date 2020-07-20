@@ -469,7 +469,7 @@ public class DiceEditor : MonoBehaviour
         file.Write(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
 
         file.Close();
-
+        //Cursor.SetCursor(null, new Vector2(0.0f, 0.0f), CursorMode.Auto);
         m_manager.ChangeScene("Main");
     }
 }

@@ -24,6 +24,8 @@ public class EditorToolPanel : MonoBehaviour
     [SerializeField]
     ColorPicker m_secondaryColorPicker;
     ToolType m_tool;
+    [SerializeField]
+    Texture2D[] m_cursors;
 
     public Color PrimaryColor { get { return m_primaryPanel.color; } }
     public Color SecondaryColor { get { return m_secondaryPanel.color; } }
@@ -35,6 +37,7 @@ public class EditorToolPanel : MonoBehaviour
         m_primaryColorPicker.gameObject.SetActive(false);
         m_secondaryColorPicker.gameObject.SetActive(false);
         m_tool = ToolType.Brush;
+        Cursor.SetCursor(m_cursors[0], new Vector2(8.0f, 24.0f), CursorMode.ForceSoftware);
     }
 
     // Update is called once per frame
@@ -91,6 +94,7 @@ public class EditorToolPanel : MonoBehaviour
     public void SetTool(int _tool)
     {
         m_tool = (ToolType)_tool;
+        Cursor.SetCursor(m_cursors[_tool], ((_tool == 0) ? new Vector2(8.0f, 24.0f) : new Vector2(0.0f, 0.0f)), CursorMode.ForceSoftware);
     }
 
     IEnumerator EyeDropperClicked()
