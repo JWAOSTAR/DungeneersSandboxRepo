@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Windows.Forms;
+
 //using UnityEditor;
 
 public class DiceSelector : MonoBehaviour
