@@ -13,6 +13,7 @@ public static class OBJImporter
         public List<int> vertexIndices;
         public List<int> uvIndices;
         public List<int> normalIndices;
+        public List<int> subMeshStarts;
         public MeshTopology topology;
     }
 
@@ -27,6 +28,7 @@ public static class OBJImporter
         _obj.vertexIndices = new List<int>();
         _obj.uvIndices = new List<int>();
         _obj.normalIndices = new List<int>();
+        _obj.subMeshStarts = new List<int>();
 
         List<Vector3> temp_vertices = new List<Vector3>();
         List<Vector2> temp_uvs = new List<Vector2>();
@@ -41,8 +43,12 @@ public static class OBJImporter
                 string line = string.Empty;
 
                 line = _file.ReadLine();
-
-                if(line.StartsWith("vn"))
+                if(line.StartsWith("o"))
+                {
+                    int startingIndicie = _obj.vertexIndices.Count;
+                    _obj.subMeshStarts.Add(startingIndicie);
+                }
+                else if(line.StartsWith("vn"))
                 {
                     Vector3 normal = new Vector3();
                     float.TryParse(line.Split(' ')[1], out normal.x);
@@ -147,7 +153,7 @@ public static class OBJImporter
     public static void OBJToMesh(OBJ _obj, out Mesh _mesh)
     {
         _mesh = new Mesh();
-
+        _mesh.subMeshCount = _obj.subMeshStarts.Count;
         //_mesh.vertices = _obj.verticies.ToArray();
         //_mesh.normals = _obj.normals.ToArray();
         //_mesh.uv = _obj.uvs.ToArray();
@@ -157,26 +163,31 @@ public static class OBJImporter
         List<Vector2> uvs = new List<Vector2>();
         List<Vector3> normals = new List<Vector3>();
         List<int> tris = new List<int>();
-
-        for (int i = 0; i < _obj.vertexIndices.Count; i++)
-        {
-            Vector3 vertex = new Vector3(_obj.verticies[_obj.vertexIndices[i] - 1].x, _obj.verticies[_obj.vertexIndices[i] - 1].y, _obj.verticies[_obj.vertexIndices[i] - 1].z);
-            Vector2 uv = new Vector2(_obj.uvs[(int)(_obj.uvIndices[i] - 1)].x, _obj.uvs[(int)(_obj.uvIndices[i] - 1)].y);
-            Vector3 normal = new Vector3(_obj.normals[(int)(_obj.normalIndices[i] - 1)].x, _obj.normals[(int)(_obj.normalIndices[i] - 1)].y, _obj.normals[(int)(_obj.normalIndices[i] - 1)].z);
-            vertecies.Add(vertex);
-            uvs.Add(uv);
-            normals.Add(normal);
-            tris.Add(i);
+        for (int s = 0; s < _obj.subMeshStarts.Count; s++) {
+            for (int i = _obj.subMeshStarts[s]; i < (((s + 1) < _obj.subMeshStarts.Count) ? (_obj.subMeshStarts[s + 1]) : _obj.vertexIndices.Count); i++)
+            {
+                Vector3 vertex = new Vector3(_obj.verticies[_obj.vertexIndices[i] - 1].x, _obj.verticies[_obj.vertexIndices[i] - 1].y, _obj.verticies[_obj.vertexIndices[i] - 1].z);
+                Vector2 uv = new Vector2(_obj.uvs[(int)(_obj.uvIndices[i] - 1)].x, _obj.uvs[(int)(_obj.uvIndices[i] - 1)].y);
+                Vector3 normal = new Vector3(_obj.normals[(int)(_obj.normalIndices[i] - 1)].x, _obj.normals[(int)(_obj.normalIndices[i] - 1)].y, _obj.normals[(int)(_obj.normalIndices[i] - 1)].z);
+                vertecies.Add(vertex);
+                uvs.Add(uv);
+                normals.Add(normal);
+                tris.Add(i);
+            }
         }
 
         _mesh.vertices = vertecies.ToArray();
+        for (int j = 0; j < _obj.subMeshStarts.Count; j++)
+        {
+            _mesh.SetIndices(tris, _obj.subMeshStarts[j], (((j + 1) < _obj.subMeshStarts.Count) ? (_obj.subMeshStarts[j + 1] - _obj.subMeshStarts[j]) : (_obj.vertexIndices.Count - _obj.subMeshStarts[j])), _obj.topology, j);
+        }
         _mesh.uv = uvs.ToArray();
         _mesh.normals = normals.ToArray();
         //_mesh.triangles = tris.ToArray();
-        _mesh.SetIndices(tris.ToArray(), _obj.topology, 0);
+        
 
         _mesh.RecalculateBounds();
-        _mesh.Optimize();
+        //_mesh.Optimize();
     }
 
     public static bool LoadMaterials(string _path, out Material[] _materials)
@@ -247,19 +258,35 @@ public static class OBJImporter
                     }
                     else if (line.StartsWith("Ks"))
                     {
+                        Color col = new Color();
+                        if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null; return false; }
+                        col.a = 1.0f;
 
+                        materials[materials.Count - 1].SetColor("_SpecColor", col);
                     }
                     else if (line.StartsWith("Ns"))
                     {
+                        float exp;
+                        if(!float.TryParse(line.Split(' ')[1], out exp)) { _materials = null; return false; }
 
+                        materials[materials.Count - 1].SetFloat("_SpecularHighlights", exp);
                     }
                     else if (line.StartsWith("d"))
                     {
+                        Color col = materials[materials.Count - 1].GetColor("_Color");
+                        if (!float.TryParse(line.Split(' ')[1], out col.a)) { _materials = null; return false; }
 
+                        materials[materials.Count - 1].SetColor("_Color", col);
                     }
                     else if (line.StartsWith("Tr"))
                     {
+                        Color col = materials[materials.Count - 1].GetColor("_Color");
+                        if (!float.TryParse(line.Split(' ')[1], out col.a)) { _materials = null; return false; }
+                        col.a = 1.0f - col.a;
 
+                        materials[materials.Count - 1].SetColor("_Color", col);
                     }
                     else if (line.StartsWith("Ni"))
                     {

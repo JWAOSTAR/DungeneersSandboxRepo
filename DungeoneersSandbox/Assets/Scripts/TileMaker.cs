@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class TileMaker : MonoBehaviour
 {
-    List<OBJImporter.OBJ> m_objects;
-    Tile m_tile;
+    List<OBJImporter.OBJ> m_objects = new List<OBJImporter.OBJ>();
+    Tile m_tile = new Tile();
 
     // Start is called before the first frame update
     void Start()
