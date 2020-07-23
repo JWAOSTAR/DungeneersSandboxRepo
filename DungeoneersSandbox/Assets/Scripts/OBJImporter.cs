@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Drawing;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class OBJImporter
 {
@@ -43,12 +45,12 @@ public static class OBJImporter
                 string line = string.Empty;
 
                 line = _file.ReadLine();
-                if(line.StartsWith("o"))
+                /*if(line.StartsWith("o"))
                 {
                     int startingIndicie = _obj.vertexIndices.Count;
                     _obj.subMeshStarts.Add(startingIndicie);
                 }
-                else if(line.StartsWith("vn"))
+                else*/ if(line.StartsWith("vn"))
                 {
                     Vector3 normal = new Vector3();
                     float.TryParse(line.Split(' ')[1], out normal.x);
@@ -74,8 +76,13 @@ public static class OBJImporter
                     // temp_vertices.Add(vertex);
                     _obj.verticies.Add(vertex);
                 }
+                else if(line.StartsWith("usemtl"))
+                {
+                    int startingIndicie = _obj.vertexIndices.Count;
+                    _obj.subMeshStarts.Add(startingIndicie);
+                }
                 else if(line.StartsWith("f"))
-               {
+                {
                     int[] vertexIndecies = new int[line.Split(' ').Length - 1];
                     int[] uvIndecies = new int[line.Split(' ').Length - 1];
                     int[] normalIndecies = new int[line.Split(' ').Length - 1];
@@ -205,7 +212,14 @@ public static class OBJImporter
 
                 if(line.StartsWith("mtllib"))
                 {
-                    _mtlFilePath = _path.Replace(_path.Split('/')[_path.Split('/').Length - 1], line.Replace("mtllib ", ""));
+                    if (_path.Split('/').Length > 1)
+                    {
+                        _mtlFilePath = _path.Replace(_path.Split('/')[_path.Split('/').Length - 1], line.Replace("mtllib ", ""));
+                    }
+                    else
+                    {
+                        _mtlFilePath = _path.Replace(_path.Split('\\')[_path.Split('\\').Length - 1], line.Replace("mtllib ", ""));
+                    }
                     break;
                 }
 
@@ -241,7 +255,7 @@ public static class OBJImporter
                         Color col = new Color();
                         if(!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null;  return false; }
                         if(!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null;  return false; }
-                        if(!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null;  return false; }
+                        if(!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null;  return false; }
                         col.a = 1.0f;
 
                         materials[materials.Count - 1].SetColor("_EmissionColor", col);
@@ -251,7 +265,7 @@ public static class OBJImporter
                         Color col = new Color();
                         if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
-                        if (!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null; return false; }
                         col.a = 1.0f;
 
                         materials[materials.Count - 1].SetColor("_Color", col);
@@ -261,7 +275,7 @@ public static class OBJImporter
                         Color col = new Color();
                         if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
-                        if (!float.TryParse(line.Split(' ')[2], out col.b)) { _materials = null; return false; }
+                        if (!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null; return false; }
                         col.a = 1.0f;
 
                         materials[materials.Count - 1].SetColor("_SpecColor", col);
@@ -290,11 +304,47 @@ public static class OBJImporter
                     }
                     else if (line.StartsWith("Ni"))
                     {
-
+                        float ior;
+                        if (!float.TryParse(line.Split(' ')[1], out ior)) { _materials = null; return false; }
+                        materials[materials.Count - 1].SetFloat("_GlossyReflections", ior);
                     }
                     else if (line.StartsWith("illum"))
                     {
-
+                        
+                    }
+                    else if(line.StartsWith("map_"))
+                    {
+                        Texture2D _tex = new Texture2D(2, 2);
+                        if(line.StartsWith("map_Ka"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Ka ", ""))));
+                            materials[materials.Count - 1].SetTexture("_EmissionMap", _tex);
+                        }
+                        else if(line.StartsWith("map_Kd"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Kd ", ""))));
+                            materials[materials.Count - 1].SetTexture("_MainTex", _tex);
+                        }
+                        else if (line.StartsWith("map_Ks"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Ks ", ""))));
+                            materials[materials.Count - 1].SetTexture("_SpecGlossMap", _tex);
+                        }
+                        else if (line.StartsWith("map_d"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_d ", ""))));
+                            materials[materials.Count - 1].SetTexture("_OcclusionMap", _tex);
+                        }
+                        else if (line.StartsWith("map_bump"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_bump ", ""))));
+                            materials[materials.Count - 1].SetTexture("_BumpMap", _tex);
+                        }
+                        else if (line.StartsWith("map_Bump"))
+                        {
+                            _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Bump ", ""))));
+                            materials[materials.Count - 1].SetTexture("_BumpMap", _tex);
+                        }
                     }
 
                     if (_file.EndOfStream)

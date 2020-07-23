@@ -47,8 +47,11 @@ public class TileMaker : MonoBehaviour
             MeshCollider collider = newTile.AddComponent<MeshCollider>();
             Mesh mesh = new Mesh();
             OBJImporter.OBJToMesh(newOBJ, out mesh);
+            Material[] materials;
+            OBJImporter.LoadMaterials(file_path, out materials);
             filter.mesh = mesh;
             collider.sharedMesh = mesh;
+            renderer.materials = materials;
             m_tile.objects.Add(newTile);
             m_objects.Add(newOBJ);
 
