@@ -329,7 +329,7 @@ public class DiceSelector : MonoBehaviour
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         OpenFileDialog openFileDialog1 = new OpenFileDialog();
         openFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/";
-        openFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
+        openFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd|PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg|JPEG files(*.jpeg)|*.jpeg";
         openFileDialog1.FilterIndex = 0;
         openFileDialog1.RestoreDirectory = false;
 
@@ -342,26 +342,40 @@ public class DiceSelector : MonoBehaviour
         {
             BinaryReader file = new BinaryReader(File.Open(file_path, FileMode.Open));
             //Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
-            isTexture = file.ReadBoolean();
-            currentDiceType = (Dice.DiceType)file.ReadInt32();
-            currentModel.mesh = models[(int)currentDiceType];
-            diceTextField.text = (currentDiceType != Dice.DiceType.D10_10s) ? currentDiceType.ToString() : "D10(10s)";
-            if (!isTexture)
-            {
-                modelRenderProperties.materials[0].SetTexture("_MainTex", null);
-                modelRenderProperties.materials[1].SetTexture("_MainTex", null);
-                SetNumColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
-                SetDiceColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+            if (file_path.EndsWith(".dsd")) {
+                isTexture = file.ReadBoolean();
+                currentDiceType = (Dice.DiceType)file.ReadInt32();
+                currentModel.mesh = models[(int)currentDiceType];
+                diceTextField.text = (currentDiceType != Dice.DiceType.D10_10s) ? currentDiceType.ToString() : "D10(10s)";
+                if (!isTexture)
+                {
+                    modelRenderProperties.materials[0].SetTexture("_MainTex", null);
+                    modelRenderProperties.materials[1].SetTexture("_MainTex", null);
+                    SetNumColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                    SetDiceColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                }
+                else
+                {
+                    int array_size = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(array_size));
+                    modelRenderProperties.materials[0].SetTexture("_MainTex", newTex);
+                    modelRenderProperties.materials[1].SetTexture("_MainTex", newTex);
+                    modelRenderProperties.materials[0].SetColor("_Color", Color.white);
+                    modelRenderProperties.materials[1].SetColor("_Color", Color.white);
+                }
+                file.Close();
             }
             else
             {
-                int array_size = file.ReadInt32();
-                Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
-                newTex.LoadImage(file.ReadBytes(array_size));
+                file.Close();
+                Texture2D newTex = new Texture2D(2, 2);
+                newTex.LoadImage(File.ReadAllBytes(file_path));
                 modelRenderProperties.materials[0].SetTexture("_MainTex", newTex);
                 modelRenderProperties.materials[1].SetTexture("_MainTex", newTex);
+                modelRenderProperties.materials[0].SetColor("_Color", Color.white);
+                modelRenderProperties.materials[1].SetColor("_Color", Color.white);
             }
-            file.Close();
         }
 
         //        String file_path;
