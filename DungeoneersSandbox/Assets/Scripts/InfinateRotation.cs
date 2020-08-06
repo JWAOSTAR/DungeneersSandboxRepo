@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class InfinateRotation : MonoBehaviour
 {
+    [SerializeField]
+    float speed = 0.025f;
+    [SerializeField]
+    bool XAxis = false;
+    [SerializeField]
+    bool YAxis = true;
+    [SerializeField]
+    bool ZAxis = false;
+
+    bool m_mobile = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +24,19 @@ public class InfinateRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(new Vector3(0.0f, 1.0f, 0.0f), 0.025f);
+        if (m_mobile)
+        {
+            transform.Rotate(new Vector3(((XAxis) ? 1.0f : 0.0f), ((YAxis) ? 1.0f : 0.0f), ((ZAxis) ? 1.0f : 0.0f)), speed, Space.World);
+        }
+    }
+
+    public void SetMobility(bool _isMobile)
+    {
+        m_mobile = _isMobile;
+    }
+
+    public bool GetMobility()
+    {
+        return m_mobile;
     }
 }
