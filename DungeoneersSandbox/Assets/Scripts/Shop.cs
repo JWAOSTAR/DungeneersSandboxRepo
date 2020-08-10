@@ -4,9 +4,24 @@ using UnityEngine;
 
 public class Shop : MonoBehaviour
 {
+    enum ItemType
+    {
+        Dice,
+        DiceTray,
+        MapBlock,
+        Miniture,
+    }
+
+    struct Item
+    {
+        Texture2D thumbnail;
+        string name;
+        ItemType itemType;
+    }
 
     bool m_modelMobile = false;
     Coroutine m_mobilityCountdown = null;
+    List<Item> m_itmes = new List<Item>();
 
     [SerializeField]
     DiceAxisMovement m_mover;
@@ -16,7 +31,10 @@ public class Shop : MonoBehaviour
     MeshCollider m_colider;
     [SerializeField]
     MeshFilter m_mesh;
+    [SerializeField]
     GameObject[] menues = new GameObject[3];
+    [SerializeField]
+    GameObject[] itemPannels;
 
     // Start is called before the first frame update
     void Start()
