@@ -61,6 +61,8 @@ public class DiceEditorV2 : MonoBehaviour
     int in_step = 0;
     List<Texture2D> step_back_stack = new List<Texture2D>();
     List<Texture2D> step_forward_stack = new List<Texture2D>();
+
+    bool savePanelOpen = false;
     //int numFramsDown = 0;
 
     // Start is called before the first frame update
@@ -139,7 +141,7 @@ public class DiceEditorV2 : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         Vector4 mouseWorldPos = Vector3.positiveInfinity;
 
-        if(!diceMover.GetMobility() && Input.GetMouseButton(0))
+        if(!savePanelOpen && !diceMover.GetMobility() && Input.GetMouseButton(0))
         {
             if(Physics.Raycast(ray, out hit))
             {
@@ -202,6 +204,11 @@ public class DiceEditorV2 : MonoBehaviour
         Shader.SetGlobalInt("_isSquare", (brush.Square) ? 1 : 0);
     }
 
+    public void SaveDialogOpen(bool _open)
+    {
+        savePanelOpen = _open;
+    }
+
     public void SaveFile()
     {
         if (currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
@@ -209,6 +216,7 @@ public class DiceEditorV2 : MonoBehaviour
             if (m_saveDialog.text == "untitled")
             {
                 m_saveDialog.transform.parent.gameObject.SetActive(true);
+                savePanelOpen = true;
                 return;
             }
             else
