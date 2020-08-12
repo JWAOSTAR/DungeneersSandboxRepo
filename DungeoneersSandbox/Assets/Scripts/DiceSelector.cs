@@ -199,20 +199,28 @@ public class DiceSelector : MonoBehaviour
     {
         BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
 
-        file.Write(false);
+        file.Write(isTexture);
 
         file.Write((int)currentDiceType);
 
-        file.Write(modelRenderProperties.materials[0].color.r);
-        file.Write(modelRenderProperties.materials[0].color.g);
-        file.Write(modelRenderProperties.materials[0].color.b);
-        file.Write(modelRenderProperties.materials[0].color.a);
+        if (!isTexture) {
+            file.Write(modelRenderProperties.materials[0].color.r);
+            file.Write(modelRenderProperties.materials[0].color.g);
+            file.Write(modelRenderProperties.materials[0].color.b);
+            file.Write(modelRenderProperties.materials[0].color.a);
 
-        file.Write(modelRenderProperties.materials[1].color.r);
-        file.Write(modelRenderProperties.materials[1].color.g);
-        file.Write(modelRenderProperties.materials[1].color.b);
-        file.Write(modelRenderProperties.materials[1].color.a);
-
+            file.Write(modelRenderProperties.materials[1].color.r);
+            file.Write(modelRenderProperties.materials[1].color.g);
+            file.Write(modelRenderProperties.materials[1].color.b);
+            file.Write(modelRenderProperties.materials[1].color.a);
+        }
+        else
+        {
+            file.Write(((Texture2D)modelRenderProperties.materials[0].mainTexture).EncodeToPNG().Length);
+            file.Write(((Texture2D)modelRenderProperties.materials[0].mainTexture).width);
+            file.Write(((Texture2D)modelRenderProperties.materials[0].mainTexture).height);
+            file.Write(((Texture2D)modelRenderProperties.materials[0].mainTexture).EncodeToPNG());
+        }
         file.Close();
 
     }
@@ -369,6 +377,7 @@ public class DiceSelector : MonoBehaviour
             else
             {
                 file.Close();
+                isTexture = true;
                 Texture2D newTex = new Texture2D(2, 2);
                 newTex.LoadImage(File.ReadAllBytes(file_path));
                 modelRenderProperties.materials[0].SetTexture("_MainTex", newTex);

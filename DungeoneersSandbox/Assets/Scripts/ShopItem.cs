@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewShopItem", menuName = "DungoneersSandbox/Shop Item", order = 2)]
 public class ShopItem : ScriptableObject
 {
-    enum ItemType
+    public enum ItemType
     {
         Dice,
         DiceTray,
@@ -14,13 +14,13 @@ public class ShopItem : ScriptableObject
     }
 
     [SerializeField]
-    Texture2D thumbnail;
+    public Texture2D thumbnail;
     [SerializeField]
-    string itemID;
+    public string itemID;
     [SerializeField]
-    string name;
+    public string name;
     [SerializeField]
-    ItemType itemType;
+    public ItemType itemType;
     [SerializeField]
-    float price;
+    public float price;
 }
