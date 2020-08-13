@@ -485,6 +485,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 6
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &129676326
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,6 +1007,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1001 &181352016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1041,7 +1063,7 @@ PrefabInstance:
     - target: {fileID: 5244414893252154678, guid: 9ae026f05b0049f45ae7a749c773348d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5244414893252154678, guid: 9ae026f05b0049f45ae7a749c773348d,
         type: 3}
@@ -1632,6 +1654,17 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
@@ -2687,6 +2720,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &626940875
 GameObject:
   m_ObjectHideFlags: 0
@@ -3243,6 +3287,7 @@ RectTransform:
   m_Children:
   - {fileID: 1435239614}
   - {fileID: 138182111}
+  - {fileID: 1577142842}
   - {fileID: 1605978973}
   - {fileID: 181352017}
   m_Father: {fileID: 1777139636}
@@ -5695,6 +5740,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 9
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &1361254548
 GameObject:
   m_ObjectHideFlags: 0
@@ -6274,6 +6330,12 @@ MeshCollider:
 --- !u!33 &1418551880 stripped
 MeshFilter:
   m_CorrespondingSourceObject: {fileID: -5178661895559278292, guid: 2b94b1487593ba54f882e9cc5cadcb85,
+    type: 3}
+  m_PrefabInstance: {fileID: 1956190772}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1418551881 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: 2b94b1487593ba54f882e9cc5cadcb85,
     type: 3}
   m_PrefabInstance: {fileID: 1956190772}
   m_PrefabAsset: {fileID: 0}
@@ -7054,6 +7116,90 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 8
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+--- !u!1 &1577142841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1577142842}
+  - component: {fileID: 1577142844}
+  - component: {fileID: 1577142843}
+  m_Layer: 5
+  m_Name: Thumbnail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1577142842
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577142841}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 804934217}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 251, y: 64}
+  m_SizeDelta: {x: 300, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1577142843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577142841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1577142844
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577142841}
+  m_CullTransparentMesh: 1
 --- !u!1 &1583800425
 GameObject:
   m_ObjectHideFlags: 0
@@ -7195,6 +7341,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 7
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &1605978972
 GameObject:
   m_ObjectHideFlags: 0
@@ -7228,7 +7385,7 @@ RectTransform:
   m_Children:
   - {fileID: 711930581}
   m_Father: {fileID: 804934217}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -8318,6 +8475,8 @@ MonoBehaviour:
   m_rotator: {fileID: 1418551878}
   m_colider: {fileID: 1418551879}
   m_mesh: {fileID: 1418551880}
+  m_renderer: {fileID: 1418551881}
+  m_purchaseButton: {fileID: 1605978977}
   menues:
   - {fileID: 987045972}
   - {fileID: 389083796}
@@ -8342,6 +8501,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0c5c9153262071b4a8bcccd5219570d8, type: 2}
   - {fileID: 11400000, guid: 85cb3d9c73a73b34aafc437b2fabbdec, type: 2}
   - {fileID: 11400000, guid: 5940684efcda68b4ebc18eff8c0471e4, type: 2}
+  m_diceMesh:
+  - {fileID: -1213038667356813595, guid: eaa2e2962b3da234c988d4452ca7ba94, type: 3}
+  - {fileID: 2722449972857296610, guid: 2b94b1487593ba54f882e9cc5cadcb85, type: 3}
+  - {fileID: 578291741333493845, guid: a31ba7c7f5542b14aa08375172fc189c, type: 3}
+  - {fileID: 8161962347496955538, guid: a70d5f31e0ac5464591a95aa983f9fe4, type: 3}
+  - {fileID: -6682867018594333879, guid: 8e6122e644fac9e4cafb1625bde6adeb, type: 3}
+  - {fileID: 2038982201916422068, guid: ebc77e217fd65204a8b7abbf874aa33f, type: 3}
+  - {fileID: -5028228686344099254, guid: 071fb6d24a1799646af7c3e2d2a4dcc8, type: 3}
+  m_trayMesh:
+  - {fileID: -3153014974416642496, guid: ddcab177aca67054da959d82cc8f6986, type: 3}
+  - {fileID: -4823266969027199758, guid: 6db982b0ee44e744d9eddfef49c7518a, type: 3}
 --- !u!1 &1855795673
 GameObject:
   m_ObjectHideFlags: 0
@@ -8778,6 +8948,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &1950221838
 GameObject:
   m_ObjectHideFlags: 0
@@ -8915,6 +9096,17 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
@@ -9248,6 +9440,17 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1812777952}
+        m_MethodName: SetPurchaseButton
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1

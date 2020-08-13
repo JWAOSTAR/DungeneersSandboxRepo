@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: e37fa6f29f4592440a395199648b0384, type: 3}
   itemID: com.RedJacketStudios.DungeoneersSandbox.d4_tie_dye_skin
-  name: D4 Tie Dye Skin
+  title: D4 Tie Dye Skin
   itemType: 0
   price: 1.99
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D4 Tie Dye Skin.dsd

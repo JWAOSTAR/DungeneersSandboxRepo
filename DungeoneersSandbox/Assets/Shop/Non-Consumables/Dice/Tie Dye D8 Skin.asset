@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: d8d1747a687707f4585bf6912cb7979f, type: 3}
   itemID: com.RedJacketStudios.DungeoneersSandbox.d8_tie_dye_skin
-  name: D8 Tie Dye Skin
+  title: D8 Tie Dye Skin
   itemType: 0
   price: 1.99
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D8 Tie Dye Skin.dsd

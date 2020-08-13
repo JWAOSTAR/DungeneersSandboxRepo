@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: 41db85600a723c948b5b066abf13ac30, type: 3}
   itemID: com.RedJacketStudios.DungeoneersSandbox.d10_10s_tie_dye_skin
-  name: D10(10s) Tie Dye Skin
+  title: D10(10s) Tie Dye Skin
   itemType: 0
   price: 1.99
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D10(10s) Tie Dye Skin.dsd

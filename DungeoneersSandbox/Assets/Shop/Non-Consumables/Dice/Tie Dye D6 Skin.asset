@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: 4554ce4ec1464364f8b5e6fab86d5b13, type: 3}
   itemID: com.RedJacketStudios.DungeoneersSandbox.d6_tie_dye_skin
-  name: D6 Tie Dye Skin
+  title: D6 Tie Dye Skin
   itemType: 0
   price: 1.99
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D6 Tie Dye Skin.dsd

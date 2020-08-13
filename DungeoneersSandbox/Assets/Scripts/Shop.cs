@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Purchasing;
 using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
@@ -11,6 +13,7 @@ public class Shop : MonoBehaviour
     //List<ShopItem> m_itmes = new List<ShopItem>();
     Predicate<ShopItem>[] searchFuncs = { FindDice, FindTrays, FindMapBlock, FindMinitures };
     int currentItemType = -1;
+    int currentItemPageIndex = 0;
 
     [SerializeField]
     DiceAxisMovement m_mover;
@@ -21,11 +24,19 @@ public class Shop : MonoBehaviour
     [SerializeField]
     MeshFilter m_mesh;
     [SerializeField]
+    MeshRenderer m_renderer;
+    [SerializeField]
+    IAPButton m_purchaseButton;
+    [SerializeField]
     GameObject[] menues = new GameObject[3];
     [SerializeField]
     GameObject[] itemPannels;
     [SerializeField]
     List<ShopItem> m_itmes = new List<ShopItem>();
+    [SerializeField]
+    Mesh[] m_diceMesh;
+    [SerializeField]
+    Mesh[] m_trayMesh;
 
 
 
@@ -38,6 +49,7 @@ public class Shop : MonoBehaviour
         }
         m_mover.SetMobility(m_modelMobile);
         m_rotator.SetMobility(!m_modelMobile);
+        m_colider.sharedMesh = m_mesh.mesh;
     }
 
     // Update is called once per frame
@@ -72,6 +84,10 @@ public class Shop : MonoBehaviour
 
     public void OpenMenu(int _menu)
     {
+        if (menues[2].activeSelf && _menu != 2)
+        {
+            m_purchaseButton.enabled = false;
+        }
         for(int i = 0; i < menues.Length; i++)
         {
             if(i == _menu)
@@ -97,8 +113,59 @@ public class Shop : MonoBehaviour
         {
             itemPannels[i].SetActive(true);
             itemPannels[i].transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(itemsToDisplay[i].thumbnail, new Rect(0.0f, 0.0f, itemsToDisplay[i].thumbnail.width, itemsToDisplay[i].thumbnail.height), new Vector2(0.0f, 0.0f));
-            itemPannels[i].transform.GetChild(1).GetComponent<Text>().text = itemsToDisplay[i].name;
+            itemPannels[i].transform.GetChild(1).GetComponent<Text>().text = itemsToDisplay[i].title;
         }
+    }
+
+    public void SetPurchaseButton(int _item)
+    {
+        m_purchaseButton.productId = m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex*10].itemID;
+        m_purchaseButton.enabled = true;
+        switch((ShopItem.ItemType)currentItemType)
+        {
+            case ShopItem.ItemType.Dice:
+                {
+                    BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
+
+                    bool isTexture = file.ReadBoolean();
+                    int diceType = file.ReadInt32();
+                    if (!isTexture)
+                    {
+                        m_renderer.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                        m_renderer.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    }
+                    else
+                    {
+                        int array_size = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(array_size));
+                        m_renderer.materials[0].mainTexture = newTex;
+                    }
+                    
+                    file.Close();
+
+                    m_mesh.mesh = m_diceMesh[diceType];
+                }
+                break;
+            case ShopItem.ItemType.DiceTray:
+                { 
+                    
+                }
+                break;
+            case ShopItem.ItemType.MapBlock:
+                {
+                    
+                }
+                break;
+            case ShopItem.ItemType.Miniture:
+                {
+
+                }
+                break;
+            default:
+                break;
+        }
+        //m_mesh
     }
 
     private static bool FindDice(ShopItem _item)

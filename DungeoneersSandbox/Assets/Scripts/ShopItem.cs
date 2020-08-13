@@ -18,9 +18,11 @@ public class ShopItem : ScriptableObject
     [SerializeField]
     public string itemID;
     [SerializeField]
-    public string name;
+    public string title;
     [SerializeField]
     public ItemType itemType;
     [SerializeField]
     public float price;
+    [SerializeField]
+    public List<string> files = new List<string>();
 }

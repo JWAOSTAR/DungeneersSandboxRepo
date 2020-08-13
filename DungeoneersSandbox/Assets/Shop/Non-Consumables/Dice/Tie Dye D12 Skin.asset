@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: 2a3ae2f19755ee94b8546d334dd41611, type: 3}
   itemID: com.RedJacketStudios.DungeoneersSandbox.d12_tie_dye_skin
-  name: D12 Tie Dye Skin
+  title: D12 Tie Dye Skin
   itemType: 0
   price: 1.99
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D12 Tie Dye Skin.dsd

@@ -13,7 +13,15 @@ MonoBehaviour:
   m_Name: Tie Dye Dice Set
   m_EditorClassIdentifier: 
   thumbnail: {fileID: 2800000, guid: 814a5cd155476b74fbaf692a3a7849a5, type: 3}
-  itemID: com.RedJacketStudios.DungeoneersSandbox.d4_tie_dye_skin
-  name: Tie Dye Dice Set
+  itemID: com.RedJacketStudios.DungeoneersSandbox.tie_dye_skin_set
+  title: Tie Dye Dice Set
   itemType: 0
   price: 13.93
+  files:
+  - Assets/Shop/Non-Consumables/Dice/D4 Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D6 Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D8 Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D10(1s) Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D10(10s) Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D12 Tie Dye Skin.dsd
+  - Assets/Shop/Non-Consumables/Dice/D20 Tie Dye Skin.dsd
