@@ -14,6 +14,8 @@ public class Shop : MonoBehaviour
     Predicate<ShopItem>[] searchFuncs = { FindDice, FindTrays, FindMapBlock, FindMinitures };
     int currentItemType = -1;
     int currentItemPageIndex = 0;
+    int currentModelIndex = 0;
+    int currentItemIndex = 0;
 
     [SerializeField]
     DiceAxisMovement m_mover;
@@ -27,6 +29,8 @@ public class Shop : MonoBehaviour
     MeshRenderer m_renderer;
     [SerializeField]
     IAPButton m_purchaseButton;
+    [SerializeField]
+    GameObject collectionsMenu;
     [SerializeField]
     GameObject[] menues = new GameObject[3];
     [SerializeField]
@@ -87,6 +91,7 @@ public class Shop : MonoBehaviour
         if (menues[2].activeSelf && _menu != 2)
         {
             m_purchaseButton.enabled = false;
+            collectionsMenu.transform.GetChild(0).gameObject.SetActive(false);
         }
         for(int i = 0; i < menues.Length; i++)
         {
@@ -119,9 +124,12 @@ public class Shop : MonoBehaviour
 
     public void SetPurchaseButton(int _item)
     {
+        currentItemIndex = _item;
         m_purchaseButton.productId = m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex*10].itemID;
         m_purchaseButton.enabled = true;
-        switch((ShopItem.ItemType)currentItemType)
+        collectionsMenu.SetActive(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].isCollection);
+
+        switch ((ShopItem.ItemType)currentItemType)
         {
             case ShopItem.ItemType.Dice:
                 {
@@ -165,7 +173,83 @@ public class Shop : MonoBehaviour
             default:
                 break;
         }
+        if(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].isCollection)
+        {
+            m_mesh.gameObject.SetActive(false);
+            collectionsMenu.transform.GetChild(0).gameObject.SetActive(true);
+            collectionsMenu.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].thumbnail, new Rect(0.0f, 0.0f, m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].thumbnail.width, m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].thumbnail.height), new Vector2(0.0f, 0.0f));
+        }
         //m_mesh
+    }
+
+    public void NextItemInCollection()
+    {
+        currentModelIndex++;
+        
+            if (currentModelIndex <= m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files.Count)
+            {
+                if(!m_mesh.gameObject.activeSelf)
+                {
+                    m_mesh.gameObject.SetActive(true);
+                    collectionsMenu.transform.GetChild(0).gameObject.SetActive(false);
+                }
+                switch ((ShopItem.ItemType)currentItemType)
+                {
+                    case ShopItem.ItemType.Dice:
+                        {
+                            BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1], FileMode.Open));
+
+                            bool isTexture = file.ReadBoolean();
+                            int diceType = file.ReadInt32();
+                            if (!isTexture)
+                            {
+                                m_renderer.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                                m_renderer.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                            }
+                            else
+                            {
+                                int array_size = file.ReadInt32();
+                                Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                                newTex.LoadImage(file.ReadBytes(array_size));
+                                m_renderer.materials[0].mainTexture = newTex;
+                            }
+
+                            file.Close();
+
+                            m_mesh.mesh = m_diceMesh[diceType];
+                        }
+                        break;
+                    case ShopItem.ItemType.DiceTray:
+                        {
+
+                        }
+                        break;
+                    case ShopItem.ItemType.MapBlock:
+                        {
+
+                        }
+                        break;
+                    case ShopItem.ItemType.Miniture:
+                        {
+
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                currentModelIndex = 0;
+                m_mesh.gameObject.SetActive(false);
+                collectionsMenu.transform.GetChild(0).gameObject.SetActive(true);
+            }
+        
+    }
+
+    public void PrevItemInCollection()
+    {
+
     }
 
     private static bool FindDice(ShopItem _item)

@@ -25,4 +25,6 @@ public class ShopItem : ScriptableObject
     public float price;
     [SerializeField]
     public List<string> files = new List<string>();
+    [SerializeField]
+    public bool isCollection = false;
 }
