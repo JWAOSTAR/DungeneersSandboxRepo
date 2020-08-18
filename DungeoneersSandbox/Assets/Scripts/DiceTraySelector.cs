@@ -8,6 +8,20 @@ using UnityEngine.UI;
 
 public class DiceTraySelector : MonoBehaviour
 {
+    enum MATERIAL_0_TYPE
+    {
+        COLOR,
+        TEXTURE,
+        TILE,
+    }
+
+    enum MATERIAL_1_TYPE
+    {
+        COLOR,
+        TEXTURE = 4,
+        TILE = 8,
+    }
+
     [SerializeField]
     MeshFilter m_currentMesh;
     [SerializeField]
@@ -28,8 +42,11 @@ public class DiceTraySelector : MonoBehaviour
     DiceAxisMovement m_trayMover;
     [SerializeField]
     SceneChanger m_manager;
-
+    
     int currentModel = 0;
+    MATERIAL_0_TYPE mat0type = MATERIAL_0_TYPE.COLOR;
+    MATERIAL_1_TYPE mat1type = MATERIAL_1_TYPE.COLOR;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,25 +96,159 @@ public class DiceTraySelector : MonoBehaviour
         
     }
 
-    public void SaveDiceTray()
+    public void SaveDiceTray(string path)
     {
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/"+path+".dss", FileMode.OpenOrCreate));
 
         file.Write(currentModel);
-        
-        file.Write(m_trayMaterials.materials[1].color.r);
-        file.Write(m_trayMaterials.materials[1].color.g);
-        file.Write(m_trayMaterials.materials[1].color.b);
-        file.Write(m_trayMaterials.materials[1].color.a);
 
-        file.Write(m_trayMaterials.materials[0].color.r);
-        file.Write(m_trayMaterials.materials[0].color.g);
-        file.Write(m_trayMaterials.materials[0].color.b);
-        file.Write(m_trayMaterials.materials[0].color.a);
+        file.Write((((int)mat0type) + ((int)mat1type)));
+
+        switch (mat0type)
+        {
+            case MATERIAL_0_TYPE.COLOR:
+                {
+                    file.Write(m_trayMaterials.materials[1].color.r);
+                    file.Write(m_trayMaterials.materials[1].color.g);
+                    file.Write(m_trayMaterials.materials[1].color.b);
+                    file.Write(m_trayMaterials.materials[1].color.a);
+                }
+                break;
+            case MATERIAL_0_TYPE.TEXTURE:
+                {
+                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[1].mainTexture.width, m_trayMaterials.materials[1].mainTexture.height, TextureFormat.RGBA32, false);
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                }
+                break;
+            case MATERIAL_0_TYPE.TILE:
+                {
+                    //TODO: Add in file writting when shader is written
+                }
+                break;
+            default:
+                break;
+        }
+
+        switch (mat1type)
+        {
+            case MATERIAL_1_TYPE.COLOR:
+                {
+                    file.Write(m_trayMaterials.materials[0].color.r);
+                    file.Write(m_trayMaterials.materials[0].color.g);
+                    file.Write(m_trayMaterials.materials[0].color.b);
+                    file.Write(m_trayMaterials.materials[0].color.a);
+                }
+                break;
+            case MATERIAL_1_TYPE.TEXTURE:
+                {
+                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[0].mainTexture.width, m_trayMaterials.materials[0].mainTexture.height, TextureFormat.RGBA32, false);
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                }
+                break;
+            case MATERIAL_1_TYPE.TILE:
+                {
+                    //TODO: Add in file writting when shader is written
+                }
+                break;
+            default:
+                break;
+        }
 
         file.Close();
 
         //m_manager.ChangeScene("DiceSetSelector");
+    }
+
+    public void SaveDiceTray()
+    {
+        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.OpenOrCreate));
+
+        //file.Write(currentModel);
+
+        //file.Write(m_trayMaterials.materials[1].color.r);
+        //file.Write(m_trayMaterials.materials[1].color.g);
+        //file.Write(m_trayMaterials.materials[1].color.b);
+        //file.Write(m_trayMaterials.materials[1].color.a);
+
+        //file.Write(m_trayMaterials.materials[0].color.r);
+        //file.Write(m_trayMaterials.materials[0].color.g);
+        //file.Write(m_trayMaterials.materials[0].color.b);
+        //file.Write(m_trayMaterials.materials[0].color.a);
+
+        file.Write(currentModel);
+
+        file.Write((((int)mat0type) + ((int)mat1type)));
+
+        switch (mat0type)
+        {
+            case MATERIAL_0_TYPE.COLOR:
+                {
+                    file.Write(m_trayMaterials.materials[1].color.r);
+                    file.Write(m_trayMaterials.materials[1].color.g);
+                    file.Write(m_trayMaterials.materials[1].color.b);
+                    file.Write(m_trayMaterials.materials[1].color.a);
+                }
+                break;
+            case MATERIAL_0_TYPE.TEXTURE:
+                {
+                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[1].mainTexture.width, m_trayMaterials.materials[1].mainTexture.height, TextureFormat.RGBA32, false);
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                }
+                break;
+            case MATERIAL_0_TYPE.TILE:
+                {
+                    //TODO: Add in file writting when shader is written
+                }
+                break;
+            default:
+                break;
+        }
+
+        switch (mat1type)
+        {
+            case MATERIAL_1_TYPE.COLOR:
+                {
+                    file.Write(m_trayMaterials.materials[0].color.r);
+                    file.Write(m_trayMaterials.materials[0].color.g);
+                    file.Write(m_trayMaterials.materials[0].color.b);
+                    file.Write(m_trayMaterials.materials[0].color.a);
+                }
+                break;
+            case MATERIAL_1_TYPE.TEXTURE:
+                {
+                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[0].mainTexture.width, m_trayMaterials.materials[0].mainTexture.height, TextureFormat.RGBA32, false);
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                }
+                break;
+            case MATERIAL_1_TYPE.TILE:
+                {
+                    //TODO: Add in file writting when shader is written
+                }
+                break;
+            default:
+                break;
+        }
+
+        file.Close();
+
+        //m_manager.ChangeScene("DiceSetSelector");
+    }
+
+    public void LoadDiceTray()
+    {
+
     }
 }
 

@@ -153,6 +153,7 @@ public class DiceRoller : MonoBehaviour
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.Open));
             int trayType = file.ReadInt32();
+            int matType = file.ReadInt32();
             m_trayMesh.mesh = m_trayMeshes[trayType];
             m_trayMaterilas.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
             m_trayMaterilas.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
