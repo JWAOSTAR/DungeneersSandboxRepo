@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Windows.Forms;
 
 public class DiceTraySelector : MonoBehaviour
 {
@@ -96,9 +97,83 @@ public class DiceTraySelector : MonoBehaviour
         
     }
 
+    public void OpenSaveDialog()
+    {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        SaveFileDialog diceTraySaveDialog = new SaveFileDialog();
+        diceTraySaveDialog.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/";
+        diceTraySaveDialog.Filter = "DS Dice Tray files (*.dst)|*.dst|All files (*.*)|*.*";
+        diceTraySaveDialog.FilterIndex = 0;
+        diceTraySaveDialog.RestoreDirectory = true;
+
+        if(diceTraySaveDialog.ShowDialog() == DialogResult.OK)
+        {
+            SaveDiceTray(diceTraySaveDialog.FileName);
+        }
+#endif
+    }
+
+    public void OpenFileDialog()
+    {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog diceTrayOpenDialog = new OpenFileDialog();
+        diceTrayOpenDialog.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/";
+        diceTrayOpenDialog.Filter = "DS Dice Tray files (*.dst)|*.dst|All files (*.*)|*.*";
+        diceTrayOpenDialog.FilterIndex = 0;
+        diceTrayOpenDialog.RestoreDirectory = true;
+
+        if (diceTrayOpenDialog.ShowDialog() == DialogResult.OK)
+        {
+            BinaryReader file = new BinaryReader(File.Open(diceTrayOpenDialog.FileName, FileMode.Open));
+            currentModel = file.ReadInt32();
+            int matType = file.ReadInt32();
+            m_currentMesh.mesh = m_meshOptions[currentModel];
+            m_modelName.text = "Model " + currentModel;
+
+            if ((matType != 3) && (matType != 7) && (matType < 11) && (matType >= 0))
+            {
+                if ((matType & 4) == 4)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[1].color = Color.white;
+                    m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+                }
+                else if ((matType & 8) == 8)
+                {
+                    //TODO: Add in file reading when shader is written
+                }
+                else
+                {
+                    m_trayMaterials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                }
+
+                if ((matType & 1) == 1)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[0].color = Color.white;
+                    m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+                }
+                else if ((matType & 2) == 2)
+                {
+                    //TODO: Add in file reading when shader is written
+                }
+                else
+                {
+                    m_trayMaterials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                }
+            }
+            file.Close();
+        }
+#endif
+    }
+
     public void SaveDiceTray(string path)
     {
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/"+path+".dss", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
 
         file.Write(currentModel);
 
@@ -167,7 +242,7 @@ public class DiceTraySelector : MonoBehaviour
 
     public void SaveDiceTray()
     {
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
 
         //file.Write(currentModel);
 

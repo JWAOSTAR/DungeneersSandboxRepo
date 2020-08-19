@@ -53,7 +53,7 @@ public class DiceRoller : MonoBehaviour
     [SerializeField]
     Mesh[] m_trayMeshes;
     [SerializeField]
-    MeshRenderer m_trayMaterilas;
+    MeshRenderer m_trayMaterials;
     [SerializeField]
     MeshFilter m_trayMesh;
 
@@ -149,14 +149,49 @@ public class DiceRoller : MonoBehaviour
                 dice[i].GetChild(1).GetComponent<MeshRenderer>().materials[1].color = Color.black;
             }
         }
-        if(File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss"))
+        if(File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst"))
         {
-            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dss", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.Open));
             int trayType = file.ReadInt32();
             int matType = file.ReadInt32();
             m_trayMesh.mesh = m_trayMeshes[trayType];
-            m_trayMaterilas.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
-            m_trayMaterilas.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+            
+            if((matType != 3) && (matType != 7) && (matType < 11) && (matType >= 0))
+            {
+                if((matType & 4) == 4)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[1].color = Color.white;
+                    m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+                }
+                else if((matType & 8) == 8)
+                {
+                    //TODO: Add in file reading when shader is written
+                }
+                else
+                {
+                    m_trayMaterials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                }
+
+                if ((matType & 1) == 1)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[0].color = Color.white;
+                    m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+                }
+                else if((matType & 2) == 2)
+                {
+                    //TODO: Add in file reading when shader is written
+                }
+                else
+                {
+                    m_trayMaterials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                }
+            }
             file.Close();
         }
     }
