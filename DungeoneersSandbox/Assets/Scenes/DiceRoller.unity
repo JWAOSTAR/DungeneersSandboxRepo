@@ -13047,9 +13047,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ac053eaa763d26744920a7ab029e3ee7, type: 3}
   - {fileID: 21300000, guid: e98ac47da0a0101428577ddbd22e0cc0, type: 3}
   m_trayMeshes:
-  - {fileID: -3153014974416642496, guid: ddcab177aca67054da959d82cc8f6986, type: 3}
-  - {fileID: -4823266969027199758, guid: 6db982b0ee44e744d9eddfef49c7518a, type: 3}
-  m_trayMaterilas: {fileID: 1169014924}
+  - {fileID: -3153014974416642496, guid: a9d02172de16e394982c87b5c501c9fc, type: 3}
+  - {fileID: -4823266969027199758, guid: 7db5d13d917455e47b0ed2f6888d72ef, type: 3}
+  m_trayMaterials: {fileID: 1169014924}
   m_trayMesh: {fileID: 1169014925}
 --- !u!1 &1158278448
 GameObject:
