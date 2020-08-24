@@ -156,8 +156,61 @@ public class Shop : MonoBehaviour
                 }
                 break;
             case ShopItem.ItemType.DiceTray:
-                { 
-                    
+                {
+                    BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
+
+                    int trayType = file.ReadInt32();
+                    int matType = file.ReadInt32();
+
+                    //If Material 0 is a texture
+                    if ((matType & 4) == 4)
+                    {
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        if (m_renderer.materials[1] == null)
+                        {
+                            m_renderer.materials[1] = new Material(Shader.Find("Standard"));
+                        }
+                        m_renderer.materials[1].color = Color.white;
+                        m_renderer.materials[1].SetTexture("_MainTex", newTex);
+                    }
+                    //If Material 0 is a tile
+                    else if ((matType & 8) == 8)
+                    {
+                        //TODO: Add in file readng when shader is written
+                    }
+                    //IF Material 0 is a color
+                    else
+                    {
+                        m_renderer.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    }
+
+                    //If Material 1 is a texture
+                    if ((matType & 1) == 1)
+                    {
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        if (m_renderer.materials[0] == null)
+                        {
+                            m_renderer.materials[0] = new Material(Shader.Find("Standard"));
+                        }
+                        m_renderer.materials[0].color = Color.white;
+                        m_renderer.materials[0].SetTexture("_MainTex", newTex);
+                    }
+                    //If Material 1 is a tile
+                    else if ((matType & 2) == 2)
+                    {
+                        //TODO: Add in file readng when shader is written
+                    }
+                    //IF Material 1 is a color
+                    else
+                    {
+                        m_renderer.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    }
+                    file.Close();
+                    m_mesh.mesh = m_trayMesh[trayType];
                 }
                 break;
             case ShopItem.ItemType.MapBlock:
@@ -221,7 +274,60 @@ public class Shop : MonoBehaviour
                         break;
                     case ShopItem.ItemType.DiceTray:
                         {
+                            BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1], FileMode.Open));
 
+                            int trayType = file.ReadInt32();
+                            int matType = file.ReadInt32();
+
+                            //If Material 0 is a texture
+                            if((matType & 4) == 4)
+                            {
+                                int arraySize = file.ReadInt32();
+                                Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                                newTex.LoadImage(file.ReadBytes(arraySize));
+                                if(m_renderer.materials[1] == null)
+                                {
+                                    m_renderer.materials[1] = new Material(Shader.Find("Standard"));
+                                }
+                                m_renderer.materials[1].color = Color.white;
+                                m_renderer.materials[1].SetTexture("_MainTex", newTex);
+                            }
+                            //If Material 0 is a tile
+                            else if((matType & 8) == 8)
+                            {
+                                //TODO: Add in file readng when shader is written
+                            }
+                            //IF Material 0 is a color
+                            else
+                            {
+                                m_renderer.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                            }
+
+                            //If Material 1 is a texture
+                            if ((matType & 1) == 1)
+                            {
+                                int arraySize = file.ReadInt32();
+                                Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                                newTex.LoadImage(file.ReadBytes(arraySize));
+                                if(m_renderer.materials[0] == null)
+                                {
+                                    m_renderer.materials[0] = new Material(Shader.Find("Standard"));
+                                }
+                                m_renderer.materials[0].color = Color.white;
+                                m_renderer.materials[0].SetTexture("_MainTex", newTex);
+                            }
+                            //If Material 1 is a tile
+                            else if ((matType & 2) == 2)
+                            {
+                                //TODO: Add in file readng when shader is written
+                            }
+                            //IF Material 1 is a color
+                            else
+                            {
+                                m_renderer.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                            }
+                            file.Close();
+                            m_mesh.mesh = m_trayMesh[trayType];
                         }
                         break;
                     case ShopItem.ItemType.MapBlock:

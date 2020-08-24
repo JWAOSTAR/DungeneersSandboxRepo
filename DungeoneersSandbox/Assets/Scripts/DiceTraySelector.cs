@@ -118,55 +118,83 @@ public class DiceTraySelector : MonoBehaviour
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         OpenFileDialog diceTrayOpenDialog = new OpenFileDialog();
         diceTrayOpenDialog.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/";
-        diceTrayOpenDialog.Filter = "DS Dice Tray files (*.dst)|*.dst|All files (*.*)|*.*";
+        diceTrayOpenDialog.Filter = "DS Dice Tray files (*.dst)|*.dst|PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
         diceTrayOpenDialog.FilterIndex = 0;
         diceTrayOpenDialog.RestoreDirectory = true;
 
         if (diceTrayOpenDialog.ShowDialog() == DialogResult.OK)
         {
             BinaryReader file = new BinaryReader(File.Open(diceTrayOpenDialog.FileName, FileMode.Open));
-            currentModel = file.ReadInt32();
-            int matType = file.ReadInt32();
-            m_currentMesh.mesh = m_meshOptions[currentModel];
-            m_modelName.text = "Model " + currentModel;
+            if (diceTrayOpenDialog.FileName.EndsWith(".dst")) {
+                currentModel = file.ReadInt32();
+                int matType = file.ReadInt32();
+                m_currentMesh.mesh = m_meshOptions[currentModel];
+                m_modelName.text = "Model " + currentModel;
 
-            if ((matType != 3) && (matType != 7) && (matType < 11) && (matType >= 0))
-            {
-                if ((matType & 4) == 4)
+                if ((matType != 3) && (matType != 7) && (matType < 11) && (matType >= 0))
                 {
-                    int arraySize = file.ReadInt32();
-                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
-                    newTex.LoadImage(file.ReadBytes(arraySize));
-                    m_trayMaterials.materials[1].color = Color.white;
-                    m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
-                }
-                else if ((matType & 8) == 8)
-                {
-                    //TODO: Add in file reading when shader is written
-                }
-                else
-                {
-                    m_trayMaterials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
-                }
+                    if ((matType & 4) == 4)
+                    {
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        m_trayMaterials.materials[1].color = Color.white;
+                        m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
 
-                if ((matType & 1) == 1)
-                {
-                    int arraySize = file.ReadInt32();
-                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
-                    newTex.LoadImage(file.ReadBytes(arraySize));
-                    m_trayMaterials.materials[0].color = Color.white;
-                    m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+                        mat0type = MATERIAL_0_TYPE.TEXTURE;
+                    }
+                    else if ((matType & 8) == 8)
+                    {
+                        //TODO: Add in file reading when shader is written
+
+                        mat0type = MATERIAL_0_TYPE.TILE;
+                    }
+                    else
+                    {
+                        m_trayMaterials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+
+                        mat0type = MATERIAL_0_TYPE.COLOR;
+                    }
+
+                    if ((matType & 1) == 1)
+                    {
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        m_trayMaterials.materials[0].color = Color.white;
+                        m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+
+                        mat1type = MATERIAL_1_TYPE.TEXTURE;
+                    }
+                    else if ((matType & 2) == 2)
+                    {
+                        //TODO: Add in file reading when shader is written
+
+                        mat1type = MATERIAL_1_TYPE.TILE;
+                    }
+                    else
+                    {
+                        m_trayMaterials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+
+                        mat1type = MATERIAL_1_TYPE.COLOR;
+                    }
                 }
-                else if ((matType & 2) == 2)
-                {
-                    //TODO: Add in file reading when shader is written
-                }
-                else
-                {
-                    m_trayMaterials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
-                }
+                file.Close();
             }
-            file.Close();
+            else if(diceTrayOpenDialog.FileName.EndsWith(".png") || diceTrayOpenDialog.FileName.EndsWith(".jpg") || diceTrayOpenDialog.FileName.EndsWith(".jpeg"))
+            {
+                mat0type = MATERIAL_0_TYPE.TEXTURE;
+                mat1type = MATERIAL_1_TYPE.TEXTURE;
+
+                file.Close();
+                Texture2D newTex = new Texture2D(2, 2);
+                newTex.LoadImage(File.ReadAllBytes(diceTrayOpenDialog.FileName));
+                m_trayMaterials.materials[0].color = Color.white;
+                m_trayMaterials.materials[1].color = Color.white;
+                m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+                m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+            }
+            
         }
 #endif
     }
@@ -191,7 +219,7 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_0_TYPE.TEXTURE:
                 {
-                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[1].mainTexture.width, m_trayMaterials.materials[1].mainTexture.height, TextureFormat.RGBA32, false);
+                    Texture2D tex2D = (Texture2D)m_trayMaterials.materials[1].mainTexture;
                     file.Write(tex2D.EncodeToPNG().Length);
                     file.Write(m_trayMaterials.materials[1].mainTexture.width);
                     file.Write(m_trayMaterials.materials[1].mainTexture.height);
@@ -219,7 +247,7 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_1_TYPE.TEXTURE:
                 {
-                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[0].mainTexture.width, m_trayMaterials.materials[0].mainTexture.height, TextureFormat.RGBA32, false);
+                    Texture2D tex2D = (Texture2D)m_trayMaterials.materials[0].mainTexture;
                     file.Write(tex2D.EncodeToPNG().Length);
                     file.Write(m_trayMaterials.materials[0].mainTexture.width);
                     file.Write(m_trayMaterials.materials[0].mainTexture.height);
@@ -272,7 +300,7 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_0_TYPE.TEXTURE:
                 {
-                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[1].mainTexture.width, m_trayMaterials.materials[1].mainTexture.height, TextureFormat.RGBA32, false);
+                    Texture2D tex2D = (Texture2D)m_trayMaterials.materials[1].mainTexture/*new Texture2D(m_trayMaterials.materials[1].mainTexture.width, m_trayMaterials.materials[1].mainTexture.height, TextureFormat.RGBA32, false)*/;
                     file.Write(tex2D.EncodeToPNG().Length);
                     file.Write(m_trayMaterials.materials[1].mainTexture.width);
                     file.Write(m_trayMaterials.materials[1].mainTexture.height);
@@ -300,7 +328,7 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_1_TYPE.TEXTURE:
                 {
-                    Texture2D tex2D = new Texture2D(m_trayMaterials.materials[0].mainTexture.width, m_trayMaterials.materials[0].mainTexture.height, TextureFormat.RGBA32, false);
+                    Texture2D tex2D = (Texture2D)m_trayMaterials.materials[0].mainTexture/*new Texture2D(m_trayMaterials.materials[0].mainTexture.width, m_trayMaterials.materials[0].mainTexture.height, TextureFormat.RGBA32, false)*/;
                     file.Write(tex2D.EncodeToPNG().Length);
                     file.Write(m_trayMaterials.materials[0].mainTexture.width);
                     file.Write(m_trayMaterials.materials[0].mainTexture.height);
