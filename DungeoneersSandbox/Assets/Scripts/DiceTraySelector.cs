@@ -43,6 +43,13 @@ public class DiceTraySelector : MonoBehaviour
     DiceAxisMovement m_trayMover;
     [SerializeField]
     SceneChanger m_manager;
+    [SerializeField]
+    GameObject m_patternPropertiesMenu;
+
+    [SerializeField]
+    Image m_InnerPatternImage;
+    [SerializeField]
+    Image m_OutterPatternImage;
     
     int currentModel = 0;
     MATERIAL_0_TYPE mat0type = MATERIAL_0_TYPE.COLOR;
@@ -55,6 +62,7 @@ public class DiceTraySelector : MonoBehaviour
         m_currentMesh.mesh = m_meshOptions[currentModel];
         m_innerColorPicker.gameObject.SetActive(false);
         m_outterColorPicker.gameObject.SetActive(false);
+        m_patternPropertiesMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -195,6 +203,42 @@ public class DiceTraySelector : MonoBehaviour
                 m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
             }
             
+        }
+#endif
+    }
+
+    public void UploadInnerPatternImage()
+    {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog patternImageOpenDialog = new OpenFileDialog();
+        patternImageOpenDialog.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/";
+        patternImageOpenDialog.Filter = "PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+        patternImageOpenDialog.FilterIndex = 0;
+        patternImageOpenDialog.RestoreDirectory = true;
+        if(patternImageOpenDialog.ShowDialog() == DialogResult.OK)
+        {
+            m_patternPropertiesMenu.SetActive(true);
+            Texture2D newTex = new Texture2D(2, 2);
+            newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
+            m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+        }
+#endif
+    }
+
+    public void UploadOutterPatternImage()
+    {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog patternImageOpenDialog = new OpenFileDialog();
+        patternImageOpenDialog.InitialDirectory = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/diceTray/";
+        patternImageOpenDialog.Filter = "PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+        patternImageOpenDialog.FilterIndex = 0;
+        patternImageOpenDialog.RestoreDirectory = true;
+        if (patternImageOpenDialog.ShowDialog() == DialogResult.OK)
+        {
+            m_patternPropertiesMenu.SetActive(true);
+            Texture2D newTex = new Texture2D(2, 2);
+            newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
+            m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
         }
 #endif
     }
