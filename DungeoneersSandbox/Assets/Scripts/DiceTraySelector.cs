@@ -23,6 +23,12 @@ public class DiceTraySelector : MonoBehaviour
         TILE = 8,
     }
 
+    struct PatternProperties
+    {
+        public Vector2 Tiling;
+        public Vector2 Offset;
+    }
+
     [SerializeField]
     MeshFilter m_currentMesh;
     [SerializeField]
@@ -50,10 +56,23 @@ public class DiceTraySelector : MonoBehaviour
     Image m_InnerPatternImage;
     [SerializeField]
     Image m_OutterPatternImage;
-    
+    [SerializeField]
+    Image m_patternUIImage;
+    [SerializeField]
+    InputField m_XTilling;
+    [SerializeField]
+    InputField m_YTilling;
+    [SerializeField]
+    InputField m_XOffset;
+    [SerializeField]
+    InputField m_YOffset;
+
     int currentModel = 0;
+    int currentPattern = 0;
     MATERIAL_0_TYPE mat0type = MATERIAL_0_TYPE.COLOR;
     MATERIAL_1_TYPE mat1type = MATERIAL_1_TYPE.COLOR;
+    PatternProperties pattern0;
+    PatternProperties pattern1;
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +82,18 @@ public class DiceTraySelector : MonoBehaviour
         m_innerColorPicker.gameObject.SetActive(false);
         m_outterColorPicker.gameObject.SetActive(false);
         m_patternPropertiesMenu.SetActive(false);
+
+        pattern0.Tiling = new Vector2(1.0f, 1.0f);
+        pattern0.Offset = new Vector2(0.0f, 0.0f);
+
+        pattern1.Tiling = new Vector2(1.0f, 1.0f);
+        pattern1.Offset = new Vector2(0.0f, 0.0f);
+
+        m_XTilling.text = 1.0f.ToString("0.00");
+        m_YTilling.text = 1.0f.ToString("0.00");
+
+        m_XOffset.text = 0.0f.ToString("0.00");
+        m_YOffset.text = 0.0f.ToString("0.00");
     }
 
     // Update is called once per frame
@@ -220,7 +251,21 @@ public class DiceTraySelector : MonoBehaviour
             m_patternPropertiesMenu.SetActive(true);
             Texture2D newTex = new Texture2D(2, 2);
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
+            newTex.alphaIsTransparency = true;
             m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+            for (int y = 0; y < newTex.height; y++)
+            {
+                for (int x = 0; x < newTex.width; x++)
+                {
+                    if (newTex.GetPixel(x, y).a == 0.0f)
+                    {
+                        newTex.SetPixel(x, y, m_innerColorPicker.CurrentColor);
+                    }
+                }
+            }
+            newTex.Apply();
+            m_trayMaterials.materials[1].color = Color.white;
+            m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
         }
 #endif
     }
@@ -238,7 +283,21 @@ public class DiceTraySelector : MonoBehaviour
             m_patternPropertiesMenu.SetActive(true);
             Texture2D newTex = new Texture2D(2, 2);
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
+            newTex.alphaIsTransparency = true;
             m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+            for(int y = 0; y < newTex.height; y++)
+            {
+                for(int x = 0; x < newTex.width; x++)
+                {
+                    if (newTex.GetPixel(x, y).a == 0.0f)
+                    {
+                        newTex.SetPixel(x, y, m_outterColorPicker.CurrentColor);
+                    }
+                }
+            }
+            newTex.Apply();
+            m_trayMaterials.materials[0].color = Color.white;
+            m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
         }
 #endif
     }
@@ -396,6 +455,124 @@ public class DiceTraySelector : MonoBehaviour
     public void LoadDiceTray()
     {
 
+    }
+
+    public void SetPatternUIImage(int _inORout)
+    {
+        currentPattern = _inORout;
+        m_patternUIImage.sprite = (_inORout == 0) ? m_InnerPatternImage.sprite : m_OutterPatternImage.sprite;
+    }
+
+    public void SetTillingX(string _tilling_x)
+    {
+        float _val_tilling_x;
+        if (float.TryParse(_tilling_x, out _val_tilling_x))
+        {
+            if (_val_tilling_x > 1.0f)
+            {
+                if (currentPattern == 0)
+                {
+                    pattern0.Tiling.x = _val_tilling_x;
+                    m_XTilling.text = pattern0.Tiling.x.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                }
+                else
+                {
+                    pattern1.Tiling.x = _val_tilling_x;
+                    m_XTilling.text = pattern1.Tiling.x.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                }
+            }
+            else
+            {
+                if (currentPattern == 0)
+                {
+                    pattern0.Tiling.x = 1.0f;
+                    m_XTilling.text = pattern0.Tiling.x.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                }
+                else
+                {
+                    pattern1.Tiling.x = 1.0f;
+                    m_XTilling.text = pattern1.Tiling.x.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                }
+            }
+        }
+
+    }
+
+    public void SetTillingY(string _tilling_y)
+    {
+        float _val_tilling_y;
+        if (float.TryParse(_tilling_y, out _val_tilling_y)) {
+            if (_val_tilling_y > 1.0f)
+            {
+                if (currentPattern == 0)
+                {
+                    pattern0.Tiling.y = _val_tilling_y;
+                    m_YTilling.text = pattern0.Tiling.y.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                }
+                else
+                {
+                    pattern1.Tiling.y = _val_tilling_y;
+                    m_YTilling.text = pattern1.Tiling.y.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                }
+            }
+
+            else
+            {
+                if (currentPattern == 0)
+                {
+                    pattern0.Tiling.y = 1.0f;
+                    m_YTilling.text = pattern0.Tiling.y.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                }
+                else
+                {
+                    pattern1.Tiling.y = 1.0f;
+                    m_YTilling.text = pattern1.Tiling.y.ToString("0.00");
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                }
+            }
+        }
+    }
+
+    public void SetOffsetX(string _offset_x)
+    {
+        float _val_offset_x;
+        if (float.TryParse(_offset_x, out _val_offset_x)) {
+            if (currentPattern == 0)
+            {
+                pattern0.Offset.x = _val_offset_x;
+                m_XOffset.text = pattern0.Offset.x.ToString("0.00");
+            }
+            else
+            {
+                pattern1.Offset.x = _val_offset_x;
+                m_XOffset.text = pattern1.Offset.x.ToString("0.00");
+            }
+        }
+    }
+
+    public void SetOffsetY(string _offset_y)
+    {
+        float _val_offset_y;
+        if (float.TryParse(_offset_y, out _val_offset_y))
+        {
+            if (currentPattern == 0)
+            {
+                pattern0.Offset.y = _val_offset_y;
+                m_YOffset.text = pattern0.Offset.y.ToString("0.00");
+            }
+            else
+            {
+                pattern1.Offset.y = _val_offset_y;
+                m_YOffset.text = pattern1.Offset.y.ToString("0.00");
+            }
+        }
     }
 }
 
