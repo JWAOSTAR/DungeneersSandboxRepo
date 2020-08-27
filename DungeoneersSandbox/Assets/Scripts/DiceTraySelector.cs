@@ -53,6 +53,8 @@ public class DiceTraySelector : MonoBehaviour
     GameObject m_patternPropertiesMenu;
 
     [SerializeField]
+    Sprite m_nullImage;
+    [SerializeField]
     Image m_InnerPatternImage;
     [SerializeField]
     Image m_OutterPatternImage;
@@ -73,6 +75,8 @@ public class DiceTraySelector : MonoBehaviour
     MATERIAL_1_TYPE mat1type = MATERIAL_1_TYPE.COLOR;
     PatternProperties pattern0;
     PatternProperties pattern1;
+    bool pattern0uploaded = false;
+    bool pattern1uploaded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -125,13 +129,47 @@ public class DiceTraySelector : MonoBehaviour
 
     public void SetInnerColor(Color _color)
     {
-        m_trayMaterials.materials[1].color = _color;
+        if (!pattern0uploaded)
+        {
+            m_trayMaterials.materials[1].color = _color;
+        }
+        else
+        {
+            for (int y = 0; y < m_trayMaterials.materials[1].mainTexture.height; y++)
+            {
+                for (int x = 0; x < m_trayMaterials.materials[1].mainTexture.width; x++)
+                {
+                    if (m_InnerPatternImage.sprite.texture.GetPixel(x, y).a == 0.0f)
+                    {
+                        ((Texture2D)m_trayMaterials.materials[1].mainTexture).SetPixel(x, y, _color);
+                    }
+                }
+            }
+            ((Texture2D)m_trayMaterials.materials[1].mainTexture).Apply();
+        }
         m_innerColorBlock.color = _color;
     }
 
     public void SetOutterColor(Color _color)
     {
-        m_trayMaterials.materials[0].color = _color;
+        if (!pattern1uploaded)
+        {
+            m_trayMaterials.materials[0].color = _color;
+        }
+        else
+        {
+            for (int y = 0; y < m_trayMaterials.materials[0].mainTexture.height; y++)
+            {
+                for (int x = 0; x < m_trayMaterials.materials[0].mainTexture.width; x++)
+                {
+                    if (m_OutterPatternImage.sprite.texture.GetPixel(x, y).a == 0.0f)
+                    {
+                        ((Texture2D)m_trayMaterials.materials[0].mainTexture).SetPixel(x, y, _color);
+                    }
+                }
+            }
+            ((Texture2D)m_trayMaterials.materials[0].mainTexture).Apply();
+        }
         m_outterColorBlock.color = _color;
         
     }
@@ -253,19 +291,22 @@ public class DiceTraySelector : MonoBehaviour
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
             newTex.alphaIsTransparency = true;
             m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
-            for (int y = 0; y < newTex.height; y++)
+            Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+            tempTex.LoadImage(newTex.EncodeToPNG());
+            for (int y = 0; y < tempTex.height; y++)
             {
-                for (int x = 0; x < newTex.width; x++)
+                for (int x = 0; x < tempTex.width; x++)
                 {
-                    if (newTex.GetPixel(x, y).a == 0.0f)
+                    if (tempTex.GetPixel(x, y).a == 0.0f)
                     {
-                        newTex.SetPixel(x, y, m_innerColorPicker.CurrentColor);
+                        tempTex.SetPixel(x, y, m_innerColorPicker.CurrentColor);
                     }
                 }
             }
-            newTex.Apply();
+            tempTex.Apply();
             m_trayMaterials.materials[1].color = Color.white;
-            m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+            m_trayMaterials.materials[1].SetTexture("_MainTex", tempTex);
+            pattern0uploaded = true;
         }
 #endif
     }
@@ -285,19 +326,22 @@ public class DiceTraySelector : MonoBehaviour
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
             newTex.alphaIsTransparency = true;
             m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
-            for(int y = 0; y < newTex.height; y++)
+            Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+            tempTex.LoadImage(newTex.EncodeToPNG());
+            for(int y = 0; y < tempTex.height; y++)
             {
-                for(int x = 0; x < newTex.width; x++)
+                for(int x = 0; x < tempTex.width; x++)
                 {
-                    if (newTex.GetPixel(x, y).a == 0.0f)
+                    if (tempTex.GetPixel(x, y).a == 0.0f)
                     {
-                        newTex.SetPixel(x, y, m_outterColorPicker.CurrentColor);
+                        tempTex.SetPixel(x, y, m_outterColorPicker.CurrentColor);
                     }
                 }
             }
-            newTex.Apply();
+            tempTex.Apply();
             m_trayMaterials.materials[0].color = Color.white;
-            m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+            m_trayMaterials.materials[0].SetTexture("_MainTex", tempTex);
+            pattern1uploaded = true;
         }
 #endif
     }
@@ -457,10 +501,30 @@ public class DiceTraySelector : MonoBehaviour
 
     }
 
+    public void OpenPatternEditor(int _inORout)
+    {
+        if (_inORout == 0 && pattern0uploaded)
+        {
+            SetPatternUIImage(_inORout);
+            m_patternPropertiesMenu.SetActive(true);
+        }
+        else if (_inORout == 1 && pattern1uploaded)
+        {
+            SetPatternUIImage(_inORout);
+            m_patternPropertiesMenu.SetActive(true);
+        }
+    }
+
     public void SetPatternUIImage(int _inORout)
     {
         currentPattern = _inORout;
         m_patternUIImage.sprite = (_inORout == 0) ? m_InnerPatternImage.sprite : m_OutterPatternImage.sprite;
+
+        m_XTilling.text = ((_inORout == 0) ? pattern0.Tiling.x : pattern1.Tiling.x).ToString("0.00");
+        m_YTilling.text = ((_inORout == 0) ? pattern0.Tiling.y : pattern1.Tiling.y).ToString("0.00");
+
+        m_XOffset.text = ((_inORout == 0) ? pattern0.Offset.x : pattern1.Offset.x).ToString("0.00");
+        m_YOffset.text = ((_inORout == 0) ? pattern0.Offset.y : pattern1.Offset.y).ToString("0.00");
     }
 
     public void SetTillingX(string _tilling_x)
@@ -480,7 +544,7 @@ public class DiceTraySelector : MonoBehaviour
                 {
                     pattern1.Tiling.x = _val_tilling_x;
                     m_XTilling.text = pattern1.Tiling.x.ToString("0.00");
-                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
                 }
             }
             else
@@ -495,7 +559,7 @@ public class DiceTraySelector : MonoBehaviour
                 {
                     pattern1.Tiling.x = 1.0f;
                     m_XTilling.text = pattern1.Tiling.x.ToString("0.00");
-                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
                 }
             }
         }
@@ -518,7 +582,7 @@ public class DiceTraySelector : MonoBehaviour
                 {
                     pattern1.Tiling.y = _val_tilling_y;
                     m_YTilling.text = pattern1.Tiling.y.ToString("0.00");
-                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
                 }
             }
 
@@ -534,7 +598,7 @@ public class DiceTraySelector : MonoBehaviour
                 {
                     pattern1.Tiling.y = 1.0f;
                     m_YTilling.text = pattern1.Tiling.y.ToString("0.00");
-                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern1.Tiling);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
                 }
             }
         }
@@ -548,11 +612,13 @@ public class DiceTraySelector : MonoBehaviour
             {
                 pattern0.Offset.x = _val_offset_x;
                 m_XOffset.text = pattern0.Offset.x.ToString("0.00");
+                m_trayMaterials.materials[1].SetTextureOffset("_MainTex", pattern0.Offset);
             }
             else
             {
                 pattern1.Offset.x = _val_offset_x;
                 m_XOffset.text = pattern1.Offset.x.ToString("0.00");
+                m_trayMaterials.materials[0].SetTextureOffset("_MainTex", pattern1.Offset);
             }
         }
     }
@@ -566,12 +632,33 @@ public class DiceTraySelector : MonoBehaviour
             {
                 pattern0.Offset.y = _val_offset_y;
                 m_YOffset.text = pattern0.Offset.y.ToString("0.00");
+                m_trayMaterials.materials[1].SetTextureOffset("_MainTex", pattern0.Offset);
             }
             else
             {
                 pattern1.Offset.y = _val_offset_y;
                 m_YOffset.text = pattern1.Offset.y.ToString("0.00");
+                m_trayMaterials.materials[0].SetTextureOffset("_MainTex", pattern1.Offset);
             }
+        }
+    }
+
+    public void RemovePattern()
+    {
+        m_trayMaterials.materials[(currentPattern == 0) ? 1 : 0].SetTexture("_MainTex", null);
+        m_patternPropertiesMenu.SetActive(false);
+        if (currentPattern == 0)
+        {
+            m_InnerPatternImage.sprite = m_nullImage;
+            m_trayMaterials.materials[1].color = m_innerColorPicker.CurrentColor;
+            pattern0uploaded = false;
+
+        }
+        else
+        {
+            m_OutterPatternImage.sprite = m_nullImage;
+            m_trayMaterials.materials[0].color = m_outterColorPicker.CurrentColor;
+            pattern1uploaded = false;
         }
     }
 }
