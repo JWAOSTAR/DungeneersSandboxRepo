@@ -223,8 +223,34 @@ public class DiceTraySelector : MonoBehaviour
                     else if ((matType & 8) == 8)
                     {
                         //TODO: Add in file reading when shader is written
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        pattern0.Tiling = new Vector2(file.ReadSingle(), file.ReadSingle());
+                        pattern0.Offset = new Vector2(file.ReadSingle(), file.ReadSingle());
+                        m_innerColorPicker.SetCurrentColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                        m_innerColorBlock.color = m_innerColorPicker.CurrentColor;
+                        m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+                        Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                        tempTex.LoadImage(newTex.EncodeToPNG());
+                        for (int y = 0; y < tempTex.height; y++)
+                        {
+                            for (int x = 0; x < tempTex.width; x++)
+                            {
+                                if (tempTex.GetPixel(x, y).a == 0.0f)
+                                {
+                                    tempTex.SetPixel(x, y, m_innerColorPicker.CurrentColor);
+                                }
+                            }
+                        }
+                        tempTex.Apply();
+                        m_trayMaterials.materials[1].color = Color.white;
+                        m_trayMaterials.materials[1].SetTexture("_MainTex", tempTex);
+                        m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                        m_trayMaterials.materials[1].SetTextureOffset("_MainTex", pattern0.Offset);
 
                         mat0type = MATERIAL_0_TYPE.TILE;
+                        pattern0uploaded = true;
                     }
                     else
                     {
@@ -247,7 +273,33 @@ public class DiceTraySelector : MonoBehaviour
                     {
                         //TODO: Add in file reading when shader is written
 
+                        int arraySize = file.ReadInt32();
+                        Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                        newTex.LoadImage(file.ReadBytes(arraySize));
+                        pattern1.Tiling = new Vector2(file.ReadSingle(), file.ReadSingle());
+                        pattern1.Offset = new Vector2(file.ReadSingle(), file.ReadSingle());
+                        m_outterColorPicker.SetCurrentColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                        m_outterColorBlock.color = m_outterColorPicker.CurrentColor;
+                        m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+                        Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                        tempTex.LoadImage(newTex.EncodeToPNG());
+                        for (int y = 0; y < tempTex.height; y++)
+                        {
+                            for (int x = 0; x < tempTex.width; x++)
+                            {
+                                if (tempTex.GetPixel(x, y).a == 0.0f)
+                                {
+                                    tempTex.SetPixel(x, y, m_outterColorPicker.CurrentColor);
+                                }
+                            }
+                        }
+                        tempTex.Apply();
+                        m_trayMaterials.materials[0].color = Color.white;
+                        m_trayMaterials.materials[0].SetTexture("_MainTex", tempTex);
+                        m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
+                        m_trayMaterials.materials[0].SetTextureOffset("_MainTex", pattern1.Offset);
                         mat1type = MATERIAL_1_TYPE.TILE;
+                        pattern1uploaded = true;
                     }
                     else
                     {
@@ -307,6 +359,7 @@ public class DiceTraySelector : MonoBehaviour
             m_trayMaterials.materials[1].color = Color.white;
             m_trayMaterials.materials[1].SetTexture("_MainTex", tempTex);
             pattern0uploaded = true;
+            mat0type = MATERIAL_0_TYPE.TILE;
         }
 #endif
     }
@@ -342,6 +395,7 @@ public class DiceTraySelector : MonoBehaviour
             m_trayMaterials.materials[0].color = Color.white;
             m_trayMaterials.materials[0].SetTexture("_MainTex", tempTex);
             pattern1uploaded = true;
+            mat1type = MATERIAL_1_TYPE.TILE;
         }
 #endif
     }
@@ -375,7 +429,19 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_0_TYPE.TILE:
                 {
-                    //TODO: Add in file writting when shader is written
+                    Texture2D tex2D = m_InnerPatternImage.sprite.texture;
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                    file.Write(m_trayMaterials.materials[1].GetTextureScale("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[1].GetTextureScale("_MainTex").y);
+                    file.Write(m_trayMaterials.materials[1].GetTextureOffset("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[1].GetTextureOffset("_MainTex").y);
+                    file.Write(m_innerColorPicker.CurrentColor.r);
+                    file.Write(m_innerColorPicker.CurrentColor.g);
+                    file.Write(m_innerColorPicker.CurrentColor.b);
+                    file.Write(m_innerColorPicker.CurrentColor.a);
                 }
                 break;
             default:
@@ -403,7 +469,19 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_1_TYPE.TILE:
                 {
-                    //TODO: Add in file writting when shader is written
+                    Texture2D tex2D = m_OutterPatternImage.sprite.texture;
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                    file.Write(m_trayMaterials.materials[0].GetTextureScale("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[0].GetTextureScale("_MainTex").y);
+                    file.Write(m_trayMaterials.materials[0].GetTextureOffset("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[0].GetTextureOffset("_MainTex").y);
+                    file.Write(m_outterColorPicker.CurrentColor.r);
+                    file.Write(m_outterColorPicker.CurrentColor.g);
+                    file.Write(m_outterColorPicker.CurrentColor.b);
+                    file.Write(m_outterColorPicker.CurrentColor.a);
                 }
                 break;
             default:
@@ -456,7 +534,19 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_0_TYPE.TILE:
                 {
-                    //TODO: Add in file writting when shader is written
+                    Texture2D tex2D = m_InnerPatternImage.sprite.texture;
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[1].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                    file.Write(m_trayMaterials.materials[1].GetTextureScale("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[1].GetTextureScale("_MainTex").y);
+                    file.Write(m_trayMaterials.materials[1].GetTextureOffset("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[1].GetTextureOffset("_MainTex").y);
+                    file.Write(m_innerColorPicker.CurrentColor.r);
+                    file.Write(m_innerColorPicker.CurrentColor.g);
+                    file.Write(m_innerColorPicker.CurrentColor.b);
+                    file.Write(m_innerColorPicker.CurrentColor.a);
                 }
                 break;
             default:
@@ -484,7 +574,19 @@ public class DiceTraySelector : MonoBehaviour
                 break;
             case MATERIAL_1_TYPE.TILE:
                 {
-                    //TODO: Add in file writting when shader is written
+                    Texture2D tex2D = m_OutterPatternImage.sprite.texture;
+                    file.Write(tex2D.EncodeToPNG().Length);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.width);
+                    file.Write(m_trayMaterials.materials[0].mainTexture.height);
+                    file.Write(tex2D.EncodeToPNG());
+                    file.Write(m_trayMaterials.materials[0].GetTextureScale("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[0].GetTextureScale("_MainTex").y);
+                    file.Write(m_trayMaterials.materials[0].GetTextureOffset("_MainTex").x);
+                    file.Write(m_trayMaterials.materials[0].GetTextureOffset("_MainTex").y);
+                    file.Write(m_outterColorPicker.CurrentColor.r);
+                    file.Write(m_outterColorPicker.CurrentColor.g);
+                    file.Write(m_outterColorPicker.CurrentColor.b);
+                    file.Write(m_outterColorPicker.CurrentColor.a);
                 }
                 break;
             default:
@@ -652,6 +754,7 @@ public class DiceTraySelector : MonoBehaviour
             m_InnerPatternImage.sprite = m_nullImage;
             m_trayMaterials.materials[1].color = m_innerColorPicker.CurrentColor;
             pattern0uploaded = false;
+            mat0type = MATERIAL_0_TYPE.COLOR;
 
         }
         else
@@ -659,7 +762,66 @@ public class DiceTraySelector : MonoBehaviour
             m_OutterPatternImage.sprite = m_nullImage;
             m_trayMaterials.materials[0].color = m_outterColorPicker.CurrentColor;
             pattern1uploaded = false;
+            mat1type = MATERIAL_1_TYPE.COLOR;
         }
+    }
+
+    public void RotatePattern(float _angle)
+    {
+        if (currentPattern == 0)
+        {
+            m_trayMaterials.materials[1].SetTexture("_MainTex", RotateTexture(m_InnerPatternImage.sprite.texture, _angle));
+        }
+        else
+        {
+            m_trayMaterials.materials[0].SetTexture("_MainTex", RotateTexture(m_OutterPatternImage.sprite.texture, _angle));
+        }
+    }
+    public void RotatePattern(string _angle)
+    {
+        float _rot_val;
+        if(float.TryParse(_angle, out _rot_val))
+        {
+            if(currentPattern == 0)
+            {
+                m_trayMaterials.materials[1].SetTexture("_MainTex", RotateTexture(m_InnerPatternImage.sprite.texture, _rot_val));
+            }
+            else
+            {
+                m_trayMaterials.materials[0].SetTexture("_MainTex", RotateTexture(m_OutterPatternImage.sprite.texture, _rot_val));
+            }
+        }
+    }
+
+    Texture2D RotateTexture(Texture2D _original, float _angle)
+    {
+        float sinAng = Mathf.Sin(Mathf.Deg2Rad*_angle);
+        float cosAng = Mathf.Cos(Mathf.Deg2Rad*_angle);
+
+        Texture2D newTex = new Texture2D(_original.width, _original.height);
+        Texture2D cpyTex = new Texture2D(_original.width, _original.height);
+        cpyTex.LoadImage(_original.EncodeToPNG());
+        for (int y = 0; y < cpyTex.height; y++)
+        {
+            for (int x = 0; x < cpyTex.width; x++)
+            {
+                if (cpyTex.GetPixel(x, y).a == 0.0f)
+                {
+                    cpyTex.SetPixel(x,y,((currentPattern==0)?m_innerColorBlock.color:m_outterColorBlock.color));
+                }
+            }
+        }
+        cpyTex.Apply();
+        for (int y = 0; y < newTex.height; y++)
+        {
+            for(int x = 0; x < newTex.width; x++)
+            {
+                newTex.SetPixel((int)((x-(newTex.width/2)) * cosAng - (y - (newTex.height / 2)) * sinAng + x), (int)((x - (newTex.width / 2)) * sinAng - (y - (newTex.height / 2)) * cosAng + y), cpyTex.GetPixel(x, y));
+            }
+        }
+        newTex.Apply();
+
+        return newTex;
     }
 }
 
