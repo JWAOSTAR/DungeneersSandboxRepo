@@ -127,6 +127,7 @@ public class Shop : MonoBehaviour
         currentItemIndex = _item;
         m_purchaseButton.productId = m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex*10].itemID;
         m_purchaseButton.enabled = true;
+        m_purchaseButton.onPurchaseComplete.AddListener(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].PurchaseComplete);
         collectionsMenu.SetActive(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].isCollection);
 
         switch ((ShopItem.ItemType)currentItemType)
