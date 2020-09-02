@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class DiceGalary : MonoBehaviour
 {
     [SerializeField]
-    RectTransform m_scrollContent;
+    RectTransform[] m_scrollContent;
     [SerializeField]
     DiceAxisMovement m_mover;
     [SerializeField]
@@ -26,6 +26,7 @@ public class DiceGalary : MonoBehaviour
     List<Dice.DiceSkin> skins = new List<Dice.DiceSkin>();
     string[] files;
     int currentIndex = 0;
+    int currentStartIndex = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,7 @@ public class DiceGalary : MonoBehaviour
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
         files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+        int filedLines = 0;
         for (int j = 0; j < files.Length; j++)
         {
             BinaryReader file = new BinaryReader(File.Open(files[j], FileMode.Open));
@@ -55,25 +57,32 @@ public class DiceGalary : MonoBehaviour
             }
             skins.Add(skinToAdd);
             file.Close();
-            if(j >= m_scrollContent.childCount)
+            //if(j >= m_scrollContent.childCount)
+            //{
+            //    Instantiate(m_scrollContent.GetChild(m_scrollContent.childCount - 1), m_scrollContent).gameObject.name = "Line " + j;
+            //    m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetChild(0).GetComponent<Text>().text = files[j].Split('/')[files[j].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
+            //    m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().position = new Vector3(m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.x, m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.y - ((m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y+10)*j), m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().position.z);
+            //    if (m_scrollContent.sizeDelta.y < ((m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y + 10) * (j + 1)))
+            //    {
+            //        m_scrollContent.sizeDelta = new Vector2(m_scrollContent.sizeDelta.x, m_scrollContent.sizeDelta.y + m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y + 10);
+            //        UpdateLineSpacing();
+            //    }
+            //}
+            //else
+            //{
+            //    m_scrollContent.GetChild(j).GetChild(0).GetComponent<Text>().text = files[j].Split('/')[files[j].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
+            //}
+            //int t = j;
+            //m_scrollContent.GetChild(j).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { SetSkin(t); });
+            if (filedLines < m_scrollContent.Length)
             {
-                Instantiate(m_scrollContent.GetChild(m_scrollContent.childCount - 1), m_scrollContent).gameObject.name = "Line " + j;
-                m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetChild(0).GetComponent<Text>().text = files[j].Split('/')[files[j].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
-                m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().position = new Vector3(m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.x, m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.y - ((m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y+10)*j), m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().position.z);
-                if (m_scrollContent.sizeDelta.y < ((m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y + 10) * (j + 1)))
-                {
-                    m_scrollContent.sizeDelta = new Vector2(m_scrollContent.sizeDelta.x, m_scrollContent.sizeDelta.y + m_scrollContent.GetChild(m_scrollContent.childCount - 1).GetComponent<RectTransform>().sizeDelta.y + 10);
-                    UpdateLineSpacing();
-                }
+                int t = j;
+                m_scrollContent[filedLines].GetChild(0).GetComponent<Text>().text = files[j].Split('/')[files[j].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
+                m_scrollContent[filedLines].GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { SetSkin(t); });
+                filedLines++;
             }
-            else
-            {
-                m_scrollContent.GetChild(j).GetChild(0).GetComponent<Text>().text = files[j].Split('/')[files[j].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
-            }
-            int t = j;
-            m_scrollContent.GetChild(j).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { SetSkin(t); });
         }
-        SetSkin(m_scrollContent.childCount - 1);
+        SetSkin(0);
     }
 
     // Update is called once per frame
@@ -91,11 +100,43 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
-    void UpdateLineSpacing()
+    public void NextModel()
     {
-        for(int i = 1; i < m_scrollContent.childCount + 1; i++)
+        currentStartIndex = (currentStartIndex+ m_scrollContent.Length < files.Length) ? currentStartIndex+ m_scrollContent.Length : 0;
+        for(int i = currentStartIndex; i < ((currentStartIndex + m_scrollContent.Length < files.Length)? currentStartIndex + m_scrollContent.Length : files.Length); i++)
         {
-            m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position = new Vector3(m_scrollContent.GetChild(0).GetComponent<RectTransform>().position.x, ((m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().sizeDelta.y + (m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().sizeDelta.y)) * i), m_scrollContent.GetChild(i - 1).GetComponent<RectTransform>().position.z);
+            int t = i;
+            m_scrollContent[i% m_scrollContent.Length].GetChild(0).GetComponent<Text>().text = files[i].Split('/')[files[i].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
+            m_scrollContent[i% m_scrollContent.Length].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
+            m_scrollContent[i% m_scrollContent.Length].GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { SetSkin(t); });
+        }
+        if (currentStartIndex + m_scrollContent.Length > files.Length)
+        {
+            for(int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
+            {
+                m_scrollContent[2-j].GetChild(0).GetComponent<Text>().text = "-";
+                m_scrollContent[2-j].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
+            }
+        }
+    }
+
+    public void PrevModel()
+    {
+        currentStartIndex = (currentStartIndex - m_scrollContent.Length >= 0) ? currentStartIndex - m_scrollContent.Length : files.Length -1;
+        for (int i = currentStartIndex; i < ((currentStartIndex + m_scrollContent.Length < files.Length) ? currentStartIndex + m_scrollContent.Length : files.Length); i++)
+        {
+            int t = i;
+            m_scrollContent[i % m_scrollContent.Length].GetChild(0).GetComponent<Text>().text = files[i].Split('/')[files[i].Split('/').Length - 1].Replace(".dsd", "").Replace("_", " ");
+            m_scrollContent[i % m_scrollContent.Length].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
+            m_scrollContent[i % m_scrollContent.Length].GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { SetSkin(t); });
+        }
+        if (currentStartIndex + m_scrollContent.Length > files.Length)
+        {
+            for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
+            {
+                m_scrollContent[2 - j].GetChild(0).GetComponent<Text>().text = "-";
+                m_scrollContent[2 - j].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
+            }
         }
     }
 
