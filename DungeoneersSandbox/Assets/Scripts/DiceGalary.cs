@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,8 @@ public class DiceGalary : MonoBehaviour
     Mesh[] m_diceModels;
     [SerializeField]
     Texture2D[] textures;
+    [SerializeField]
+    GameObject m_notificationPanel;
 
     List<Dice.DiceSkin> skins = new List<Dice.DiceSkin>();
     string[] files;
@@ -35,7 +38,11 @@ public class DiceGalary : MonoBehaviour
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
-        files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/"))
+        {
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
+        }
+        files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/")).ToArray();
         int filedLines = 0;
         for (int j = 0; j < files.Length; j++)
         {
@@ -82,7 +89,22 @@ public class DiceGalary : MonoBehaviour
                 filedLines++;
             }
         }
-        SetSkin(0);
+        if(filedLines < m_scrollContent.Length)
+        {
+            for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
+            {
+                m_scrollContent[2 - j].GetChild(0).GetComponent<Text>().text = "-";
+                m_scrollContent[2 - j].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
+            }
+        }
+        if (files.Length > 0)
+        {
+            SetSkin(0);
+        }
+        else
+        {
+            m_currentModel.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -213,41 +235,54 @@ public class DiceGalary : MonoBehaviour
 
     public void ExportSkin()
     {
+        if (!files[currentIndex].Contains("purchased")) {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-        saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents/";
-        saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
-        saveFileDialog1.FilterIndex = 0;
-        saveFileDialog1.RestoreDirectory = false;
-        saveFileDialog1.FileName = files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1];
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents/";
+            saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";
+            saveFileDialog1.FilterIndex = 0;
+            saveFileDialog1.RestoreDirectory = false;
+            saveFileDialog1.FileName = files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1];
 
-        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-        {
-            BinaryWriter file = new BinaryWriter(saveFileDialog1.OpenFile());
-            file.Write(skins[currentIndex].isTexture);
-            file.Write((int)skins[currentIndex].diceType);
-
-            if (!skins[currentIndex].isTexture)
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                file.Write(skins[currentIndex].numbers.r);
-                file.Write(skins[currentIndex].numbers.g);
-                file.Write(skins[currentIndex].numbers.b);
-                file.Write(skins[currentIndex].numbers.a);
+                BinaryWriter file = new BinaryWriter(saveFileDialog1.OpenFile());
+                file.Write(skins[currentIndex].isTexture);
+                file.Write((int)skins[currentIndex].diceType);
 
-                file.Write(skins[currentIndex].die.r);
-                file.Write(skins[currentIndex].die.g);
-                file.Write(skins[currentIndex].die.b);
-                file.Write(skins[currentIndex].die.a);
+                if (!skins[currentIndex].isTexture)
+                {
+                    file.Write(skins[currentIndex].numbers.r);
+                    file.Write(skins[currentIndex].numbers.g);
+                    file.Write(skins[currentIndex].numbers.b);
+                    file.Write(skins[currentIndex].numbers.a);
+
+                    file.Write(skins[currentIndex].die.r);
+                    file.Write(skins[currentIndex].die.g);
+                    file.Write(skins[currentIndex].die.b);
+                    file.Write(skins[currentIndex].die.a);
+                }
+                else
+                {
+                    file.Write(skins[currentIndex].texture.EncodeToPNG().Length);
+                    file.Write(skins[currentIndex].texture.width);
+                    file.Write(skins[currentIndex].texture.height);
+                    file.Write(skins[currentIndex].texture.EncodeToPNG());
+                }
+                file.Close();
             }
-            else
-            {
-                file.Write(skins[currentIndex].texture.EncodeToPNG().Length);
-                file.Write(skins[currentIndex].texture.width);
-                file.Write(skins[currentIndex].texture.height);
-                file.Write(skins[currentIndex].texture.EncodeToPNG());
-            }
-            file.Close();
-        }
 #endif
+        }
+        else
+        {
+            StartCoroutine(ToggleActivation(m_notificationPanel, 1.0f));
+        }
+    }
+
+    IEnumerator ToggleActivation(GameObject _gameObject, float _timeDelay)
+    {
+        _gameObject.SetActive(!_gameObject.activeSelf);
+        yield return new WaitForSeconds(_timeDelay);
+        _gameObject.SetActive(!_gameObject.activeSelf);
     }
 }

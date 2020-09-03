@@ -37,13 +37,13 @@ public class ShopItem : ScriptableObject
 
     public void PurchaseComplete(Product _product)
     {
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
         }
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/"))
+        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/");
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/");
         }
 
         switch (itemType)
@@ -52,7 +52,7 @@ public class ShopItem : ScriptableObject
                 {
                     for (int id = 0; id < files.Count; id++)
                     {
-                        File.Copy(files[id], ("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + files[id].Split('/')[files[id].Split('/').Length - 1]));
+                        File.Copy(files[id], ("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/" + files[id].Split('/')[files[id].Split('/').Length - 1]));
                     }
                 }
                 break;
@@ -60,7 +60,7 @@ public class ShopItem : ScriptableObject
                 {
                     for (int idt = 0; idt < files.Count; idt++)
                     {
-                        File.Copy(files[idt], ("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/" + files[idt].Split('/')[files[idt].Split('/').Length - 1]));
+                        File.Copy(files[idt], ("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/" + files[idt].Split('/')[files[idt].Split('/').Length - 1]));
                     }
                 }
                 break;
