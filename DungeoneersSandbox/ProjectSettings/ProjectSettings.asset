@@ -277,7 +277,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: b027ff9873941aa49968d2f47836b2d0, type: 3}
+      m_Icon: {fileID: 2800000, guid: 4e1bb079848a0ed4c9706f3bf094e6c7, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -801,27 +801,41 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Template_3D
   wsaImages:
-    65636: Assets/Images/Icon_0_Final(50x50).png
-    65661: Assets/Images/Icon_0_Final(63x63).png
-    65686: Assets/Images/Icon_0_Final(75x75).png
-    65736: Assets/Images/Icon_0_Final(100x100).png
-    65936: Assets/Images/Icon_0_Final(200x200).png
-    2031632: Assets/Images/Icon_0_Final(16x16).png
-    2031640: Assets/Images/Icon_0_Final(24x24).png
-    2031648: Assets/Images/Icon_0_Final(32x32).png
-    2031664: Assets/Images/Icon_0_Final(48x48).png
-    2031716: Assets/Images/Icon_0_Final(44x44).png
-    2031741: Assets/Images/Icon_0_Final(55x55).png
-    2031766: Assets/Images/Icon_0_Final(66x66).png
-    2031816: Assets/Images/Icon_0_Final(88x88).png
-    2031872: Assets/Images/Icon_0_Final(256x256).png
-    2032016: Assets/Images/Icon_0_Final(176x176).png
-    2097252: Assets/Images/Icon_0_Final(71x71).png
-    2097277: Assets/Images/Icon_0_Final(89x89).png
-    2097302: Assets/Images/Icon_0_Final(107x107).png
-    2097352: Assets/Images/Icon_0_Final(142x142).png
-    2097552: Assets/Images/Icon_0_Final(284x284).png
-    2294160: Assets/Images/Icon_0_Final(1240x600).png
+    65636: Assets/Images/DS_Logo(50x50).png
+    65661: Assets/Images/DS_Logo(63x63).png
+    65686: Assets/Images/DS_Logo(75x75).png
+    65736: Assets/Images/DS_Logo(100x100).png
+    65936: Assets/Images/DS_Logo(200x200).png
+    2031632: Assets/Images/DS_Logo(16x16).png
+    2031640: Assets/Images/DS_Logo(24x24).png
+    2031648: Assets/Images/DS_Logo(32x32).png
+    2031664: Assets/Images/DS_Logo(48x48).png
+    2031716: Assets/Images/DS_Logo(44x44).png
+    2031741: Assets/Images/DS_Logo(55x55).png
+    2031766: Assets/Images/DS_Logo(66x66).png
+    2031816: Assets/Images/DS_Logo(88x88).png
+    2031872: Assets/Images/DS_Logo(256x256).png
+    2032016: Assets/Images/DS_Logo(176x176).png
+    2097252: Assets/Images/DS_Logo(71x71).png
+    2097277: Assets/Images/DS_Logo(89x89).png
+    2097302: Assets/Images/DS_Logo(107x107).png
+    2097352: Assets/Images/DS_Logo(142x142).png
+    2097552: Assets/Images/DS_Logo(284x284).png
+    2162788: Assets/Images/DS_Logo(150x150).png
+    2162813: Assets/Images/DS_Logo(188x188).png
+    2162838: Assets/Images/DS_Logo(225x225).png
+    2162888: Assets/Images/DS_Logo(300x300).png
+    2163088: Assets/Images/DS_Logo(600x600).png
+    2228324: Assets/Images/DS_Logo(310x310).png
+    2228349: Assets/Images/DS_Logo(388x388).png
+    2228374: Assets/Images/DS_Logo(465x465).png
+    2228424: Assets/Images/DS_Logo(620x620).png
+    2228624: 
+    2293860: Assets/Images/DS_Logo(310x150).png
+    2293885: Assets/Images/DS_Logo(388x188).png
+    2293910: Assets/Images/DS_Logo(465x225).png
+    2293960: Assets/Images/DS_Logo(620x300).png
+    2294160: Assets/Images/DS_Logo(1240x600).png
   metroTileShortName: Dungeoneers Sandbox
   metroTileShowName: 0
   metroMediumTileShowName: 0

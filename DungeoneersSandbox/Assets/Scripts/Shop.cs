@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.UI;
@@ -41,6 +42,8 @@ public class Shop : MonoBehaviour
     Mesh[] m_diceMesh;
     [SerializeField]
     Mesh[] m_trayMesh;
+    [SerializeField]
+    GameObject m_collectionNotification;
 
 
 
@@ -125,15 +128,54 @@ public class Shop : MonoBehaviour
     public void SetPurchaseButton(int _item)
     {
         currentItemIndex = _item;
+        collectionsMenu.SetActive(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].isCollection);
         m_purchaseButton.productId = m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex*10].itemID;
         m_purchaseButton.enabled = true;
         m_purchaseButton.onPurchaseComplete.AddListener(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].PurchaseComplete);
-        collectionsMenu.SetActive(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].isCollection);
 
         switch ((ShopItem.ItemType)currentItemType)
         {
             case ShopItem.ItemType.Dice:
                 {
+                    string[] purchasedFiles = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
+                    for(int i =0; i < purchasedFiles.Length; i++)
+                    {
+                        if (!collectionsMenu.activeSelf) {
+                            if (BinaryFilesEqual(purchasedFiles[i], m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0]))
+                            {
+                                m_purchaseButton.enabled = false;
+                                m_purchaseButton.transform.GetChild(1).gameObject.SetActive(true);
+                                break;
+                            }
+                            else if (i == (purchasedFiles.Length - 1))
+                            {
+                                m_purchaseButton.enabled = true;
+                                m_purchaseButton.transform.GetChild(1).gameObject.SetActive(false);
+                            }
+                        }
+                        else
+                        {
+                            for(int j = 0; j < m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files.Count; j++)
+                            {
+                                if (BinaryFilesEqual(purchasedFiles[i], m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[j]))
+                                {
+                                    m_purchaseButton.enabled = false;
+                                    m_purchaseButton.transform.GetChild(1).gameObject.SetActive(true);
+                                    m_collectionNotification.SetActive(true);
+                                    break;
+                                }
+                                else if (i == (purchasedFiles.Length - 1))
+                                {
+                                    m_purchaseButton.enabled = true;
+                                    m_purchaseButton.transform.GetChild(1).gameObject.SetActive(false);
+                                }
+                            }
+                            if(m_collectionNotification.activeSelf)
+                            {
+                                break;
+                            }
+                        }
+                    }
                     BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
 
                     bool isTexture = file.ReadBoolean();
@@ -150,10 +192,11 @@ public class Shop : MonoBehaviour
                         newTex.LoadImage(file.ReadBytes(array_size));
                         m_renderer.materials[0].mainTexture = newTex;
                     }
-                    
+
                     file.Close();
 
                     m_mesh.mesh = m_diceMesh[diceType];
+                    
                 }
                 break;
             case ShopItem.ItemType.DiceTray:
@@ -382,5 +425,27 @@ public class Shop : MonoBehaviour
     bool FindAllItemType(ShopItem _item, ShopItem.ItemType _itemType)
     {
         return (_item.itemType == _itemType);
+    }
+
+    bool BinaryFilesEqual(string _file_0, string _file_1)
+    {
+        byte[] _bytes_0 = File.ReadAllBytes(_file_0);
+        byte[] _bytes_1 = File.ReadAllBytes(_file_1);
+
+        if(_bytes_0.Length == _bytes_1.Length)
+        {
+            if(_bytes_0.Take(_bytes_0.Length).SequenceEqual(_bytes_1.Take(_bytes_1.Length)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 }
