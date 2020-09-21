@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.UI;
+using UnityEngine.Android;
 
 public class Shop : MonoBehaviour
 {
@@ -57,6 +58,7 @@ public class Shop : MonoBehaviour
         m_mover.SetMobility(m_modelMobile);
         m_rotator.SetMobility(!m_modelMobile);
         m_colider.sharedMesh = m_mesh.mesh;
+        
     }
 
     // Update is called once per frame
@@ -137,6 +139,7 @@ public class Shop : MonoBehaviour
         {
             case ShopItem.ItemType.Dice:
                 {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
                     string[] purchasedFiles = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
                     for(int i =0; i < purchasedFiles.Length; i++)
                     {
@@ -176,6 +179,7 @@ public class Shop : MonoBehaviour
                             }
                         }
                     }
+#endif
                     BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
 
                     bool isTexture = file.ReadBoolean();

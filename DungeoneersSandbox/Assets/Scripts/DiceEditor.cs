@@ -82,6 +82,7 @@ public class DiceEditor : MonoBehaviour
         step_back_stack.Capacity = 5;
         step_forward_stack.Capacity = 5;
         m_strokes_to_process.Enqueue(new Stroke());
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
@@ -99,6 +100,7 @@ public class DiceEditor : MonoBehaviour
                material.materials[i].SetTexture("_MainTex", newTex);
             }
         }
+#endif
         Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
         _newText.LoadImage(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
         step_back_stack.Insert(0, _newText);
@@ -207,6 +209,7 @@ public class DiceEditor : MonoBehaviour
             StepForwards();
         }
 
+        //TODO: Remove this if as it was used for debug
         if (Input.GetKeyUp(KeyCode.P))
         {
             for(int i = 0; i < step_back_stack.Count; i++)
@@ -444,7 +447,8 @@ public class DiceEditor : MonoBehaviour
 
     public void SaveFile()
     {
-        if(currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        if (currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
         {
             if (m_saveDialog.text == "untitled") {
                 m_saveDialog.transform.parent.gameObject.SetActive(true);
@@ -469,6 +473,7 @@ public class DiceEditor : MonoBehaviour
         file.Write(((Texture2D)(material.materials[0].mainTexture)).EncodeToPNG());
 
         file.Close();
+#endif
         //Cursor.SetCursor(null, new Vector2(0.0f, 0.0f), CursorMode.Auto);
         m_manager.ChangeScene("Main");
     }

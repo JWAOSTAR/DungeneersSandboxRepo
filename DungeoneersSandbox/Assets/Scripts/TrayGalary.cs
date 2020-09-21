@@ -33,6 +33,7 @@ public class TrayGalary : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 		if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/"))
 		{
 			Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/");
@@ -141,6 +142,7 @@ public class TrayGalary : MonoBehaviour
 				filedLines++;
 			}
 		}
+#endif
 		if (filedLines < m_scrollContent.Length)
 		{
 			for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)

@@ -76,6 +76,7 @@ public class DiceEditorV2 : MonoBehaviour
         m_brushSoftnessSlider.SetValueWithoutNotify(brush.Hardness);
         m_circleToggle.SetIsOnWithoutNotify(!brush.Square);
         m_squareToggle.SetIsOnWithoutNotify(brush.Square);
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
@@ -114,6 +115,7 @@ public class DiceEditorV2 : MonoBehaviour
 
             albedo.SetActiveTexture(cam);
         }
+#endif
     }
 
     // Update is called once per frame
@@ -211,6 +213,7 @@ public class DiceEditorV2 : MonoBehaviour
 
     public void SaveFile()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1].Contains("untitled"))
         {
             if (m_saveDialog.text == "untitled")
@@ -244,7 +247,7 @@ public class DiceEditorV2 : MonoBehaviour
         file.Write(_newText.EncodeToPNG());
 
         file.Close();
-
+#endif
         //SaveFileDialog saveFileDialog1 = new SaveFileDialog();
         //saveFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/Documents/";
         //saveFileDialog1.Filter = "DS Dice files (*.dsd)|*.dsd";

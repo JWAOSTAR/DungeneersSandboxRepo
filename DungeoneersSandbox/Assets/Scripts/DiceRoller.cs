@@ -102,6 +102,7 @@ public class DiceRoller : MonoBehaviour
         gameCamera.position = cameraPositions[currentCamPos].position;
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
         //RollDice((int)DiceType.D20);
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.Open));
@@ -194,6 +195,7 @@ public class DiceRoller : MonoBehaviour
             }
             file.Close();
         }
+#endif
     }
 
     // Update is called once per frame

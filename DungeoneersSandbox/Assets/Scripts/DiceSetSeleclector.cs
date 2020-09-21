@@ -42,7 +42,7 @@ public class DiceSetSeleclector : MonoBehaviour
         m_lastGlobalColor[1] = m_dieBlockColor.color = m_dieColor.CurrentColor;
         m_numberColor.gameObject.SetActive(false);
         m_dieColor.gameObject.SetActive(false);
-
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
@@ -79,7 +79,8 @@ public class DiceSetSeleclector : MonoBehaviour
             skins.Add(skinToAdd);
             file.Close();
         }
-        
+#endif
+
         for (int i = 0; i < dice.Length; i++)
         {
             if (skins.FindAll(searchFuncs[i]).Count > 0)
@@ -160,6 +161,7 @@ public class DiceSetSeleclector : MonoBehaviour
 
     public void SaveActiveDice()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.OpenOrCreate));
         for(int i = 0; i < dice.Length; i++)
         {
@@ -187,6 +189,7 @@ public class DiceSetSeleclector : MonoBehaviour
             }
         }
         file.Close();
+#endif
     }
 
     public void SetNumColor(Color _color)

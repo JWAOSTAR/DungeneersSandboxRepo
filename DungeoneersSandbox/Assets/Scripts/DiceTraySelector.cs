@@ -495,6 +495,7 @@ public class DiceTraySelector : MonoBehaviour
 
     public void SaveDiceTray()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
 
         //file.Write(currentModel);
@@ -594,7 +595,7 @@ public class DiceTraySelector : MonoBehaviour
         }
 
         file.Close();
-
+#endif
         //m_manager.ChangeScene("DiceSetSelector");
     }
 

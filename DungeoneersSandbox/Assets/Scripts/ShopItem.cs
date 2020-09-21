@@ -37,6 +37,7 @@ public class ShopItem : ScriptableObject
 
     public void PurchaseComplete(Product _product)
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
@@ -77,6 +78,7 @@ public class ShopItem : ScriptableObject
             default:
                 break;
         }
+#endif
 
     }
 

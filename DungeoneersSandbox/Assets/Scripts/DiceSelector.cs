@@ -176,6 +176,7 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveData()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
@@ -193,6 +194,7 @@ public class DiceSelector : MonoBehaviour
         {
             SaveData("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
+#endif
     }
 
     void SaveData(String path)
@@ -253,6 +255,7 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveDialogConfirmed()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
@@ -271,6 +274,7 @@ public class DiceSelector : MonoBehaviour
         isSavedFile = true;
         
         SaveData("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+#endif
     }
 
     public void SaveDialogCanceled()
@@ -283,6 +287,7 @@ public class DiceSelector : MonoBehaviour
 
     public void GenerateTextureFromMaterial()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
@@ -328,7 +333,7 @@ public class DiceSelector : MonoBehaviour
         }
 
         file.Close();
-
+#endif
     }
 
     public void LoadFile()

@@ -34,6 +34,7 @@ public class DiceGalary : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
@@ -43,6 +44,7 @@ public class DiceGalary : MonoBehaviour
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
         }
         files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/")).ToArray();
+#endif
         int filedLines = 0;
         for (int j = 0; j < files.Length; j++)
         {
@@ -206,6 +208,7 @@ public class DiceGalary : MonoBehaviour
 
     public void EditSkin()
     {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!skins[currentIndex].isTexture)
         {
             Texture2D _diceTex = MaterialToTexture2D();
@@ -230,6 +233,7 @@ public class DiceGalary : MonoBehaviour
         BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.OpenOrCreate));
         file.Write(files[currentIndex]);
         file.Close();
+#endif
         m_manager.ChangeScene("DiceEditor");
     }
 
