@@ -47,8 +47,14 @@ public class DiceSetSeleclector : MonoBehaviour
         {
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
-
-        for(int k = 0; k < dice.Length; k++)
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+        AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
+        if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/dice/skins/"))
+        {
+            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+        }
+#endif
+        for (int k = 0; k < dice.Length; k++)
         {
             Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
             skinToAdd.isTexture = false;
@@ -79,7 +85,6 @@ public class DiceSetSeleclector : MonoBehaviour
             skins.Add(skinToAdd);
             file.Close();
         }
-#endif
 
         for (int i = 0; i < dice.Length; i++)
         {

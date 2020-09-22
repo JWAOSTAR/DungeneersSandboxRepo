@@ -252,7 +252,7 @@ public static class OBJImporter
                     }
                     else if(line.StartsWith("Ka"))
                     {
-                        Color col = new Color();
+                        UnityEngine.Color col = new UnityEngine.Color();
                         if(!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null;  return false; }
                         if(!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null;  return false; }
                         if(!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null;  return false; }
@@ -262,7 +262,7 @@ public static class OBJImporter
                     }
                     else if (line.StartsWith("Kd"))
                     {
-                        Color col = new Color();
+                        UnityEngine.Color col = new UnityEngine.Color();
                         if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null; return false; }
@@ -272,7 +272,7 @@ public static class OBJImporter
                     }
                     else if (line.StartsWith("Ks"))
                     {
-                        Color col = new Color();
+                        UnityEngine.Color col = new UnityEngine.Color();
                         if (!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[2], out col.g)) { _materials = null; return false; }
                         if (!float.TryParse(line.Split(' ')[3], out col.b)) { _materials = null; return false; }
@@ -289,14 +289,14 @@ public static class OBJImporter
                     }
                     else if (line.StartsWith("d"))
                     {
-                        Color col = materials[materials.Count - 1].GetColor("_Color");
+                        UnityEngine.Color col = materials[materials.Count - 1].GetColor("_Color");
                         if (!float.TryParse(line.Split(' ')[1], out col.a)) { _materials = null; return false; }
 
                         materials[materials.Count - 1].SetColor("_Color", col);
                     }
                     else if (line.StartsWith("Tr"))
                     {
-                        Color col = materials[materials.Count - 1].GetColor("_Color");
+                        UnityEngine.Color col = materials[materials.Count - 1].GetColor("_Color");
                         if (!float.TryParse(line.Split(' ')[1], out col.a)) { _materials = null; return false; }
                         col.a = 1.0f - col.a;
 

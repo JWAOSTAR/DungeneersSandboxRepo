@@ -43,7 +43,18 @@ public class TrayGalary : MonoBehaviour
 			Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/");
 		}
 		files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
-
+#elif (UNITY_ANDROID)
+		AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
+		if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/"))
+		{
+			Directory.CreateDirectory(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/");
+		}
+		if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/purchased/"))
+		{
+			Directory.CreateDirectory(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/purchased/");
+		}
+		files = Directory.GetFiles(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
+#endif
 		int filedLines = 0;
 		for (int j = 0; j < files.Length; j++)
 		{
@@ -142,7 +153,6 @@ public class TrayGalary : MonoBehaviour
 				filedLines++;
 			}
 		}
-#endif
 		if (filedLines < m_scrollContent.Length)
 		{
 			for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
