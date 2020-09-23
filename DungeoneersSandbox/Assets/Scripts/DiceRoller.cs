@@ -102,10 +102,15 @@ public class DiceRoller : MonoBehaviour
         gameCamera.position = cameraPositions[currentCamPos].position;
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
         //RollDice((int)DiceType.D20);
+        string filePath;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss"))
+        filePath = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/";
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+        filePath = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/";
+#endif
+        if (File.Exists(filePath+"active_dice_set.dss"))
         {
-            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open(filePath + "active_dice_set.dss", FileMode.Open));
             for (int i = 0; i < dice.Length; i++)
             {
                 if (!file.ReadBoolean())
@@ -150,9 +155,9 @@ public class DiceRoller : MonoBehaviour
                 dice[i].GetChild(1).GetComponent<MeshRenderer>().materials[1].color = Color.black;
             }
         }
-        if(File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst"))
+        if(File.Exists(filePath + "active_dice_tray.dst"))
         {
-            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open(filePath + "active_dice_tray.dst", FileMode.Open));
             int trayType = file.ReadInt32();
             int matType = file.ReadInt32();
             m_trayMesh.mesh = m_trayMeshes[trayType];
@@ -195,7 +200,6 @@ public class DiceRoller : MonoBehaviour
             }
             file.Close();
         }
-#endif
     }
 
     // Update is called once per frame

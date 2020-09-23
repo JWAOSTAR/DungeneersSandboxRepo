@@ -496,11 +496,17 @@ public class DiceTraySelector : MonoBehaviour
     public void SaveDiceTray()
     {
         BinaryWriter file;
+        string rootPath = UnityEngine.Application.persistentDataPath;
+        
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
 #elif(UNITY_ANDROID && !UNITY_EDITOR)
-        AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
-        file = new BinaryWriter(File.Open(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath") + "/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
+        AndroidJavaClass jc = new AndroidJavaClass("java.io.File");
+        if (!Directory.Exists(rootPath + "/DungeoneersSamdbox/dice/"))
+        {
+            Directory.CreateDirectory(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/");
+        }
+        file = new BinaryWriter(File.Open(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
 #endif
 
         //file.Write(currentModel);

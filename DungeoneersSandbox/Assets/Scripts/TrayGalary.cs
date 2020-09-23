@@ -43,17 +43,16 @@ public class TrayGalary : MonoBehaviour
 			Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/");
 		}
 		files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
-#elif (UNITY_ANDROID)
-		AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
-		if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/"))
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+		if (!Directory.Exists(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/"))
 		{
-			Directory.CreateDirectory(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/");
+			Directory.CreateDirectory(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/");
 		}
-		if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/purchased/"))
+		if (!Directory.Exists(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/purchased/"))
 		{
-			Directory.CreateDirectory(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/purchased/");
+			Directory.CreateDirectory(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/purchased/");
 		}
-		files = Directory.GetFiles(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
+		files = Directory.GetFiles(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
 #endif
 		int filedLines = 0;
 		for (int j = 0; j < files.Length; j++)

@@ -48,10 +48,9 @@ public class DiceSetSeleclector : MonoBehaviour
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
         }
 #elif(UNITY_ANDROID && !UNITY_EDITOR)
-        AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
-        if (!Directory.Exists(jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<string>("getAbsolutePath")+"/DungeoneersSamdbox/dice/skins/"))
+        if (!Directory.Exists(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/dice/skins/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+            Directory.CreateDirectory(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/dice/skins/");
         }
 #endif
         for (int k = 0; k < dice.Length; k++)
@@ -64,7 +63,12 @@ public class DiceSetSeleclector : MonoBehaviour
             skins.Add(skinToAdd);
         }
 
-        string[] files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+        string[] files;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        files = Directory.GetFiles(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/dice/skins/");
+#endif
         for (int j = 0; j < files.Length; j++) { 
             BinaryReader file = new BinaryReader(File.Open(files[j], FileMode.Open));
             Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
@@ -166,9 +170,13 @@ public class DiceSetSeleclector : MonoBehaviour
 
     public void SaveActiveDice()
     {
+        BinaryWriter file;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.OpenOrCreate));
-        for(int i = 0; i < dice.Length; i++)
+        file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.OpenOrCreate));
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        file = new BinaryWriter(File.Open(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/dice/active_dice_set.dss", FileMode.OpenOrCreate));
+#endif
+        for (int i = 0; i < dice.Length; i++)
         {
             bool isTexture = (skins.FindAll(searchFuncs[i]).Count > 0) ? skins.FindAll(searchFuncs[i])[currentSkins[i]].isTexture : false;
             file.Write(isTexture);
@@ -194,7 +202,6 @@ public class DiceSetSeleclector : MonoBehaviour
             }
         }
         file.Close();
-#endif
     }
 
     public void SetNumColor(Color _color)

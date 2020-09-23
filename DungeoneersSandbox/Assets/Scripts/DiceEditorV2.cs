@@ -77,6 +77,8 @@ public class DiceEditorV2 : MonoBehaviour
         m_circleToggle.SetIsOnWithoutNotify(!brush.Square);
         m_squareToggle.SetIsOnWithoutNotify(brush.Square);
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+#endif
         if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
@@ -115,7 +117,6 @@ public class DiceEditorV2 : MonoBehaviour
 
             albedo.SetActiveTexture(cam);
         }
-#endif
     }
 
     // Update is called once per frame
