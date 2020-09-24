@@ -501,7 +501,7 @@ public class DiceTraySelector : MonoBehaviour
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/active_dice_tray.dst", FileMode.OpenOrCreate));
 #elif(UNITY_ANDROID && !UNITY_EDITOR)
-        AndroidJavaClass jc = new AndroidJavaClass("java.io.File");
+        //AndroidJavaClass jc = new AndroidJavaClass("java.io.File");
         if (!Directory.Exists(rootPath + "/DungeoneersSamdbox/dice/"))
         {
             Directory.CreateDirectory(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/");

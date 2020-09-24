@@ -176,25 +176,29 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveData()
     {
+        string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/";
+#endif
+        if (!Directory.Exists(path + "dice/skins/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+            Directory.CreateDirectory(path + "dice/skins/");
         }
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/"))
+        if (!Directory.Exists(path + "temp/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/");
+            Directory.CreateDirectory(path + "temp/");
         }
 
         if (isSavedFile)
         {
-            SaveData("C:/Users/"+Environment.UserName+ "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            SaveData(path + "dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
         else
         {
-            SaveData("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            SaveData(path + "temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
-#endif
     }
 
     void SaveData(String path)
@@ -255,26 +259,30 @@ public class DiceSelector : MonoBehaviour
 
     public void SaveDialogConfirmed()
     {
+        string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        if (!Directory.Exists("C:/Users/"+Environment.UserName+"/AppData/Local/DungeoneersSamdbox/"))
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/";
+#endif
+        if (!Directory.Exists(path))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
+            Directory.CreateDirectory(path);
         }
 
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/"))
+        if (!Directory.Exists(path + "dice/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/");
+            Directory.CreateDirectory(path + "dice/");
         }
 
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
+        if (!Directory.Exists(path + "dice/skins/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
+            Directory.CreateDirectory(path + "dice/skins/");
         }
 
         isSavedFile = true;
         
-        SaveData("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
-#endif
+        SaveData(path + "dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
     }
 
     public void SaveDialogCanceled()
@@ -287,15 +295,20 @@ public class DiceSelector : MonoBehaviour
 
     public void GenerateTextureFromMaterial()
     {
+        string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/"))
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/";
+#endif
+        if (!Directory.Exists(path))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/");
+            Directory.CreateDirectory(path);
         }
 
-        if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/"))
+        if (!Directory.Exists(path+"temp/"))
         {
-            Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/");
+            Directory.CreateDirectory(path + "temp/");
         }
 
 
@@ -316,24 +329,23 @@ public class DiceSelector : MonoBehaviour
             }
         }
 
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".png", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open(path + "temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".png", FileMode.OpenOrCreate));
 
         file.Write(newTexture.EncodeToPNG());
 
         file.Close();
 
-        file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.OpenOrCreate));
+        file = new BinaryWriter(File.Open(path + "temp/die_to_paint.dstd", FileMode.OpenOrCreate));
         if (isSavedFile)
         {
-            file.Write("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            file.Write(path+"dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
         else
         {
-            file.Write("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
+            file.Write(path + "temp/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
         }
 
         file.Close();
-#endif
     }
 
     public void LoadFile()

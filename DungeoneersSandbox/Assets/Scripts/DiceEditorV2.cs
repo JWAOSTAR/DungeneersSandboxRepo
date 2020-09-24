@@ -76,12 +76,15 @@ public class DiceEditorV2 : MonoBehaviour
         m_brushSoftnessSlider.SetValueWithoutNotify(brush.Hardness);
         m_circleToggle.SetIsOnWithoutNotify(!brush.Square);
         m_squareToggle.SetIsOnWithoutNotify(brush.Square);
+        string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/";
 #elif (UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/temp/";
 #endif
-        if (File.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd"))
+        if (File.Exists(path + "die_to_paint.dstd"))
         {
-            BinaryReader file = new BinaryReader(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.Open));
+            BinaryReader file = new BinaryReader(File.Open(path +"die_to_paint.dstd", FileMode.Open));
             currentFilePath = file.ReadString();
             file = new BinaryReader(File.Open(currentFilePath, FileMode.Open));
             file.ReadBoolean();
@@ -90,7 +93,7 @@ public class DiceEditorV2 : MonoBehaviour
             String imageName = currentFilePath.Split('/')[currentFilePath.Split('/').Length - 1];
             imageName = imageName.Replace(".dsd", ".png");
             Texture2D newTex = new Texture2D(512, 512);
-            newTex.LoadImage(File.ReadAllBytes("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + imageName));
+            newTex.LoadImage(File.ReadAllBytes(path + imageName));
 
             originalTexture = newTex;
 
