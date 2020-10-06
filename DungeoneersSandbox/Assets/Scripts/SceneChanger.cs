@@ -16,4 +16,11 @@ public class SceneChanger : MonoBehaviour
     {
         Application.Quit();
     }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void RequestPermisions()
+    {
+        Permission.RequestUserPermission(Permission.ExternalStorageRead);
+        Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+    }
 }

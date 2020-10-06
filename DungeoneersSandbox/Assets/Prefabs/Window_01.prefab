@@ -128,7 +128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 970389071044891162}
   m_Layer: 5
-  m_Name: Side Area
+  m_Name: Nav Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1117,13 +1117,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 970389072363200364}
+  - component: {fileID: 970389072542327020}
   m_Layer: 5
   m_Name: Window_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &970389072363200364
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1156,6 +1157,30 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &970389072542327020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970389072363200365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b38a092525f3f845b6218529070cdfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_generalFile: {fileID: 21300000, guid: 381e113e752b55c4ca2a1e5a8b49b85a, type: 3}
+  m_documentFile: {fileID: 21300000, guid: 3b1d5e06f9be0834e838c9d4a15310f8, type: 3}
+  m_videoFile: {fileID: 21300000, guid: 950f75764ef04c849b2dc43f8bb8958a, type: 3}
+  m_modelFile: {fileID: 21300000, guid: d27a817bbd9dfb947843dd070610ef36, type: 3}
+  m_imageFile: {fileID: 21300000, guid: 07840dc7de7d5f049b5d1a8ba17e12b8, type: 3}
+  m_folder: {fileID: 21300000, guid: ad6ab316b7ca20b4fbde1c7ed725cbec, type: 3}
+  m_mainFileArea: {fileID: 970389072986533529}
+  m_navFileArea: {fileID: 970389071044891162}
+  m_filePathAdressbar: {fileID: 970389071143814723}
+  m_searchBar: {fileID: 970389073076287504}
+  m_iconFileFormat: {fileID: 0}
+  m_listFileFormat: {fileID: 0}
 --- !u!1 &970389072717093537
 GameObject:
   m_ObjectHideFlags: 0
