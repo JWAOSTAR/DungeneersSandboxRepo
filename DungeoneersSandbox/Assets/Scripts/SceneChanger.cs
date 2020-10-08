@@ -20,7 +20,9 @@ public class SceneChanger : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void RequestPermisions()
     {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         Permission.RequestUserPermission(Permission.ExternalStorageRead);
         Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+#endif
     }
 }
