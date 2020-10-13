@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 using System.Windows.Forms;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 

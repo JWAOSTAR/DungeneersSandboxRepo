@@ -6,7 +6,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.UI;
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 using UnityEngine.Android;
+#endif
 
 public class Shop : MonoBehaviour
 {

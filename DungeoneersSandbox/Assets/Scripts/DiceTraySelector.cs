@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 using System.Windows.Forms;
+#endif
 
 public class DiceTraySelector : MonoBehaviour
 {

@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 using System.Windows.Forms;
+#endif
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
