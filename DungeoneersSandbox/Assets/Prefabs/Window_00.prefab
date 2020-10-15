@@ -435,6 +435,8 @@ MonoBehaviour:
   m_videoFile: {fileID: 21300000, guid: 950f75764ef04c849b2dc43f8bb8958a, type: 3}
   m_modelFile: {fileID: 21300000, guid: d27a817bbd9dfb947843dd070610ef36, type: 3}
   m_imageFile: {fileID: 21300000, guid: 07840dc7de7d5f049b5d1a8ba17e12b8, type: 3}
+  m_audioFile: {fileID: 21300000, guid: 42d4d6ef749db7e49b7e9c0410ea9dc0, type: 3}
+  m_DSFile: {fileID: 21300000, guid: 4814db77fafffc6439d1598e168027da, type: 3}
   m_folder: {fileID: 21300000, guid: ad6ab316b7ca20b4fbde1c7ed725cbec, type: 3}
   m_mainFileArea: {fileID: 5077517300221156612}
   m_navFileArea: {fileID: 5077517300735271941}
