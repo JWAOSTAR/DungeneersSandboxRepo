@@ -610,12 +610,134 @@ public class DiceTraySelector : MonoBehaviour
         file.Close();
         //m_manager.ChangeScene("DiceSetSelector");
     }
-
-    public void LoadDiceTray()
+//#if (UNITY_ANDROID && !UNITY_EDITOR)
+    public void LoadDiceTray(string _path)
     {
+        BinaryReader file = new BinaryReader(File.Open(_path, FileMode.Open));
+        if (_path.EndsWith(".dst"))
+        {
+            currentModel = file.ReadInt32();
+            int matType = file.ReadInt32();
+            m_currentMesh.mesh = m_meshOptions[currentModel];
+            m_modelName.text = "Model " + currentModel;
 
+            if ((matType != 3) && (matType != 7) && (matType < 11) && (matType >= 0))
+            {
+                if ((matType & 4) == 4)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[1].color = Color.white;
+                    m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+
+                    mat0type = MATERIAL_0_TYPE.TEXTURE;
+                }
+                else if ((matType & 8) == 8)
+                {
+                    //TODO: Add in file reading when shader is written
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    pattern0.Tiling = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    pattern0.Offset = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    m_innerColorPicker.SetCurrentColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                    m_innerColorBlock.color = m_innerColorPicker.CurrentColor;
+                    m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+                    Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                    tempTex.LoadImage(newTex.EncodeToPNG());
+                    for (int y = 0; y < tempTex.height; y++)
+                    {
+                        for (int x = 0; x < tempTex.width; x++)
+                        {
+                            if (tempTex.GetPixel(x, y).a == 0.0f)
+                            {
+                                tempTex.SetPixel(x, y, m_innerColorPicker.CurrentColor);
+                            }
+                        }
+                    }
+                    tempTex.Apply();
+                    m_trayMaterials.materials[1].color = Color.white;
+                    m_trayMaterials.materials[1].SetTexture("_MainTex", tempTex);
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", pattern0.Tiling);
+                    m_trayMaterials.materials[1].SetTextureOffset("_MainTex", pattern0.Offset);
+
+                    mat0type = MATERIAL_0_TYPE.TILE;
+                    pattern0uploaded = true;
+                }
+                else
+                {
+                    m_trayMaterials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+
+                    mat0type = MATERIAL_0_TYPE.COLOR;
+                }
+
+                if ((matType & 1) == 1)
+                {
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    m_trayMaterials.materials[0].color = Color.white;
+                    m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+
+                    mat1type = MATERIAL_1_TYPE.TEXTURE;
+                }
+                else if ((matType & 2) == 2)
+                {
+                    //TODO: Add in file reading when shader is written
+
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    pattern1.Tiling = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    pattern1.Offset = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    m_outterColorPicker.SetCurrentColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                    m_outterColorBlock.color = m_outterColorPicker.CurrentColor;
+                    m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
+                    Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                    tempTex.LoadImage(newTex.EncodeToPNG());
+                    for (int y = 0; y < tempTex.height; y++)
+                    {
+                        for (int x = 0; x < tempTex.width; x++)
+                        {
+                            if (tempTex.GetPixel(x, y).a == 0.0f)
+                            {
+                                tempTex.SetPixel(x, y, m_outterColorPicker.CurrentColor);
+                            }
+                        }
+                    }
+                    tempTex.Apply();
+                    m_trayMaterials.materials[0].color = Color.white;
+                    m_trayMaterials.materials[0].SetTexture("_MainTex", tempTex);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", pattern1.Tiling);
+                    m_trayMaterials.materials[0].SetTextureOffset("_MainTex", pattern1.Offset);
+                    mat1type = MATERIAL_1_TYPE.TILE;
+                    pattern1uploaded = true;
+                }
+                else
+                {
+                    m_trayMaterials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+
+                    mat1type = MATERIAL_1_TYPE.COLOR;
+                }
+            }
+            file.Close();
+        }
+        else if (_path.EndsWith(".png") || _path.EndsWith(".jpg") || _path.EndsWith(".jpeg"))
+        {
+            mat0type = MATERIAL_0_TYPE.TEXTURE;
+            mat1type = MATERIAL_1_TYPE.TEXTURE;
+
+            file.Close();
+            Texture2D newTex = new Texture2D(2, 2);
+            newTex.LoadImage(File.ReadAllBytes(_path));
+            m_trayMaterials.materials[0].color = Color.white;
+            m_trayMaterials.materials[1].color = Color.white;
+            m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
+            m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
+        }
     }
-
+//#endif
     public void OpenPatternEditor(int _inORout)
     {
         if (_inORout == 0 && pattern0uploaded)
