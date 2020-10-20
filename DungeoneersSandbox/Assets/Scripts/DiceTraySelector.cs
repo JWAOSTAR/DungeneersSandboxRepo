@@ -53,6 +53,8 @@ public class DiceTraySelector : MonoBehaviour
     SceneChanger m_manager;
     [SerializeField]
     GameObject m_patternPropertiesMenu;
+    [SerializeField]
+    GameObject m_FileOpenWindow;
 
     [SerializeField]
     Sprite m_nullImage;
@@ -327,6 +329,8 @@ public class DiceTraySelector : MonoBehaviour
             }
             
         }
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+        m_FileOpenWindow.SetActive(true);
 #endif
     }
 
@@ -610,9 +614,9 @@ public class DiceTraySelector : MonoBehaviour
         file.Close();
         //m_manager.ChangeScene("DiceSetSelector");
     }
-//#if (UNITY_ANDROID && !UNITY_EDITOR)
     public void LoadDiceTray(string _path)
     {
+        //#if (UNITY_ANDROID && !UNITY_EDITOR)
         BinaryReader file = new BinaryReader(File.Open(_path, FileMode.Open));
         if (_path.EndsWith(".dst"))
         {
@@ -736,8 +740,8 @@ public class DiceTraySelector : MonoBehaviour
             m_trayMaterials.materials[0].SetTexture("_MainTex", newTex);
             m_trayMaterials.materials[1].SetTexture("_MainTex", newTex);
         }
+        //#endif
     }
-//#endif
     public void OpenPatternEditor(int _inORout)
     {
         if (_inORout == 0 && pattern0uploaded)

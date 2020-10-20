@@ -3827,6 +3827,7 @@ MonoBehaviour:
   m_trayMover: {fileID: 822940492}
   m_manager: {fileID: 1801028699}
   m_patternPropertiesMenu: {fileID: 1999593645}
+  m_FileOpenWindow: {fileID: 1567929665}
   m_nullImage: {fileID: 21300000, guid: d096d210e1a7040418262fa569a2aefe, type: 3}
   m_InnerPatternImage: {fileID: 523709406}
   m_OutterPatternImage: {fileID: 313591244}
@@ -5660,6 +5661,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1546322474}
   m_CullTransparentMesh: 0
+--- !u!1 &1567929665 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5077517300013252405, guid: 90d7284176fc7ef46928c4a107491e71,
+    type: 3}
+  m_PrefabInstance: {fileID: 1901395087}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1579046449
 GameObject:
   m_ObjectHideFlags: 0
@@ -6345,6 +6352,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Window_00
       objectReference: {fileID: 0}
+    - target: {fileID: 5077517300013252405, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_fileTypeFiltter.Array.size
@@ -6353,12 +6365,12 @@ PrefabInstance:
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_fileTypeFiltter.Array.data[1]
-      value: '".dst" DS Dice Tray File'
+      value: '"." All Files'
       objectReference: {fileID: 0}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
@@ -6564,21 +6576,56 @@ PrefabInstance:
         type: 3}
       propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 822940491}
+      objectReference: {fileID: 822940495}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: LoadDiceTray
       objectReference: {fileID: 0}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_fileTypeFiltter.Array.data[0]
+      value: '".dst" DS Dice Tray File'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_hideOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
+      objectReference: {fileID: 1567929665}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 5077517301147927062, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_onConfermation.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5633950314642181323, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
@@ -6588,6 +6635,11 @@ PrefabInstance:
     - target: {fileID: 5633950314642181323, guid: 90d7284176fc7ef46928c4a107491e71,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212392051024940645, guid: 90d7284176fc7ef46928c4a107491e71,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

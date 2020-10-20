@@ -1810,7 +1810,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5077517301147927062}
         m_MethodName: OnConfermation
         m_Mode: 1
         m_Arguments:
@@ -2033,6 +2033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b38a092525f3f845b6218529070cdfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hideOnStart: 0
   m_generalFile: {fileID: 21300000, guid: 381e113e752b55c4ca2a1e5a8b49b85a, type: 3}
   m_documentFile: {fileID: 21300000, guid: 3b1d5e06f9be0834e838c9d4a15310f8, type: 3}
   m_videoFile: {fileID: 21300000, guid: 950f75764ef04c849b2dc43f8bb8958a, type: 3}
@@ -2057,9 +2058,9 @@ MonoBehaviour:
   m_onConfermation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5077517301147927062}
-        m_MethodName: TestConfirmCode
-        m_Mode: 0
+      - m_Target: {fileID: 5077517300013252405}
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2068,6 +2069,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  currentFileAddress: 
 --- !u!1 &5077517300221156613
 GameObject:
   m_ObjectHideFlags: 0

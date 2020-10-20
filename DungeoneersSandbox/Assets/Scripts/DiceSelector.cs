@@ -49,6 +49,8 @@ public class DiceSelector : MonoBehaviour
     /*public*/ Color[] baseDiceColors = new Color[SIZE];
     [SerializeField]
     Image[] colorBlocks = new Image[2];
+    [SerializeField]
+    GameObject m_openWindow;
     List<Color> colorOptions = new List<Color>();
     int[] currentColorIndex = { -1, -1 };
     bool isSavedFile = false;
@@ -364,6 +366,9 @@ public class DiceSelector : MonoBehaviour
         {
             file_path = openFileDialog1.FileName;
         }
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+        m_openWindow.SetActive(true);
+        return;
 #endif
         if (file_path != string.Empty && file_path != "")
         {
@@ -437,5 +442,50 @@ public class DiceSelector : MonoBehaviour
         //            file.Close();
         //        }
 
+    }
+
+    public void LoadFile(string _path)
+    {
+        if (_path != string.Empty && _path != "")
+        {
+            BinaryReader file = new BinaryReader(File.Open(_path, FileMode.Open));
+            //Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
+            if (_path.EndsWith(".dsd"))
+            {
+                isTexture = file.ReadBoolean();
+                currentDiceType = (Dice.DiceType)file.ReadInt32();
+                currentModel.mesh = models[(int)currentDiceType];
+                diceTextField.text = (currentDiceType != Dice.DiceType.D10_10s) ? currentDiceType.ToString() : "D10(10s)";
+                if (!isTexture)
+                {
+                    modelRenderProperties.materials[0].SetTexture("_MainTex", null);
+                    modelRenderProperties.materials[1].SetTexture("_MainTex", null);
+                    SetNumColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                    SetDiceColor(new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle()));
+                }
+                else
+                {
+                    int array_size = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(array_size));
+                    modelRenderProperties.materials[0].SetTexture("_MainTex", newTex);
+                    modelRenderProperties.materials[1].SetTexture("_MainTex", newTex);
+                    modelRenderProperties.materials[0].SetColor("_Color", Color.white);
+                    modelRenderProperties.materials[1].SetColor("_Color", Color.white);
+                }
+                file.Close();
+            }
+            else
+            {
+                file.Close();
+                isTexture = true;
+                Texture2D newTex = new Texture2D(2, 2);
+                newTex.LoadImage(File.ReadAllBytes(_path));
+                modelRenderProperties.materials[0].SetTexture("_MainTex", newTex);
+                modelRenderProperties.materials[1].SetTexture("_MainTex", newTex);
+                modelRenderProperties.materials[0].SetColor("_Color", Color.white);
+                modelRenderProperties.materials[1].SetColor("_Color", Color.white);
+            }
+        }
     }
 }
