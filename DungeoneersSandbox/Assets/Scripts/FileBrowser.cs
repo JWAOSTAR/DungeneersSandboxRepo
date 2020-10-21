@@ -85,13 +85,12 @@ public class FileBrowser : MonoBehaviour
     int m_currentFileCount = 0;
     Stack<string> NextStack = new Stack<string>();
     Stack<string> PrevStack = new Stack<string>();
-    string currentAdress = string.Empty;
-    [SerializeField]
-    string currentFileAddress = string.Empty;
+    protected string currentAdress = string.Empty;
+    protected string currentFileAddress = string.Empty;
 
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         List<Dropdown.OptionData> temp_options = new List<Dropdown.OptionData>();
         for(int j = 0; j < m_fileTypeFiltter.Length; j++)
@@ -568,13 +567,16 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
-    public void SetCurrentFile(string _filePath)
+    public virtual void SetCurrentFile(string _filePath)
     {
         currentFileAddress = _filePath;
-        m_scrollContent.gameObject.BroadcastMessage("UpdateStatis", m_files.Find(f => f.path == currentFileAddress).icon);
+        if (m_files.Exists(f => f.path == currentFileAddress)) 
+        {
+            m_scrollContent.gameObject.BroadcastMessage("UpdateStatis", m_files.Find(f => f.path == currentFileAddress).icon);
+        }
     }
 
-    public void OnConfermation()
+    public virtual void OnConfermation()
     {
         if (currentFileAddress != string.Empty) {
             m_onConfermation.Invoke(currentFileAddress);
