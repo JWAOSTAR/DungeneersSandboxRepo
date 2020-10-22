@@ -67,7 +67,7 @@ public class FileBrowser : MonoBehaviour
     InputField m_searchBar;
 
     [SerializeField]
-    Dropdown m_fileTypes;
+    protected Dropdown m_fileTypes;
     [SerializeField]
     string[] m_fileTypeFiltter;
 

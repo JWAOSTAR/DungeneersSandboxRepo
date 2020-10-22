@@ -25,6 +25,8 @@ public class TrayGalary : MonoBehaviour
 	Mesh[] m_trayModels;
 	[SerializeField]
 	GameObject m_notificationPanel;
+	[SerializeField]
+	GameObject m_exportWindow;
 	//[SerializeField]
 	//Texture2D[] textures;
 
@@ -332,12 +334,19 @@ public class TrayGalary : MonoBehaviour
 			{
 				File.Copy(files[currentIndex], diceTraySaveDialog.FileName);
 			}
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+			m_exportWindow.SetActive(true);
 #endif
 		}
 		else
 		{
 			StartCoroutine(ToggleActivation(m_notificationPanel, 1.0f));
 		}
+	}
+
+	public void ExportModel(string _filePath)
+	{
+		File.Copy(files[currentIndex], _filePath);
 	}
 
 	IEnumerator ToggleActivation(GameObject _gameObject, float _timeDelay)

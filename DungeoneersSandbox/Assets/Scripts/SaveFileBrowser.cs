@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using RedExtentions;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -34,7 +35,12 @@ public class SaveFileBrowser : FileBrowser
     public void SetCurrnetFileName(string _fileName)
     {
         //m_fileName = _fileName;
-        SetCurrentFile((currentAdress + ((currentAdress.EndsWith("\\") || currentAdress.EndsWith("/")) ? "" : "\\") + _fileName + ((_fileName.Contains(".dst")) ? "" : ".dst")));
+        string extentionType = m_fileTypes.options[m_fileTypes.value].text.GetSubStringBetweenStrings("\"", "\"");
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        SetCurrentFile((currentAdress + ((currentAdress.EndsWith("\\") || currentAdress.EndsWith("/")) ? "" : "\\") + _fileName + ((_fileName.Contains(".dst")) ? "" : extentionType)));
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        SetCurrentFile((currentAdress + ((currentAdress.EndsWith("\\") || currentAdress.EndsWith("/")) ? "" : "/") + _fileName + ((_fileName.Contains(".dst")) ? "" : extentionType)));
+#endif
     }
 
     public override void OnConfermation()

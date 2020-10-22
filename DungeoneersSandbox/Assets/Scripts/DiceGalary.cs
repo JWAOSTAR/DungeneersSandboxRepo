@@ -27,6 +27,8 @@ public class DiceGalary : MonoBehaviour
     Texture2D[] textures;
     [SerializeField]
     GameObject m_notificationPanel;
+    [SerializeField]
+    GameObject m_saveFileWindow;
 
     List<Dice.DiceSkin> skins = new List<Dice.DiceSkin>();
     string[] files;
@@ -46,6 +48,16 @@ public class DiceGalary : MonoBehaviour
             Directory.CreateDirectory("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/");
         }
         files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/purchased/")).ToArray();
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        if (!Directory.Exists(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/"))
+        {
+            Directory.CreateDirectory(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/");
+        }
+        if (!Directory.Exists(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/purchased/"))
+        {
+            Directory.CreateDirectory(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/purchased/");
+        }
+        files = Directory.GetFiles(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/").Concat(Directory.GetFiles(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/purchased/")).ToArray();
 #endif
         int filedLines = 0;
         for (int j = 0; j < files.Length; j++)
@@ -277,12 +289,42 @@ public class DiceGalary : MonoBehaviour
                 }
                 file.Close();
             }
+#elif(UNITY_ANDROID && !UNITY_EDITOR)
+            m_saveFileWindow.SetActive(true);
 #endif
         }
         else
         {
             StartCoroutine(ToggleActivation(m_notificationPanel, 1.0f));
         }
+    }
+
+    public void ExportSkin(string _filePath)
+    {
+        BinaryWriter file = new BinaryWriter(File.Open(_filePath, FileMode.OpenOrCreate));
+        file.Write(skins[currentIndex].isTexture);
+        file.Write((int)skins[currentIndex].diceType);
+
+        if (!skins[currentIndex].isTexture)
+        {
+            file.Write(skins[currentIndex].numbers.r);
+            file.Write(skins[currentIndex].numbers.g);
+            file.Write(skins[currentIndex].numbers.b);
+            file.Write(skins[currentIndex].numbers.a);
+
+            file.Write(skins[currentIndex].die.r);
+            file.Write(skins[currentIndex].die.g);
+            file.Write(skins[currentIndex].die.b);
+            file.Write(skins[currentIndex].die.a);
+        }
+        else
+        {
+            file.Write(skins[currentIndex].texture.EncodeToPNG().Length);
+            file.Write(skins[currentIndex].texture.width);
+            file.Write(skins[currentIndex].texture.height);
+            file.Write(skins[currentIndex].texture.EncodeToPNG());
+        }
+        file.Close();
     }
 
     IEnumerator ToggleActivation(GameObject _gameObject, float _timeDelay)

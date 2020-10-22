@@ -55,6 +55,8 @@ public class DiceTraySelector : MonoBehaviour
     GameObject m_patternPropertiesMenu;
     [SerializeField]
     GameObject m_FileOpenWindow;
+    [SerializeField]
+    GameObject m_FileSaveWindow;
 
     [SerializeField]
     Sprite m_nullImage;
@@ -191,6 +193,8 @@ public class DiceTraySelector : MonoBehaviour
         {
             SaveDiceTray(diceTraySaveDialog.FileName);
         }
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        m_FileSaveWindow.SetActive(true);
 #endif
     }
 

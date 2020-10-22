@@ -4302,6 +4302,7 @@ MonoBehaviour:
   m_manager: {fileID: 1801028699}
   m_patternPropertiesMenu: {fileID: 1999593645}
   m_FileOpenWindow: {fileID: 1567929665}
+  m_FileSaveWindow: {fileID: 1533149140754092751}
   m_nullImage: {fileID: 21300000, guid: d096d210e1a7040418262fa569a2aefe, type: 3}
   m_InnerPatternImage: {fileID: 523709406}
   m_OutterPatternImage: {fileID: 313591244}
