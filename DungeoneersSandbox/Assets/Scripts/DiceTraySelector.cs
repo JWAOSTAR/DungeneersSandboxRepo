@@ -57,6 +57,10 @@ public class DiceTraySelector : MonoBehaviour
     GameObject m_FileOpenWindow;
     [SerializeField]
     GameObject m_FileSaveWindow;
+    [SerializeField]
+    GameObject saveDialog;
+    [SerializeField]
+    bool fileNamed = false;
 
     [SerializeField]
     Sprite m_nullImage;
@@ -501,6 +505,31 @@ public class DiceTraySelector : MonoBehaviour
         file.Close();
 
         //m_manager.ChangeScene("DiceSetSelector");
+    }
+    public void SaveToGalary(bool _isSaved)
+	{
+        fileNamed = true;
+        SaveToGalary();
+	}
+    public void SaveToGalary()
+	{
+        if (fileNamed) {
+            string path;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+            path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/";
+#endif
+            if (!Directory.Exists(path + "diceTrays/skins/"))
+            {
+                Directory.CreateDirectory(path + "diceTrays/skins/");
+            }
+            SaveDiceTray(path + "diceTrays/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dst");
+        }
+		else {
+            saveDialog.SetActive(true);
+        }
+
     }
 
     public void SaveDiceTray()

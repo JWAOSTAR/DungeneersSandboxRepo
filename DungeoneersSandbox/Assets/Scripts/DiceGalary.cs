@@ -198,6 +198,11 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
+    public void SaveSkin()
+	{
+
+	}
+
     Texture2D MaterialToTexture2D()
     {
         Texture2D newTexture = textures[(int)skins[currentIndex].diceType];
@@ -222,7 +227,17 @@ public class DiceGalary : MonoBehaviour
 
     public void EditSkin()
     {
+        string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/";
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
+        path = UnityEngine.Application.persistentDataPath + "/" + "DungeoneersSamdbox/temp/";
+#endif
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+
+        }
         if (!skins[currentIndex].isTexture)
         {
             Texture2D _diceTex = MaterialToTexture2D();
@@ -234,20 +249,19 @@ public class DiceGalary : MonoBehaviour
             _file.Write(_diceTex.height);
             _file.Write(_diceTex.EncodeToPNG());
             _file.Close();
-            BinaryWriter pic = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1].Replace(".dsd", ".png"), FileMode.OpenOrCreate));
+            BinaryWriter pic = new BinaryWriter(File.Open(path + files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1].Replace(".dsd", ".png"), FileMode.OpenOrCreate));
             pic.Write(_diceTex.EncodeToPNG());
             pic.Close();
         }
         else
         {
-            BinaryWriter pic = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/" + files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1].Replace(".dsd", ".png"), FileMode.OpenOrCreate));
+            BinaryWriter pic = new BinaryWriter(File.Open(path + files[currentIndex].Split('/')[files[currentIndex].Split('/').Length - 1].Replace(".dsd", ".png"), FileMode.OpenOrCreate));
             pic.Write(skins[currentIndex].texture.EncodeToPNG());
             pic.Close();
         }
-        BinaryWriter file = new BinaryWriter(File.Open("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/die_to_paint.dstd", FileMode.OpenOrCreate));
+        BinaryWriter file = new BinaryWriter(File.Open(path + "die_to_paint.dstd", FileMode.OpenOrCreate));
         file.Write(files[currentIndex]);
         file.Close();
-#endif
         m_manager.ChangeScene("DiceEditor");
     }
 

@@ -235,6 +235,9 @@ public class TrayGalary : MonoBehaviour
 			}
 			else
 			{
+				m_materials.materials[1].SetTexture("_MainTex", null);
+				m_materials.materials[1].SetTextureScale("_MainTex", Vector2.one);
+				m_materials.materials[1].SetTextureOffset("_MainTex", Vector2.one);
 				m_materials.materials[1].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
 			}
 
@@ -274,6 +277,9 @@ public class TrayGalary : MonoBehaviour
 			}
 			else
 			{
+				m_materials.materials[0].SetTexture("_MainTex", null);
+				m_materials.materials[0].SetTextureScale("_MainTex", Vector2.one);
+				m_materials.materials[0].SetTextureOffset("_MainTex", Vector2.one);
 				m_materials.materials[0].color = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
 			}
 		}
