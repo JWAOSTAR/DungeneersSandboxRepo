@@ -78,6 +78,9 @@ public class DiceEditorV2 : MonoBehaviour
         m_brushSoftnessSlider.SetValueWithoutNotify(brush.Hardness);
         m_circleToggle.SetIsOnWithoutNotify(!brush.Square);
         m_squareToggle.SetIsOnWithoutNotify(brush.Square);
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        Input.simulateMouseWithTouches = true;
+#endif
         string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/";
@@ -149,7 +152,7 @@ public class DiceEditorV2 : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         Vector4 mouseWorldPos = Vector3.positiveInfinity;
 
-        if(!savePanelOpen && !diceMover.GetMobility() && Input.GetMouseButton(0))
+        if(!savePanelOpen && !diceMover.GetMobility() && (Input.GetMouseButton(0)))
         {
             if(Physics.Raycast(ray, out hit))
             {

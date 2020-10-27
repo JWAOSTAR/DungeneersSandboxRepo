@@ -2428,7 +2428,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 27
-    m_FontStyle: 1
+    m_FontStyle: 3
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
@@ -2438,9 +2438,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Next
-
-'
+  m_Text: PAINT!
 --- !u!222 &600012544
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3709,10 +3707,12 @@ MonoBehaviour:
   dieColorPicker: {fileID: 1025225307}
   diceMover: {fileID: 1194334310}
   saveDialog: {fileID: 855306720}
+  paintButton: {fileID: 1005997441}
+  saveButton: {fileID: 1285892067}
   colorBlocks:
   - {fileID: 149539482}
   - {fileID: 213837792}
-  m_openWindow: {fileID: 0}
+  m_openWindow: {fileID: 1824013225}
 --- !u!4 &1287661286
 Transform:
   m_ObjectHideFlags: 0

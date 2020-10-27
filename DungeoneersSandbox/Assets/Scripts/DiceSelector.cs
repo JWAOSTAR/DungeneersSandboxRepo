@@ -45,6 +45,10 @@ public class DiceSelector : MonoBehaviour
     DiceAxisMovement diceMover;
     [SerializeField]
     GameObject saveDialog;
+    [SerializeField]
+    GameObject paintButton;
+    [SerializeField]
+    GameObject saveButton;
     private const int SIZE = 2;
     /*public*/ Color[] baseDiceColors = new Color[SIZE];
     [SerializeField]
@@ -73,6 +77,10 @@ public class DiceSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        saveButton.transform.position = new Vector3(paintButton.transform.position.x, paintButton.transform.position.y, paintButton.transform.position.z);
+        paintButton.SetActive(false);
+#endif
         Shader.Find("DS/DicePainterShader");
         Shader.Find("DS/EdgeFixShader");
         Color[] cl = { Color.black, Color.grey, Color.white, Color.red, Color.magenta, Color.blue, Color.cyan, Color.yellow, Color.green };
@@ -266,7 +274,7 @@ public class DiceSelector : MonoBehaviour
         string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
-#elif(UNITY_ANDROID && !UNITY_EDITOR)
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
         path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/";
 #endif
         if (!Directory.Exists(path))
@@ -366,7 +374,7 @@ public class DiceSelector : MonoBehaviour
         {
             file_path = openFileDialog1.FileName;
         }
-#elif(UNITY_ANDROID && !UNITY_EDITOR)
+#elif (UNITY_ANDROID && !UNITY_EDITOR)
         m_openWindow.SetActive(true);
         return;
 #endif
