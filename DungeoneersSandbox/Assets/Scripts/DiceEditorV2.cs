@@ -70,7 +70,7 @@ public class DiceEditorV2 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        //Set up base variables
         cam = Camera.main;
         step_back_stack.Capacity = 5;
         step_forward_stack.Capacity = 5;
@@ -81,12 +81,14 @@ public class DiceEditorV2 : MonoBehaviour
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         Input.simulateMouseWithTouches = true;
 #endif
+        //Get path to where the dice to paint file is located
         string path;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/temp/";
 #elif (UNITY_ANDROID && !UNITY_EDITOR)
         path = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/temp/";
 #endif
+        //Read in file
         if (File.Exists(path + "die_to_paint.dstd"))
         {
             BinaryReader file = new BinaryReader(File.Open(path +"die_to_paint.dstd", FileMode.Open));
@@ -130,6 +132,7 @@ public class DiceEditorV2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Check if shift is clicked to change the state of mobility
         if (!diceMover.GetMobility() && Input.GetKey(KeyCode.LeftShift))
         {
             diceMover.SetMobility(true);
@@ -139,19 +142,21 @@ public class DiceEditorV2 : MonoBehaviour
             diceMover.SetMobility(false);
         }
 
+        //Refresh command buffer on second frame
         if(numFrams > 2)
         {
             cam.RemoveCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
         }
-
+        //Incrument frame
         numFrams++;
 
         albedo.UpdateShaderParams(currentModel.gameObject.transform.localToWorldMatrix);
 
+        
         RaycastHit hit;
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         Vector4 mouseWorldPos = Vector3.positiveInfinity;
-
+        //Check for mouse click when mobility of on
         if(!savePanelOpen && !diceMover.GetMobility() && (Input.GetMouseButton(0)))
         {
             if(Physics.Raycast(ray, out hit))
@@ -191,6 +196,7 @@ public class DiceEditorV2 : MonoBehaviour
         }
         else
         {
+            //Incrument the state a brush stroke
             //numFramsDown = 0;
             mouseWorldPos.w = 0.0f;
             if (in_step == 1)
@@ -198,13 +204,13 @@ public class DiceEditorV2 : MonoBehaviour
                 in_step = 2;
             }
         }
-
+        //Reset for the next brush stroke
         if(in_step == 2)
         {
             TakeSnapshot();
             in_step = 0;
         }
-
+        //Send values to shader
         mousePos = mouseWorldPos;
         Shader.SetGlobalVector("_Mouse", mouseWorldPos);
 
@@ -215,11 +221,18 @@ public class DiceEditorV2 : MonoBehaviour
         Shader.SetGlobalInt("_isSquare", (brush.Square) ? 1 : 0);
     }
 
+    /// <summary>
+    /// //SaveDialogOpen setes the boolean that tells weather or not the save dialog is open
+    /// </summary>
+    /// <param name="_open">Boolean value of the bool savePanelOpen variable</param>
     public void SaveDialogOpen(bool _open)
     {
         savePanelOpen = _open;
     }
 
+    /// <summary>
+    /// SaveFile saves the current version of the dice properties to a .dsd(DS Dice file) and save it to the game's directory
+    /// </summary>
     public void SaveFile()
     {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
@@ -279,6 +292,9 @@ public class DiceEditorV2 : MonoBehaviour
         m_manager.ChangeScene("Main");
     }
 
+    /// <summary>
+    /// Loads in and textures the next snapshot taken from the current one on the die
+    /// </summary>
     public void StepForwards()
     {
         if (step_forward_stack.Count > 0)
@@ -300,6 +316,9 @@ public class DiceEditorV2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads in and textures the last snapshot taken from the current one on the die
+    /// </summary>
     public void StepBackwards()
     {
         if (step_back_stack.Count > 1)
@@ -321,6 +340,9 @@ public class DiceEditorV2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// TakeSnapshot saves a snapshot of the texture on the die before the next brush stroke is finished
+    /// </summary>
     private void TakeSnapshot()
     {
         Texture2D _newText = new Texture2D(material.materials[0].mainTexture.width, material.materials[0].mainTexture.height);
@@ -338,6 +360,9 @@ public class DiceEditorV2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cancel is called when the scene has exited
+    /// </summary>
     public void Cancel()
     {
         UnityEngine.Cursor.SetCursor(null, new Vector2(0.0f, 0.0f), CursorMode.Auto);

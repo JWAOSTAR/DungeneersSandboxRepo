@@ -26,12 +26,20 @@ public class SaveFileBrowser : FileBrowser
         
     }
 
+    /// <summary>
+    /// SetCurrentFile sets the currentlly selected file 
+    /// </summary>
+    /// <param name="_filePath">Path of the currentlly selected file</param>
     public override void SetCurrentFile(string _filePath)
     {
         base.SetCurrentFile(_filePath);
         m_fileName = m_currentFileNameBar.text = _filePath.Split('/', '\\')[_filePath.Split('/', '\\').Length - 1];
     }
 
+    /// <summary>
+    /// SetCurrnetFileName sets the path and file name for the file to be saved
+    /// </summary>
+    /// <param name="_fileName">The name for the file to be saved</param>
     public void SetCurrnetFileName(string _fileName)
     {
         //m_fileName = _fileName;
@@ -43,6 +51,9 @@ public class SaveFileBrowser : FileBrowser
 #endif
     }
 
+    /// <summary>
+    /// OnConfermation is called when the confermation button for file save is pushed to conferm the is a file to save
+    /// </summary>
     public override void OnConfermation()
     {
         if(!File.Exists(currentFileAddress))
@@ -55,6 +66,9 @@ public class SaveFileBrowser : FileBrowser
         }
     }
 
+    /// <summary>
+    /// OnReplace is called when a file being saved is itself going to replacing an existing file
+    /// </summary>
     public void OnReplace()
     {
         base.OnConfermation();

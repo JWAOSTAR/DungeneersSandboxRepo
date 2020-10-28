@@ -16,6 +16,13 @@ namespace RedExtentions
 {
     public static class StringExtentions
     {
+        /// <summary>
+        /// Retrives the first instance of a sub-string between two characters or strings
+        /// </summary>
+        /// <param name="str">String to treverse through</param>
+        /// <param name="_startString">Character or string preceding desigered sub-string</param>
+        /// <param name="_endString">Character or string proceding desigered sub_string</param>
+        /// <returns>First instance of string/character found</returns>
         public static string GetSubStringBetweenStrings(this string str, string _startString, string _endString)
         {
             int startIndex = str.IndexOf(_startString) + _startString.Length;
@@ -92,6 +99,7 @@ public class FileBrowser : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        //Log in file types
         List<Dropdown.OptionData> temp_options = new List<Dropdown.OptionData>();
         for(int j = 0; j < m_fileTypeFiltter.Length; j++)
         {
@@ -99,14 +107,17 @@ public class FileBrowser : MonoBehaviour
         }
         m_fileTypes.AddOptions(temp_options);
 
+        //Get root directory
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         m_filePathAdressbar.text = "C:\\Users\\" + Environment.UserName;
 #elif (UNITY_ANDROID && !UNITY_EDITOR)
         m_filePathAdressbar.text = Application.persistentDataPath.Substring(0, Application.persistentDataPath.IndexOf("Android", StringComparison.Ordinal));
 #endif
-        currentAdress = m_filePathAdressbar.text;
+        //Set address to bar
         string[] files = new string[0];
-        if (Directory.Exists(m_filePathAdressbar.text)) {
+        if (Directory.Exists(m_filePathAdressbar.text)) 
+        {
+            currentAdress = m_filePathAdressbar.text;
             files = Directory.GetFiles(m_filePathAdressbar.text).Concat(Directory.GetDirectories(m_filePathAdressbar.text)).ToArray();
         }
         //StreamWriter textTest = File.CreateText(m_filePathAdressbar.text + "textTest.txt");
@@ -119,6 +130,8 @@ public class FileBrowser : MonoBehaviour
         //int m = 0;
 
         //string test = files[0].Split('/')[0];
+
+        //Set icons for files in current directory
         int current_file_index = 0;
         string extentionType = m_fileTypes.options[m_fileTypes.value].text.GetSubStringBetweenStrings("\"", "\"");
         for (int i = 0; i < files.Length; i++)
@@ -314,11 +327,20 @@ public class FileBrowser : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Switches the directory contents being displayed from the current to a new given directory
+    /// </summary>
+    /// <param name="_newDirectory">Directory to switch to</param>
     public void SwitchDirectory(string _newDirectory)
     {
         SwitchDirectory(_newDirectory, true);
     }
 
+    /// <summary>
+    /// Switches the directory contents being displayed from the current to a new given directory
+    /// </summary>
+    /// <param name="_newDirectory">Directory to switch to</param>
+    /// <param name="_newDir">Boolean determining weather or not to manage the address stack</param>
     public void SwitchDirectory(string _newDirectory, bool _newDir = true)
     {
         if (_newDir)
@@ -331,6 +353,9 @@ public class FileBrowser : MonoBehaviour
         RefreshBrowser();
     }
 
+    /// <summary>
+    /// RefreshBrowser re-reads the directory and displays directory content
+    /// </summary>
     public void RefreshBrowser()
     {
         m_scrollContent.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
@@ -449,6 +474,9 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switches current display directory to the next address in the address stack
+    /// </summary>
     public void NextAddress()
     {
         if(NextStack.Count > 0)
@@ -459,6 +487,9 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switches current display directory to the previous address in the address stack
+    /// </summary>
     public void PrevAddress()
     {
         if (PrevStack.Count > 0)
@@ -469,6 +500,10 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// SearchFile treverses through files in current directory and displays the files that contains the given string
+    /// </summary>
+    /// <param name="_file">String to search for through current directory</param>
     public void SearchFile(string _file)
     {
         if (_file != "" && _file != " " && _file != string.Empty)
@@ -567,6 +602,10 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// SetCurrentFile sets the currentlly selected file 
+    /// </summary>
+    /// <param name="_filePath"></param>
     public virtual void SetCurrentFile(string _filePath)
     {
         currentFileAddress = _filePath;
@@ -576,6 +615,9 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Path of the currentlly selected file
+    /// </summary>
     public virtual void OnConfermation()
     {
         if (currentFileAddress != string.Empty) {
@@ -583,6 +625,7 @@ public class FileBrowser : MonoBehaviour
         }
     }
 
+    //Test function
     public void TestConfirmCode(string adrs)
     {
         Debug.Log("This is a test to confirm confirmation. The current file selected is :" + adrs);

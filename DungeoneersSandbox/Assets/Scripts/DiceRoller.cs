@@ -63,26 +63,31 @@ public class DiceRoller : MonoBehaviour
 
     void OnValidate()
     {
+        //Make sure array size for initialRollingTransforms can not be changed in editor
         if (initialRollingTransforms.Length != rollingTransformsSize)
         {
             Debug.LogWarning("Don't change the 'rollingTransformsSize' field's array size!");
             Array.Resize(ref initialRollingTransforms, rollingTransformsSize);
         }
-        if(dice.Length != diceListSize)
+        //Make sure array size for dice can not be changed in editor
+        if (dice.Length != diceListSize)
         {
             Debug.LogWarning("Don't change the 'dice' field's array size!");
             Array.Resize(ref dice, diceListSize);
         }
+        //Make sure array size for diceAmounts can not be changed in editor
         if (diceAmounts.Length != diceListSize)
         {
             Debug.LogWarning("Don't change the 'diceAmounts' field's array size!");
             Array.Resize(ref diceAmounts, diceListSize);
         }
+        //Make sure array size for m_diceSprites can not be changed in editor
         if (m_diceSprites.Length != diceListSize)
         {
             Debug.LogWarning("Don't change the 'diceSprites' field's array size!");
             Array.Resize(ref m_diceSprites, diceListSize);
         }
+        //Make sure array size for cameraPositions can not be changed in editor
         if (cameraPositions.Length != camTransformSize)
         {
             Debug.LogWarning("Don't change the 'cameraPositions' field's array size!");
@@ -93,6 +98,7 @@ public class DiceRoller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Set up base values for variables
         m_init_bar_height = m_chatDisplay.GetChild(0).GetChild(0).GetComponent<RectTransform>().rect.height;
         m_init_bar_pos = new Vector3(m_chatDisplay.GetChild(0).localPosition.x, m_chatDisplay.GetChild(0).localPosition.y, m_chatDisplay.GetChild(0).localPosition.z);
         m_chatDisplay.GetChild(0).GetChild(0).gameObject.SetActive(false);
@@ -102,12 +108,15 @@ public class DiceRoller : MonoBehaviour
         gameCamera.position = cameraPositions[currentCamPos].position;
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
         //RollDice((int)DiceType.D20);
+
+        //Get path where dice set and dice tray file is located
         string filePath;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         filePath = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/";
 #elif(UNITY_ANDROID && !UNITY_EDITOR)
         filePath = UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/";
 #endif
+        //Set the dice models to the properties found in the .dss(DS Dice Set file)
         if (File.Exists(filePath+"active_dice_set.dss"))
         {
             BinaryReader file = new BinaryReader(File.Open(filePath + "active_dice_set.dss", FileMode.Open));
@@ -146,6 +155,7 @@ public class DiceRoller : MonoBehaviour
             //}
             file.Close();
         }
+        //set default color for dice
         else
         {
             for (int i = 0; i < dice.Length; i++)
@@ -155,6 +165,7 @@ public class DiceRoller : MonoBehaviour
                 dice[i].GetChild(1).GetComponent<MeshRenderer>().materials[1].color = Color.black;
             }
         }
+        //Set the tray model to the properties found in the .dst(DS Dice Tray)
         if(File.Exists(filePath + "active_dice_tray.dst"))
         {
             BinaryReader file = new BinaryReader(File.Open(filePath + "active_dice_tray.dst", FileMode.Open));
@@ -205,26 +216,32 @@ public class DiceRoller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Test key for updating the dice value log
         if(Input.GetKeyUp(KeyCode.V))
         {
             UpdateDiceValues();
         }
 
+        //Test key for refreshing the line spacing for the value log
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.G))
         {
             UpdateLineSpace();
         }
+        //Test key for generating a new line in value log
         else if (!Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.G))
         {
             GenerateNewChatLine();
         }
-
+        //Test key to clear value log
         if (Input.GetKeyUp(KeyCode.C))
         {
             ClearChatDisplay();        
         }
     }
 
+    /// <summary>
+    /// Switch camera view toggles the camera between
+    /// </summary>
     public void SwitchCameraView()
     {
         if (currentCamPos + 1 < cameraPositions.Length)
@@ -239,6 +256,10 @@ public class DiceRoller : MonoBehaviour
         gameCamera.rotation = cameraPositions[currentCamPos].rotation;
     }
 
+    /// <summary>
+    /// Add dice to a queue to be rolled
+    /// </summary>
+    /// <param name="die">Integer value for RollType struct</param>
     public void AddDice(int die)
     {
         if (diceQueue.Where(d => d == (RollTypes)die).Count() < diceCap) {
@@ -247,12 +268,19 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Remove first instance of dice from queue
+    /// </summary>
+    /// <param name="die">Integer value for RollType struct</param>
     public void RemoveDice(int die)
     {
         diceQueue.Remove((RollTypes)die);
         diceAmounts[die].text = diceQueue.Where(d => d == (RollTypes)die).Count().ToString();
     }
 
+    /// <summary>
+    /// Roll dice presently in queue
+    /// </summary>
     public void RollDiceInQueue()
     {
         if (!in_roll)
@@ -279,6 +307,10 @@ public class DiceRoller : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Instanciates and rolls given die
+    /// </summary>
+    /// <param name="die">Integer value for RollType struct to instantiate</param>
     void RollDice(int die)
     {
         if (die == (int)RollTypes.D100)
@@ -316,6 +348,10 @@ public class DiceRoller : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Roll a 2d20 at advantage or disadvantage
+    /// </summary>
+    /// <param name="disadvantage"></param>
     public void RollAdvDAdv(bool disadvantage)
     {
         if (!in_roll)
@@ -327,6 +363,9 @@ public class DiceRoller : MonoBehaviour
         RollDice((int)RollTypes.D20 + AdvDAdv);
     }
 
+    /// <summary>
+    /// Clear the dice in dice tray
+    /// </summary>
     public void ClearDice()
     {
         in_roll = false;
@@ -355,6 +394,9 @@ public class DiceRoller : MonoBehaviour
         diceValues.Clear();
     }
 
+    /// <summary>
+    /// Clear the dice logged in the queue
+    /// </summary>
     public void ClearDiceQueue()
     {
         diceQueue.Clear();
@@ -364,6 +406,9 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Update the value in the current line of chat log
+    /// </summary>
     public void UpdateDiceValues()
     {
         diceValues.Clear();
@@ -450,6 +495,9 @@ public class DiceRoller : MonoBehaviour
         //return diceValues.Take(diceValues.Count).Sum();
     }
 
+    /// <summary>
+    /// Update the chat log
+    /// </summary>
     public void UpdateChatDisplay()
     {
         ClearChatDisplay();
@@ -706,6 +754,9 @@ public class DiceRoller : MonoBehaviour
         UpdateLineSpace();
     }
 
+    /// <summary>
+    /// Creates a new line in the chat log
+    /// </summary>
     void GenerateNewChatLine()
     {
         //m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, m_chatDisplay.GetChild(0).GetComponent<RectTransform>().rect.height* m_chatDisplay.childCount);
@@ -731,6 +782,9 @@ public class DiceRoller : MonoBehaviour
         m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, chatDisplaySize);
     }
 
+    /// <summary>
+    /// Readjusts the line spacing to prevent overlap of lines
+    /// </summary>
     void UpdateLineSpace()
     {
         float chatDisplaySize = 0.0f;
@@ -742,6 +796,10 @@ public class DiceRoller : MonoBehaviour
         m_chatDisplay.sizeDelta = new Vector2(m_chatDisplay.sizeDelta.x, chatDisplaySize);
     }
 
+    /// <summary>
+    /// Clears the lines in the chat display
+    /// </summary>
+    /// <param name="withRollSet">Boolean determining weather or not to clear results of previous rolls</param>
     public void ClearChatDisplay(bool withRollSet = false)
     {
         for (int i = m_chatDisplay.childCount - 1; i > 0; i--)
@@ -760,6 +818,9 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clear out all null values in the dice instance collection
+    /// </summary>
     public void UpdateInstanceList()
     {
         for(int i = (instantiatedDice.Count - 1); i >= 0; i--)
@@ -771,6 +832,9 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// A parallel process that clears the tray of dice instances after a given time
+    /// </summary>
     IEnumerator ClearTimer()
     {
         yield return new WaitForSeconds(30);

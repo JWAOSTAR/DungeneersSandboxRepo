@@ -189,6 +189,10 @@ public class TrayGalary : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Sets the skin and model of the display die
+	/// </summary>
+	/// <param name="_index">Index of which skin and model to switch to within the saved skins</param>
 	public void SetSkin(int _index)
 	{
 		currentIndex = _index;
@@ -286,6 +290,9 @@ public class TrayGalary : MonoBehaviour
 		file.Close();
 	}
 
+	/// <summary>
+	/// Goes to the next skin and model from the current skin and model
+	/// </summary>
 	public void NextModel()
 	{
 		currentStartIndex = (currentStartIndex + m_scrollContent.Length < files.Length) ? currentStartIndex + m_scrollContent.Length : 0;
@@ -306,6 +313,9 @@ public class TrayGalary : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Goes to the previous skin and model from the current skin and model
+	/// </summary>
 	public void PrevModel()
 	{
 		currentStartIndex = (currentStartIndex - m_scrollContent.Length >= 0) ? currentStartIndex - m_scrollContent.Length : files.Length - 1;
@@ -326,6 +336,9 @@ public class TrayGalary : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Open the SaveFileDialog
+	/// </summary>
 	public void ExportModel()
 	{
 		if (!files[currentIndex].Contains("purchased")) {
@@ -350,11 +363,21 @@ public class TrayGalary : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Saves the currently selected dice tray .dst(DS Dice Tray file)
+	/// </summary>
+	/// <param name="_filePath"></param>
 	public void ExportModel(string _filePath)
 	{
 		File.Copy(files[currentIndex], _filePath);
 	}
 
+	/// <summary>
+	/// Flips the active state of a given gameObject for a given time
+	/// </summary>
+	/// <param name="_gameObject">Game object to be toggled</param>
+	/// <param name="_timeDelay">Time the game object will be toggled for</param>
+	/// <returns></returns>
 	IEnumerator ToggleActivation(GameObject _gameObject, float _timeDelay)
 	{
 		_gameObject.SetActive(!_gameObject.activeSelf);

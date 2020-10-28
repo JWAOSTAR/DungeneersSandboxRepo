@@ -81,17 +81,25 @@ public class DiceSelector : MonoBehaviour
         saveButton.transform.position = new Vector3(paintButton.transform.position.x, paintButton.transform.position.y, paintButton.transform.position.z);
         paintButton.SetActive(false);
 #endif
+        //Insure that shader is imported into the project
         Shader.Find("DS/DicePainterShader");
         Shader.Find("DS/EdgeFixShader");
+
+        //Create a collection of general colors[OBSOLETE]
         Color[] cl = { Color.black, Color.grey, Color.white, Color.red, Color.magenta, Color.blue, Color.cyan, Color.yellow, Color.green };
         colorOptions.AddRange(cl);
+
+        //Set up base perameters of the scene:
+        //Set the starting die
         currentDiceType = startingDiceType;
+        //Set the die title and model
         if (currentModel && (models.Length > 0))
         {
             currentModel.mesh = models[(int)startingDiceType];
             diceTextField.text = (startingDiceType != Dice.DiceType.D10_10s) ? startingDiceType.ToString() : "D10(10s)";
-        }  
-        if(modelRenderProperties)
+        }
+        //Set die properties(number color, die color, color options[OBSOLETE])
+        if (modelRenderProperties)
         {
             baseDiceColors[0] = numberColorPicker.CurrentColor;
             baseDiceColors[1] = dieColorPicker.CurrentColor;
@@ -99,7 +107,8 @@ public class DiceSelector : MonoBehaviour
                 
                 modelRenderProperties.materials[i].color = baseDiceColors[i];
                 colorBlocks[i].color = baseDiceColors[i];
-                if(colorOptions.Contains(baseDiceColors[i]))
+                //Setting options if current die color is contained in options[OBSOLETE]
+                if (colorOptions.Contains(baseDiceColors[i]))
                 {
                     currentColorIndex[i] = colorOptions.IndexOf(baseDiceColors[i]);
                 }
@@ -110,6 +119,7 @@ public class DiceSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Check if either of the color picker is active disable die mobility
         if (!diceMover.GetMobility() && !numberColorPicker.isActiveAndEnabled && !dieColorPicker.isActiveAndEnabled && !saveDialog.activeSelf) 
         {
             diceMover.SetMobility(true);
@@ -120,6 +130,10 @@ public class DiceSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// SetNumberColor sets the color of the die's numbers within the scene
+    /// </summary>
+    /// <param name="_color">Color which the die's numbers will be set to</param>
     public void SetNumColor(Color _color)
     {
         modelRenderProperties.materials[0].SetTexture("_MainTex", null);
@@ -132,6 +146,10 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[0].color = _color;
     }
 
+    /// <summary>
+    /// SetDiceColor sets the color of the die's body within the scene
+    /// </summary>
+    /// <param name="_color">Color which the die's body will be set to</param>
     public void SetDiceColor(Color _color)
     {
         modelRenderProperties.materials[1].SetTexture("_MainTex", null);
@@ -144,6 +162,9 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[1].color = _color;
     }
 
+    /// <summary>
+    /// NextModel goes to the next model/mesh and title in the die list/collection 
+    /// </summary>
     public void NextModel()
     {
         currentDiceType = (currentDiceType != Dice.DiceType.D20) ? (Dice.DiceType)((int)currentDiceType + 1) : Dice.DiceType.D4;
@@ -151,6 +172,9 @@ public class DiceSelector : MonoBehaviour
         diceTextField.text = (currentDiceType != Dice.DiceType.D10_10s) ? currentDiceType.ToString() : "D10(10s)";
     }
 
+    /// <summary>
+    /// PrevModel goes to the previous model/mesh and title in the die list/collection
+    /// </summary>
     public void PrevModel()
     {
         currentDiceType = (currentDiceType != Dice.DiceType.D4) ? (Dice.DiceType)((int)currentDiceType - 1) : Dice.DiceType.D20;
@@ -158,6 +182,9 @@ public class DiceSelector : MonoBehaviour
         diceTextField.text = (currentDiceType != Dice.DiceType.D10_10s) ? currentDiceType.ToString() : "D10(10s)";
     }
 
+    /// <summary>
+    /// NextNumColor goes to the next color in the color options for the dice numbers colllection colors[OBSOLETE]
+    /// </summary>
     public void NextNumColor()
     {
         currentColorIndex[0] = (currentColorIndex[0] + 1 < colorOptions.Count) ? (currentColorIndex[0] + 1) : 0;
@@ -165,6 +192,9 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[0].color = colorOptions[currentColorIndex[0]];
     }
 
+    /// <summary>
+    /// PrevNumColor goes to the previous color in the color options for the dice numbers colllection colors[OBSOLETE]
+    /// </summary>
     public void PrevNumColor()
     {
         currentColorIndex[0] = (currentColorIndex[0] - 1 >= 0) ? (currentColorIndex[0] - 1) : (colorOptions.Count - 1);
@@ -172,6 +202,9 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[0].color = colorOptions[currentColorIndex[0]];
     }
 
+    /// <summary>
+    /// NextDieColor goes to the next color in the color options for the dice body colllection colors[OBSOLETE]
+    /// </summary>
     public void NextDieColor()
     {
         currentColorIndex[1] = (currentColorIndex[1] + 1 < colorOptions.Count) ? (currentColorIndex[1] + 1) : 0;
@@ -179,6 +212,9 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[1].color = colorOptions[currentColorIndex[1]];
     }
 
+    /// <summary>
+    /// PrevDieColor goes to the previous color in the color options for the dice body colllection colors[OBSOLETE]
+    /// </summary>
     public void PrevDieColor()
     {
         currentColorIndex[1] = (currentColorIndex[1] - 1 >= 0) ? (currentColorIndex[1] - 1) : (colorOptions.Count - 1);
@@ -186,6 +222,9 @@ public class DiceSelector : MonoBehaviour
         colorBlocks[1].color = colorOptions[currentColorIndex[1]];
     }
 
+    /// <summary>
+    /// SaveData saves the current dice properties to .dsd(DS Dice file) 
+    /// </summary>
     public void SaveData()
     {
         string path;
@@ -213,6 +252,10 @@ public class DiceSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// SaveData saves the current dice properties to .dsd(DS Dice file)
+    /// </summary>
+    /// <param name="path">Path within which the .dsd(DS Dice file) is saved to</param>
     void SaveData(String path)
     {
         BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
@@ -243,6 +286,10 @@ public class DiceSelector : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// LoadData reads in data from a given .dsd(DS Dice file)[OBSOLETE] 
+    /// </summary>
+    /// <param name="path">Path within which the .dsd(DS Dice file) to be loaded is located</param>
     public void LoadData(String path)
     {
         if(File.Exists(path))
@@ -269,6 +316,9 @@ public class DiceSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// SaveDialogConfirmed called when the file naming dialog's confirmation button was clicked
+    /// </summary>
     public void SaveDialogConfirmed()
     {
         string path;
@@ -297,6 +347,9 @@ public class DiceSelector : MonoBehaviour
         SaveData(path + "dice/skins/" + saveDialog.GetComponentInChildren<InputField>().text + ".dsd");
     }
 
+    /// <summary>
+    /// SaveDialogCanceled called when the file naming dialog's confirmation button was clicked
+    /// </summary>
     public void SaveDialogCanceled()
     {
         if (!isSavedFile)
@@ -305,6 +358,9 @@ public class DiceSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// GenerateTextureFromMaterial converts materila color 
+    /// </summary>
     public void GenerateTextureFromMaterial()
     {
         string path;
@@ -360,6 +416,9 @@ public class DiceSelector : MonoBehaviour
         file.Close();
     }
 
+    /// <summary>
+    /// LoadFile opens a OpenFileDialog to load in a file
+    /// </summary>
     public void LoadFile()
     {
         String file_path = string.Empty;
@@ -452,6 +511,10 @@ public class DiceSelector : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// LoadData reads in data from a given .dsd(DS Dice file)[OBSOLETE]
+    /// </summary>
+    /// <param name="_path">Path within which the .dsd(DS Dice file) to be loaded is located</param>
     public void LoadFile(string _path)
     {
         if (_path != string.Empty && _path != "")
