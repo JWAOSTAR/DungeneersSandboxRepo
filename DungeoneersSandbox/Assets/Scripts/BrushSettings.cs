@@ -25,12 +25,17 @@ public class BrushSettings : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //
         if(gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
             gameObject.SetActive(false);
         }
     }
 
+    /// <summary>
+    /// Changes the current brushes square/circle state
+    /// </summary>
+    /// <param name="_sqr">Iteger indicating wheather the state should be square or circle</param>
     public void BrushShapeToggle(int _sqr)
     {
         if(_sqr == 0)
@@ -43,11 +48,19 @@ public class BrushSettings : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the size of the currently active brush
+    /// </summary>
+    /// <param name="_size">Float value representing the size of the brush</param>
     public void SetBrushSize(float _size)
     {
         m_brush.Size = _size;
     }
 
+    /// <summary>
+    /// Sets the hardness/opacity of the currently active brush
+    /// </summary>
+    /// <param name="_hardness">Float value representing the hardness of the brush</param>
     public void SetBrushHardness(float _hardness)
     {
         m_brush.Hardness = _hardness;

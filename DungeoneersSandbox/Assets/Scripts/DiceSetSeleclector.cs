@@ -36,12 +36,16 @@ public class DiceSetSeleclector : MonoBehaviour
 
     int activeDiceType = -1;
 
+    // Start is called before the first frame update
     void Start()
     {
+        //Set the base values for the class properties
         m_lastGlobalColor[0] = m_numberBlockColor.color = m_numberColor.CurrentColor;
         m_lastGlobalColor[1] = m_dieBlockColor.color = m_dieColor.CurrentColor;
         m_numberColor.gameObject.SetActive(false);
         m_dieColor.gameObject.SetActive(false);
+
+        //Get the directory where the skins are stored
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
@@ -53,6 +57,8 @@ public class DiceSetSeleclector : MonoBehaviour
             Directory.CreateDirectory(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/dice/skins/");
         }
 #endif
+
+        //Add default dice skins skins to the collection fo skins
         for (int k = 0; k < dice.Length; k++)
         {
             Dice.DiceSkin skinToAdd = new Dice.DiceSkin();
@@ -63,6 +69,7 @@ public class DiceSetSeleclector : MonoBehaviour
             skins.Add(skinToAdd);
         }
 
+        //Get files from the directory where the skins are stored
         string[] files;
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         files = Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/");
@@ -90,6 +97,7 @@ public class DiceSetSeleclector : MonoBehaviour
             file.Close();
         }
 
+        //Set each dice type to the first skin found for specified type
         for (int i = 0; i < dice.Length; i++)
         {
             if (skins.FindAll(searchFuncs[i]).Count > 0)
@@ -120,6 +128,10 @@ public class DiceSetSeleclector : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Switches skin on model to the next skin in for the given die type(d4, d6, d8, d10[1s], d10[10s], d20)
+    /// </summary>
+    /// <param name="die">The die type of the to be switched</param>
     public void NextSkin(int die)
     {
         if (skins.FindAll(searchFuncs[die]).Count > 1) 
@@ -144,6 +156,10 @@ public class DiceSetSeleclector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switches skin on model to the previous skin in for the given die type(d4, d6, d8, d10[1s], d10[10s], d20)
+    /// </summary>
+    /// <param name="die"></param>
     public void PrevSkin(int die)
     {
         if (skins.FindAll(searchFuncs[die]).Count > 1)
@@ -168,6 +184,9 @@ public class DiceSetSeleclector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Save the set of dice to file to be read in later
+    /// </summary>
     public void SaveActiveDice()
     {
         BinaryWriter file;
@@ -204,6 +223,10 @@ public class DiceSetSeleclector : MonoBehaviour
         file.Close();
     }
 
+    /// <summary>
+    /// Change the number(s) of all dice or a select die
+    /// </summary>
+    /// <param name="_color">Color to set number(s) to</param>
     public void SetNumColor(Color _color)
     {
         if (activeDiceType == -1) 
@@ -235,6 +258,10 @@ public class DiceSetSeleclector : MonoBehaviour
         m_numberBlockColor.color = _color;
     }
 
+    /// <summary>
+    /// Change the bod(y/ies) of all dice or a select die
+    /// </summary>
+    /// <param name="_color">Color to set bod(y/ies) to</param>
     public void SetDieColor(Color _color)
     {
         if (activeDiceType == -1)
@@ -266,6 +293,9 @@ public class DiceSetSeleclector : MonoBehaviour
         m_dieBlockColor.color = _color;
     }
 
+    /// <summary>
+    /// Change the selection of whcih dies properties are to be edited to the next in the list
+    /// </summary>
     public void PrevActiveDie()
     {
         activeDiceType = (activeDiceType - 1 >= -1) ? activeDiceType - 1 : 6;
@@ -312,6 +342,9 @@ public class DiceSetSeleclector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Change the selection of whcih dies properties are to be edited to the previous in the list
+    /// </summary>
     public void NextActiveDie()
     {
         activeDiceType = (activeDiceType + 1 <= 6) ? activeDiceType + 1 : -1;
@@ -358,6 +391,7 @@ public class DiceSetSeleclector : MonoBehaviour
         }
     }
 
+    //Dice search predicate
     private static bool FindD4(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D4); }
     private static bool FindD6(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D6); }
     private static bool FindD8(Dice.DiceSkin d){ return (d.diceType == Dice.DiceType.D8); }

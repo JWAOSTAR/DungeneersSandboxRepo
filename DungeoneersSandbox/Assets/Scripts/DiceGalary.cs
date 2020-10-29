@@ -38,6 +38,7 @@ public class DiceGalary : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Get skin files from directory and store them in a collection
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/dice/skins/"))
         {
@@ -59,6 +60,7 @@ public class DiceGalary : MonoBehaviour
         }
         files = Directory.GetFiles(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/").Concat(Directory.GetFiles(UnityEngine.Application.persistentDataPath + "/DungeoneersSamdbox/dice/skins/purchased/")).ToArray();
 #endif
+        //Read in file properties into list of trays to display
         int filedLines = 0;
         for (int j = 0; j < files.Length; j++)
         {
@@ -105,7 +107,8 @@ public class DiceGalary : MonoBehaviour
                 filedLines++;
             }
         }
-        if(filedLines < m_scrollContent.Length)
+        //Fill in visible lines for the list of dice
+        if (filedLines < m_scrollContent.Length)
         {
             for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
             {
@@ -113,6 +116,7 @@ public class DiceGalary : MonoBehaviour
                 m_scrollContent[2 - j].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
             }
         }
+        //Set model to first dice file in list or if no files found hide model
         if (files.Length > 0)
         {
             SetSkin(0);
@@ -126,6 +130,7 @@ public class DiceGalary : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Check if mouse is over die model ant toggle mobility depending on the state
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!m_mover.GetMobility() && Physics.Raycast(ray, out hit))
@@ -138,6 +143,9 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switch the die model to the next model/file in the list
+    /// </summary>
     public void NextModel()
     {
         currentStartIndex = (currentStartIndex+ m_scrollContent.Length < files.Length) ? currentStartIndex+ m_scrollContent.Length : 0;
@@ -158,6 +166,9 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switch the die model to the previous model/file in the list of saved skins
+    /// </summary>
     public void PrevModel()
     {
         currentStartIndex = (currentStartIndex - m_scrollContent.Length >= 0) ? currentStartIndex - m_scrollContent.Length : files.Length -1;
@@ -178,6 +189,10 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the skin of the model to the specified model/file in the list of saved skins
+    /// </summary>
+    /// <param name="_index">Index of the model/file in the list</param>
     public void SetSkin(int _index)
     {
         currentIndex = _index;
@@ -197,12 +212,17 @@ public class DiceGalary : MonoBehaviour
             m_materials.materials[1].color = Color.white;
         }
     }
-
+    
+    //[OBSOLETE]
     public void SaveSkin()
 	{
 
 	}
 
+    /// <summary>
+    /// Converts the material properties to a Texture2D object
+    /// </summary>
+    /// <returns>The texture converted from material properties</returns>
     Texture2D MaterialToTexture2D()
     {
         Texture2D newTexture = textures[(int)skins[currentIndex].diceType];
@@ -225,6 +245,9 @@ public class DiceGalary : MonoBehaviour
         return newTexture;
     }
 
+    /// <summary>
+    /// Stores dice to be painted file in game directory and switches to dice editor scene
+    /// </summary>
     public void EditSkin()
     {
         string path;
@@ -265,6 +288,9 @@ public class DiceGalary : MonoBehaviour
         m_manager.ChangeScene("DiceEditor");
     }
 
+    /// <summary>
+    /// Opnes SaveFileDialog to save current skin
+    /// </summary>
     public void ExportSkin()
     {
         if (!files[currentIndex].Contains("purchased")) {
@@ -313,6 +339,10 @@ public class DiceGalary : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Saves file to a given path
+    /// </summary>
+    /// <param name="_filePath">The path which the file will be saved to</param>
     public void ExportSkin(string _filePath)
     {
         BinaryWriter file = new BinaryWriter(File.Open(_filePath, FileMode.OpenOrCreate));
@@ -341,6 +371,12 @@ public class DiceGalary : MonoBehaviour
         file.Close();
     }
 
+    /// <summary>
+    /// Flips the active state of a given gameObject for a given time
+    /// </summary>
+    /// <param name="_gameObject">Game object to be toggled</param>
+    /// <param name="_timeDelay">Time the game object will be toggled for</param>
+    /// <returns></returns>
     IEnumerator ToggleActivation(GameObject _gameObject, float _timeDelay)
     {
         _gameObject.SetActive(!_gameObject.activeSelf);

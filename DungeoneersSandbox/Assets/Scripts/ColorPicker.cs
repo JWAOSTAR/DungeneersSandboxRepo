@@ -14,7 +14,7 @@ public class ColorPickerColorEvent : UnityEvent<Color> { }
 public class ColorPickerEvent : UnityEvent { }
 public class ColorPicker : MonoBehaviour
 {
-
+    //Components of a color slider bar
     public struct ColorSlider
     {
         public Image bar;
@@ -73,9 +73,10 @@ public class ColorPicker : MonoBehaviour
     public ColorPickerEvent onEscape { get { return m_onEscape; } set { m_onEscape = value; } }
     protected ColorPicker() { }
 
-    // Start is called before the first frame update
+    // Awake is called when the script instance is being loaded
     void Awake()
     {
+        //Set up base varibles and components
         previousColorPanel.color = currentColor;
         currentColorPanel.color = currentColor;
         defaultColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -93,6 +94,8 @@ public class ColorPicker : MonoBehaviour
             colorSlider[i].bar.sprite = Sprite.Create(new Texture2D((int)colorSlider[i].bar.rectTransform.rect.width, (int)colorSlider[i].bar.rectTransform.rect.height), new Rect(0, 0, colorSlider[i].bar.rectTransform.rect.width, colorSlider[i].bar.rectTransform.rect.height), new Vector2(0, 0));
             //colorSlider[i].handle.localPosition = colorSlider[i].initialHandleTransform.localPosition + new Vector3((148.0f * currentColor[i]), 0.0f, 0.0f);
         }
+
+        //Set the value in the color sliders text input feilds
         for(int j = 0; j < colorBars.Length; j++)
         {
             colorSliders[j].value = currentColor[j];
@@ -100,7 +103,8 @@ public class ColorPicker : MonoBehaviour
         }
         colorSliders[3].value = currentColor.a;
         //colorSlider[0].handle.transform.localPosition
-
+        
+        //Refresh the color picker with new variable and component values
         UpdateColorPicker();
 
         //FillColorBlockSegments(hues, ref colorHueBar, true);
@@ -115,7 +119,10 @@ public class ColorPicker : MonoBehaviour
         //{
         //    FillColorBlockSegment(hues[k+1], hues[k+1], hues[k], hues[k], ref colorHueBar, 0, (int)((colorHueBar.rectTransform.rect.height / (float)(hues.Length - 1)) * (k)), (int)colorHueBar.rectTransform.rect.width, (int)((colorHueBar.rectTransform.rect.height / (float)(hues.Length - 1)) * (k+1)));
         //}
+
+        //Fill the vertical slider bar used to change the base hue to a diffrent color
         FillColorBlockSegments(hues, ref colorHueBar, true, true);
+
         //Color test = GetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f), currentColor, new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 1.0f), colorBlock, (int)colorBlock.rectTransform.rect.width, (int)colorBlock.rectTransform.rect.height);
     }
 
@@ -125,10 +132,16 @@ public class ColorPicker : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Un-does any changes done to the color picker during the current active session and sets active false
+    /// </summary>
     public void onCancel()
     {
+        //Set current color back to previouse
         currentColor = previousColorPanel.color;
+        //Reseting the base hue
         originColor = GetBaseColor(currentColor);
+        //Refreshing components
         for (int j = 0; j < 4; j++)
         {
             colorSliders[j].SetValueWithoutNotify(currentColor[j]);
@@ -142,6 +155,9 @@ public class ColorPicker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies color change to all objects listening for the confirmation event
+    /// </summary>
     public void onConferm()
     {
         previousColorPanel.color = currentColor;
@@ -152,22 +168,34 @@ public class ColorPicker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bilinearly interpolates four colors over the four points of an Image object
+    /// </summary>
+    /// <param name="topLeft">Color for the top left side of the refrenced image</param>
+    /// <param name="topRight">Color for the top right side of the refrenced image</param>
+    /// <param name="bottomRight">Color for the bottom right side of the refrenced image</param>
+    /// <param name="bottomLeft">Color for the bottom left side of the refrenced image</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="mark">Boolean indicating if the handle for the interpolated area should be repositioned in this fill</param>
     void FillColorBlock(Color topLeft, Color topRight, Color bottomRight, Color bottomLeft, ref Image block, bool mark)
     {
         if (mark)
         {
+            //Check if all current color values(RGB) are equal then set handle to the top left corner(White in interpolated block for the 2D slider) or the bottom left corner(Black in interpolated block for the 2D slider)
             if ((Mathf.Floor(10.0f * currentColor.r) == Mathf.Floor(10.0f * currentColor.g)) && (Mathf.Floor(10.0f * currentColor.g) == Mathf.Floor(10.0f * currentColor.b)))
             {
                 colorBlockHandle.localPosition = /*initialColorBlockHandlePosition.position +*/ new Vector3(-75.0f, (currentColor.r * 148.0f) - 75.0f, 0.0f);
                 colorBoxSlider.SetValueWithoutNotify(0, (currentColor.r * 148.0f));
                 //mark = false;
             }
+            //Check if the base hue is equal to the current color then set the mhandle to the top right(Base hue/color in interpolated block for the 2D slider)
             else if (((Mathf.Floor(10.0f * topRight.r) == Mathf.Floor(10.0f * currentColor.r)) && (Mathf.Floor(10.0f * topRight.g) == Mathf.Floor(10.0f * currentColor.g)) && (Mathf.Floor(10.0f * topRight.b) == Mathf.Floor(10.0f * currentColor.b))) || (topRight == currentColor))
             {
                 colorBlockHandle.localPosition = new Vector3(73.0f, 73.0f, 0.0f);
                 colorBoxSlider.SetValueWithoutNotify(148.0f, 148.0f);
                 //mark = false;
             }
+            //Check if any of the current color values are set to 100% then place the handle at the top and a ration left 
             else if ((Mathf.Floor(currentColor.r) == 1.0f || Mathf.Floor(currentColor.g) == 1.0f || Mathf.Floor(currentColor.b) == 1.0f) && ((currentColor != Color.white) && (currentColor != Color.black)))
             {
                 float r = 0.0f;
@@ -201,6 +229,7 @@ public class ColorPicker : MonoBehaviour
             //}
 
         }
+        //Fill the image
         for (int y = 0; y < Mathf.Floor(block.sprite.rect.height); y++)
         {
             for (int x = 0; x < Mathf.Floor(block.sprite.rect.width); x++)
@@ -222,6 +251,13 @@ public class ColorPicker : MonoBehaviour
         block.sprite.texture.Apply();
     }
 
+    /// <summary>
+    /// Bilinearly interpolates two colors two points to the opposing points of an Image object
+    /// </summary>
+    /// <param name="left">Color of the left/top color</param>
+    /// <param name="right">Color of the right/bottom two corners</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="top_bottom">Boolean determining wheather or not the color is interpolated from the top two corners to the bottom two or the left two to the right two</param>
     void FillColorBlock(Color left, Color right, ref Image block, bool top_bottom)
     {
         if (!top_bottom)
@@ -234,6 +270,19 @@ public class ColorPicker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bilinearly interpolate four colors between four points of a designated segment of an Image object
+    /// </summary>
+    /// <param name="topLeft">Color for the top left side of the refrenced image</param>
+    /// <param name="topRight">Color for the top right side of the refrenced image</param>
+    /// <param name="bottomRight">Color for the bottom right side of the refrenced image</param>
+    /// <param name="bottomLeft">Color for the bottom left side of the refrenced image</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="minX">Lowest horizantal position value(X Value) of the four points</param>
+    /// <param name="minY">Lowest vertical position value(Y Value) of the four points</param>
+    /// <param name="maxX">Highest horizantal position value(X Value) of the four points</param>
+    /// <param name="maxY">Highest vertical position value(Y Value) of the four points</param>
+    /// <param name="mark">Boolean indicating if the handle for the interpolated area should be repositioned in this fill</param>
     void FillColorBlockSegment(Color topLeft, Color topRight, Color bottomRight, Color bottomLeft, ref Image block, int minX, int minY, int maxX, int maxY, bool mark)
     {
         for (float y = minY; y < maxY; y++)
@@ -254,6 +303,17 @@ public class ColorPicker : MonoBehaviour
         block.sprite.texture.Apply();
     }
 
+    /// <summary>
+    /// Get the color of a point in a Image object with four colors bilinearly interpolated between four points
+    /// </summary>
+    /// <param name="topLeft">Color for the top left side of the image</param>
+    /// <param name="topRight">Color for the top right side of the image</param>
+    /// <param name="bottomRight">Color for the bottom right side of the image</param>
+    /// <param name="bottomLeft">Color for the bottom left side of the image</param>
+    /// <param name="block">Tmage that has being filled</param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Color GetColor(Color topLeft, Color topRight, Color bottomRight, Color bottomLeft, Image block, float x, float y)
     {
         return Color.Lerp(Color.Lerp(bottomLeft, bottomRight, (x / block.sprite.rect.width)), Color.Lerp(topLeft, topRight, (x / block.sprite.rect.width)), (y / block.sprite.rect.height));

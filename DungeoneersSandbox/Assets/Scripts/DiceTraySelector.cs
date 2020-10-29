@@ -91,6 +91,7 @@ public class DiceTraySelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Set base values for class variables
         m_trayMover.SetMobility(false);
         m_currentMesh.mesh = m_meshOptions[currentModel];
         m_innerColorPicker.gameObject.SetActive(false);
@@ -113,6 +114,7 @@ public class DiceTraySelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Check if shift is clicked to change the state of mobility
         if (!m_trayMover.GetMobility() && Input.GetKey(KeyCode.LeftShift))
         {
             m_trayMover.SetMobility(true);
@@ -123,6 +125,9 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switches model from current model to the next in the list
+    /// </summary>
     public void NextModel()
     {
         currentModel = ((currentModel + 1) < m_meshOptions.Length) ? currentModel + 1 : 0;
@@ -130,6 +135,9 @@ public class DiceTraySelector : MonoBehaviour
         m_modelName.text = "Model " + currentModel;
     }
 
+    /// <summary>
+    /// Switches model from current model to the previous in the list
+    /// </summary>
     public void PrevModel()
     {
         currentModel = ((currentModel - 1) >= 0) ? currentModel - 1 : m_meshOptions.Length - 1;
@@ -137,6 +145,10 @@ public class DiceTraySelector : MonoBehaviour
         m_modelName.text = "Model " + currentModel;
     }
 
+    /// <summary>
+    /// Set the interior color of the tray to a given color
+    /// </summary>
+    /// <param name="_color">Color the tray interior is to be set to</param>
     public void SetInnerColor(Color _color)
     {
         if (!pattern0uploaded)
@@ -160,6 +172,10 @@ public class DiceTraySelector : MonoBehaviour
         m_innerColorBlock.color = _color;
     }
 
+    /// <summary>
+    /// Set the exterior color of the tray to a given color
+    /// </summary>
+    /// <param name="_color">Color the tray exterior is to be set to</param>
     public void SetOutterColor(Color _color)
     {
         if (!pattern1uploaded)
@@ -184,6 +200,9 @@ public class DiceTraySelector : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Opens a SaveFileDialog to save dice tray properties to .dst(DS Dice Tray file)
+    /// </summary>
     public void OpenSaveDialog()
     {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
@@ -202,6 +221,9 @@ public class DiceTraySelector : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// Opens a OpenFileDialog to open a .dst(DS Dice Tray file) to load in properties to the dice tray
+    /// </summary>
     public void OpenFileDialog()
     {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
@@ -342,6 +364,9 @@ public class DiceTraySelector : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// Opens a OpenFileDialog to open a image file and upload a image to use a pattern for the interior of the tray
+    /// </summary>
     public void UploadInnerPatternImage()
     {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
@@ -378,6 +403,9 @@ public class DiceTraySelector : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// Opens a OpenFileDialog to open a image file and upload a image to use a pattern for the exterior of the tray
+    /// </summary>
     public void UploadOutterPatternImage()
     {
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
@@ -414,6 +442,10 @@ public class DiceTraySelector : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// Saves the .dst(DS Dice Tray file) to the given path
+    /// </summary>
+    /// <param name="path">Path that the tray file will be saved to</param>
     public void SaveDiceTray(string path)
     {
         BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
@@ -506,11 +538,20 @@ public class DiceTraySelector : MonoBehaviour
 
         //m_manager.ChangeScene("DiceSetSelector");
     }
+    
+    /// <summary>
+    /// Saves the .dst(DS Dice Tray file) to the game directory
+    /// </summary>
+    /// <param name="_isSaved">Boolean indicating weather or not the file is named</param>
     public void SaveToGalary(bool _isSaved)
 	{
         fileNamed = true;
         SaveToGalary();
 	}
+
+    /// <summary>
+    /// Saves the .dst(DS Dice Tray file) to the game directory
+    /// </summary>
     public void SaveToGalary()
 	{
         if (fileNamed) {
@@ -532,6 +573,9 @@ public class DiceTraySelector : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Saves a .dst(DS Dice Tray file) to be read in later
+    /// </summary>
     public void SaveDiceTray()
     {
         BinaryWriter file;
@@ -647,6 +691,11 @@ public class DiceTraySelector : MonoBehaviour
         file.Close();
         //m_manager.ChangeScene("DiceSetSelector");
     }
+    
+    /// <summary>
+    /// Loads dice tray from the given path
+    /// </summary>
+    /// <param name="_path">Path where .dst(DS Dice Tray file) is located</param>
     public void LoadDiceTray(string _path)
     {
         //#if (UNITY_ANDROID && !UNITY_EDITOR)
@@ -775,6 +824,11 @@ public class DiceTraySelector : MonoBehaviour
         }
         //#endif
     }
+    
+    /// <summary>
+    /// Open the editor for the shader pattern properties
+    /// </summary>
+    /// <param name="_inORout">Integer value indicating weather the function is affecting the interior of the tray or exterior</param>
     public void OpenPatternEditor(int _inORout)
     {
         if (_inORout == 0 && pattern0uploaded)
@@ -789,6 +843,10 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the image to be tiled on tray
+    /// </summary>
+    /// <param name="_inORout">Integer value indicating weather the function is affecting the interior of the tray or exterior</param>
     public void SetPatternUIImage(int _inORout)
     {
         currentPattern = _inORout;
@@ -801,6 +859,10 @@ public class DiceTraySelector : MonoBehaviour
         m_YOffset.text = ((_inORout == 0) ? pattern0.Offset.y : pattern1.Offset.y).ToString("0.00");
     }
 
+    /// <summary>
+    /// Set the horizantal tiling value
+    /// </summary>
+    /// <param name="_tilling_x">String reprisentation of the horizantal tiling value</param>
     public void SetTillingX(string _tilling_x)
     {
         float _val_tilling_x;
@@ -840,6 +902,10 @@ public class DiceTraySelector : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Set the vertical tiling value
+    /// </summary>
+    /// <param name="_tilling_y">String reprisentation of the vertical tiling value</param>
     public void SetTillingY(string _tilling_y)
     {
         float _val_tilling_y;
@@ -878,6 +944,10 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the horizantal shift value of the image pattern
+    /// </summary>
+    /// <param name="_offset_x"></param>
     public void SetOffsetX(string _offset_x)
     {
         float _val_offset_x;
@@ -897,6 +967,10 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the vertical shift value of the image pattern
+    /// </summary>
+    /// <param name="_offset_y"></param>
     public void SetOffsetY(string _offset_y)
     {
         float _val_offset_y;
@@ -917,6 +991,9 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Removes the pattern from the section of the tray the editor is active on
+    /// </summary>
     public void RemovePattern()
     {
         m_trayMaterials.materials[(currentPattern == 0) ? 1 : 0].SetTexture("_MainTex", null);
@@ -938,6 +1015,10 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotates the texture to a given angle
+    /// </summary>
+    /// <param name="_angle">Float value of the angle to rotate the image to</param>
     public void RotatePattern(float _angle)
     {
         if (currentPattern == 0)
@@ -949,6 +1030,11 @@ public class DiceTraySelector : MonoBehaviour
             m_trayMaterials.materials[0].SetTexture("_MainTex", RotateTexture(m_OutterPatternImage.sprite.texture, _angle));
         }
     }
+
+    /// <summary>
+    /// Rotates the texture to a given angle
+    /// </summary>
+    /// <param name="_angle">String value of the angle to rotate the image to</param>
     public void RotatePattern(string _angle)
     {
         float _rot_val;
@@ -965,6 +1051,12 @@ public class DiceTraySelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotates a given texture to a given angle
+    /// </summary>
+    /// <param name="_original">The texture to be rotated</param>
+    /// <param name="_angle">The value of the angle to rotate the image to</param>
+    /// <returns>The rotated Texture2D</returns>
     Texture2D RotateTexture(Texture2D _original, float _angle)
     {
         float sinAng = Mathf.Sin(Mathf.Deg2Rad*_angle);

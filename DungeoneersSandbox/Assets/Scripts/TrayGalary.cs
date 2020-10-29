@@ -37,6 +37,7 @@ public class TrayGalary : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+		//Get skin files from directory and store them in a collection
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 		if (!Directory.Exists("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/"))
 		{
@@ -58,6 +59,7 @@ public class TrayGalary : MonoBehaviour
 		}
 		files = Directory.GetFiles(UnityEngine.Application.persistentDataPath+"/DungeoneersSamdbox/diceTrays/skins/").Concat(Directory.GetFiles("C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/diceTrays/skins/purchased/")).ToArray();
 #endif
+		//Read in file properties into list of trays to display
 		int filedLines = 0;
 		for (int j = 0; j < files.Length; j++)
 		{
@@ -156,6 +158,7 @@ public class TrayGalary : MonoBehaviour
 				filedLines++;
 			}
 		}
+		//Fill in visible lines for the list of trays
 		if (filedLines < m_scrollContent.Length)
 		{
 			for (int j = 0; j < (m_scrollContent.Length - (files.Length % m_scrollContent.Length)); j++)
@@ -164,6 +167,7 @@ public class TrayGalary : MonoBehaviour
 				m_scrollContent[2 - j].GetComponent<UnityEngine.UI.Button>().onClick.RemoveAllListeners();
 			}
 		}
+		//Set model to first tray file in list or if no files found hide model
 		if (files.Length > 0)
 		{
 			SetSkin(0);
@@ -177,6 +181,7 @@ public class TrayGalary : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		//Check if mouse is over tray model ant toggle mobility depending on the state
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if (!m_mover.GetMobility() && Physics.Raycast(ray, out hit))

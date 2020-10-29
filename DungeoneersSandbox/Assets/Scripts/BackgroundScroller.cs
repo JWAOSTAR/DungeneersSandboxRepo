@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//[OBSOLETE]
 public class BackgroundScroller : MonoBehaviour
 {
     public Texture2D[] backgrounds;
@@ -13,6 +14,7 @@ public class BackgroundScroller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Set up the first bacground in the scroll
         index = 0;
         mat = gameObject.GetComponent<MeshRenderer>().material;
         mat.SetTexture("_MainTex", backgrounds[index]);
@@ -25,6 +27,9 @@ public class BackgroundScroller : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Switches to the next background from the current in the collection
+    /// </summary>
     public void onButtonNextClick()
     {
         if((index + 1) != backgrounds.GetLength(0))
@@ -41,6 +46,9 @@ public class BackgroundScroller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Switches to the previous background from the current in the collection
+    /// </summary>
     public void onButtonPrevClick()
     {
         if ((index - 1) != -1)
