@@ -229,6 +229,7 @@ public class ColorPicker : MonoBehaviour
             //}
 
         }
+
         //Fill the image
         for (int y = 0; y < Mathf.Floor(block.sprite.rect.height); y++)
         {
@@ -248,11 +249,12 @@ public class ColorPicker : MonoBehaviour
             }
         }
 
+        //Apply changes to refrenced image
         block.sprite.texture.Apply();
     }
 
     /// <summary>
-    /// Bilinearly interpolates two colors two points to the opposing points of an Image object
+    /// Bilinearly interpolates two colors from a pair of points to the opposing points of an Image object
     /// </summary>
     /// <param name="left">Color of the left/top color</param>
     /// <param name="right">Color of the right/bottom two corners</param>
@@ -311,14 +313,26 @@ public class ColorPicker : MonoBehaviour
     /// <param name="bottomRight">Color for the bottom right side of the image</param>
     /// <param name="bottomLeft">Color for the bottom left side of the image</param>
     /// <param name="block">Tmage that has being filled</param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
+    /// <param name="x">The horizantal coordinate value from where the color is to be retrived from the image</param>
+    /// <param name="y">The vertical coordinate value from where the color is to be retrived from the image</param>
+    /// <returns>The color found at the given coordinates</returns>
     public Color GetColor(Color topLeft, Color topRight, Color bottomRight, Color bottomLeft, Image block, float x, float y)
     {
         return Color.Lerp(Color.Lerp(bottomLeft, bottomRight, (x / block.sprite.rect.width)), Color.Lerp(topLeft, topRight, (x / block.sprite.rect.width)), (y / block.sprite.rect.height));
     }
 
+    /// <summary>
+    /// Bilinearly interpolate two colors from a pair of points to the opposing points of a designated segment of an Image object
+    /// </summary>
+    /// <param name="left">Color of the left/top color</param>
+    /// <param name="right">Color of the right/bottom two corners</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="minX">Lowest horizantal position value(X Value) of the four points</param>
+    /// <param name="minY">Lowest vertical position value(Y Value) of the four points</param>
+    /// <param name="maxX">Highest horizantal position value(X Value) of the four points</param>
+    /// <param name="maxY">Highest vertical position value(Y Value) of the four points</param>
+    /// <param name="top_bottom">Boolean determining wheather or not the color is interpolated from the top two corners to the bottom two or the left two to the right two</param>
+    /// <param name="mark">Boolean indicating if the handle for the interpolated area should be repositioned in this fill</param>
     void FillColorBlockSegment(Color left, Color right, ref Image block, int minX, int minY, int maxX, int maxY, bool top_bottom, bool mark)
     {
         if (!top_bottom)
@@ -331,6 +345,13 @@ public class ColorPicker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bilinearly interpolate a colection of colors between evenly destributed segments of an Image object
+    /// </summary>
+    /// <param name="colors">Collection of colors to be filled into the refrenced image</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="top_bottom">Boolean determining wheather or not the color is interpolated from the top two corners to the bottom two or the left two to the right two</param>
+    /// <param name="mark">Boolean indicating if the handle for the interpolated area should be repositioned in this fill</param>
     void FillColorBlockSegments(Color[] colors, ref Image block, bool top_bottom, bool mark)
     {
         for (int i = 0; i < (colors.Length - 1); i++)
@@ -351,6 +372,9 @@ public class ColorPicker : MonoBehaviour
 
     //}
 
+    /// <summary>
+    /// Updates marker on the hue bar that determins the main hue color of the color picker
+    /// </summary>
     public void UpdateHueMarker()
     {
         DontUpdate = true;
@@ -361,7 +385,19 @@ public class ColorPicker : MonoBehaviour
         DontUpdate = false;
         currentColorPanel.color = currentColor;
     }
-    
+
+    /// <summary>
+    /// Updates marker on the hue bar that determins the main hue color of the color picker
+    /// </summary>
+    /// <param name="topLeft">Color for the top left side of the image</param>
+    /// <param name="topRight">Color for the top right side of the image</param>
+    /// <param name="bottomRight">Color for the bottom right side of the image</param>
+    /// <param name="bottomLeft">Color for the bottom left side of the image</param>
+    /// <param name="block">Refrence to the image that is being filled</param>
+    /// <param name="minX">Lowest horizantal position value(X Value) of the four points</param>
+    /// <param name="minY">Lowest vertical position value(Y Value) of the four points</param>
+    /// <param name="maxX">Highest horizantal position value(X Value) of the four points</param>
+    /// <param name="maxY">Highest vertical position value(Y Value) of the four points</param>
     public void UpdateHueMarker(Color topLeft, Color topRight, Color bottomRight, Color bottomLeft, Image block, int minX, int minY, int maxX, int maxY)
     {
         for (float y = minY; y < maxY; y++)
@@ -377,6 +413,11 @@ public class ColorPicker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the color value of the current color of the color picker
+    /// </summary>
+    /// <param name="_color">Color value the current color is to be set to</param>
+    /// <param name="changePrevious">Boolean that indicates wheather or not to set the previouse color indicator to the current color before it changes</param>
     public void SetCurrentColor(Color _color, bool changePrevious = false)
     {
         SetCurrentColorRed(_color.r);
@@ -388,7 +429,11 @@ public class ColorPicker : MonoBehaviour
             previousColorPanel.color = _color;
         }
     }
-
+    
+    /// <summary>
+    /// Set the red value of the current color
+    /// </summary>
+    /// <param name="_color_values"></param>
     public void SetCurrentColorRed(float _color_values)
     {
         currentColor.r = _color_values;
@@ -399,6 +444,9 @@ public class ColorPicker : MonoBehaviour
         UpdateCoordinates();
     }
 
+    /// <summary>
+    /// Set the red value of the current color
+    /// </summary>
     public void SetCurrentColorRed()
     {
         currentColor.r = (float)double.Parse(colorInputFields[0].text);
@@ -418,6 +466,10 @@ public class ColorPicker : MonoBehaviour
         UpdateCoordinates();
     }
 
+    /// <summary>
+    /// Set the green value of the current color
+    /// </summary>
+    /// <param name="_color_values"></param>
     public void SetCurrentColorGreen(float _color_values)
     {
         currentColor.g = _color_values;
@@ -427,7 +479,9 @@ public class ColorPicker : MonoBehaviour
         UpdateColorPicker();
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Set the green value of the current color
+    /// </summary>
     public void SetCurrentColorGreen()
     {
         currentColor.g = (float)double.Parse(colorInputFields[1].text);
@@ -446,7 +500,10 @@ public class ColorPicker : MonoBehaviour
         UpdateColorPicker();
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Set the blue value of the current color
+    /// </summary>
+    /// <param name="_color_values"></param>
     public void SetCurrentColorBlue(float _color_values)
     {
         currentColor.b = _color_values;
@@ -456,7 +513,9 @@ public class ColorPicker : MonoBehaviour
         UpdateColorPicker();
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Set the blue value of the current color
+    /// </summary>
     public void SetCurrentColorBlue()
     {
         currentColor.b = (float)double.Parse(colorInputFields[2].text);
@@ -475,7 +534,10 @@ public class ColorPicker : MonoBehaviour
         UpdateColorPicker();
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Set the alpha/opacity value of the current color
+    /// </summary>
+    /// <param name="_color_values"></param>
     public void SetCurrentColorAlpha(float _color_values)
     {
         currentColor.a = _color_values;
@@ -489,7 +551,9 @@ public class ColorPicker : MonoBehaviour
         currentColorPanel.color = currentColor;
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Set the alpha/opacity value of the current color
+    /// </summary>
     public void SetCurrentColorAlpha()
     {
         currentColor.a = float.Parse(colorInputFields[3].text);
@@ -512,7 +576,9 @@ public class ColorPicker : MonoBehaviour
         currentColorPanel.color = currentColor;
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Updates the current color value of the color picker based on change in gui value
+    /// </summary>
     public void UpdateCurrentColor()
     {
         currentColor = GetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f), originColor, new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 1.0f), colorBlock, colorBoxSlider.xValue, colorBoxSlider.yValue);
@@ -524,7 +590,10 @@ public class ColorPicker : MonoBehaviour
         UpdateColorPicker();
         UpdateCoordinates();
     }
-
+    /// <summary>
+    /// Sets the base hue color with color from he hue bar
+    /// </summary>
+    /// <param name="_color">float value with which to set the slider to</param>
     public void SetOriginColor(float _color)
     {
         if (!DontUpdate) {
@@ -556,7 +625,9 @@ public class ColorPicker : MonoBehaviour
             FillColorBlock(new Color(currentColor.r, currentColor.g, currentColor.b, 0.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 1.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 1.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 0.0f), ref colorSlider[3].bar, false);
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     void UpdateColorPicker()
     {
         FillColorBlock(new Color(1.0f, 1.0f, 1.0f, 1.0f), originColor, new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 1.0f), ref colorBlock, true);
@@ -566,7 +637,11 @@ public class ColorPicker : MonoBehaviour
         FillColorBlock(new Color(currentColor.r, currentColor.g, currentColor.b, 0.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 1.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 1.0f), new Color(currentColor.r, currentColor.g, currentColor.b, 0.0f), ref colorSlider[3].bar, false);
         currentColorPanel.color = currentColor;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_color"></param>
+    /// <returns></returns>
     Color GetBaseColor(Color _color)
     {
         Color _base = defaultColor;
@@ -652,7 +727,9 @@ public class ColorPicker : MonoBehaviour
         }
         return _base;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void UpdateCoordinates()
     {
         m_coordinates.text = "X:" + (colorBlockHandle.localPosition.x + 75.0f).ToString("0.00") + " Y:" + (colorBlockHandle.localPosition.y + 75.0f).ToString("0.00");
