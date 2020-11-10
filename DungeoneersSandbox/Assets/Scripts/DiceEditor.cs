@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
 
+//[OBSELETE]
 public class DiceEditor : MonoBehaviour
 {
     // Start is called before the first frame update

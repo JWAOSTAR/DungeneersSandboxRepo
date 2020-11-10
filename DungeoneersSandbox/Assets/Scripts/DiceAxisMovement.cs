@@ -39,11 +39,19 @@ public class DiceAxisMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the mobile state of the object
+    /// </summary>
+    /// <param name="isMovable">Boolean value representing the state of the object</param>
     public void SetMobility(bool isMovable)
     {
         m_movable = isMovable;
     }
 
+    /// <summary>
+    /// Get the mobile state of the object
+    /// </summary>
+    /// <returns>Boolean representing whether or not the object is allowed to be moved</returns>
     public bool GetMobility()
     {
         return m_movable;

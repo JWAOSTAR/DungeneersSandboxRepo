@@ -30,11 +30,19 @@ public class InfinateRotation : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the mobile state of the object
+    /// </summary>
+    /// <param name="_isMobile">Boolean value representing the state of the object</param>
     public void SetMobility(bool _isMobile)
     {
         m_mobile = _isMobile;
     }
 
+    /// <summary>
+    /// Get the mobile state of the object
+    /// </summary>
+    /// <returns>Boolean representing whether or not the object is allowed to be moved</returns>
     public bool GetMobility()
     {
         return m_mobile;

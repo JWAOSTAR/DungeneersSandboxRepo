@@ -15,6 +15,7 @@ public class MapBuilderCameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Camera controller
         if(m_mobile)
         {
                 if (Input.GetKey(KeyCode.W) || (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") > 0))
@@ -66,11 +67,19 @@ public class MapBuilderCameraController : MonoBehaviour
         }
     }
 
-   public void SetMobility(bool _mobility)
+    /// <summary>
+    /// Set the mobile state of the object
+    /// </summary>
+    /// <param name="_mobility">Boolean value representing the state of the object</param>
+    public void SetMobility(bool _mobility)
     {
         m_mobile = _mobility;
     }
 
+    /// <summary>
+    /// Get the mobile state of the object
+    /// </summary>
+    /// <returns>Boolean representing whether or not the object is allowed to be moveds</returns>
     public bool GetMobility()
     {
         return m_mobile;

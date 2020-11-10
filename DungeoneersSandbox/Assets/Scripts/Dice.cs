@@ -83,17 +83,27 @@ public class Dice : MonoBehaviour
         m_diceUI.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
     }
 
+    /// <summary>
+    /// Get the boolean value that reprisents 
+    /// </summary>
+    /// <returns></returns>
     bool isMoving()
     {
         return m_isMoving;
     }
 
+    /// <summary>
+    /// Function called when gameObject is in motion and calls all listening functions
+    /// </summary>
     void onMove()
     {
        //m_diceUI.gameObject.SetActive(false);
         m_onMove.Invoke();
     }
 
+    /// <summary>
+    /// Function called when gameObject has rested from motion and calls all listening functions
+    /// </summary>
     void onStop()
     {
         UpdateValue();
@@ -101,12 +111,18 @@ public class Dice : MonoBehaviour
         m_onStop.Invoke();
     }
 
+    /// <summary>
+    /// Deletes the gameObject itself and calls all listening functions
+    /// </summary>
     public void Delete()
     {
         m_onDiceDelete.Invoke();
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Adds force and spin to re-roll die
+    /// </summary>
     public void ReRoll()
     {
         //Vector3[] spinDir = { /*new Vector3(20.0f, 0.0f, 0.0f), new Vector3(-20.0f, 0.0f, 0.0f),*/ new Vector3(0.0f, 20.0f, 0.0f), new Vector3(0.0f, -20.0f, 0.0f)/*, new Vector3(0.0f, 0.0f, 20.0f), new Vector3(0.0f, 0.0f, -20.0f)*/ };
@@ -114,12 +130,14 @@ public class Dice : MonoBehaviour
         rb.AddTorque(new Vector3(Random.Range(20.0f, 100.0f), /*Random.Range(20.0f, 100.0f)*/0.0f, Random.Range(20.0f, 100.0f)));
     }
 
+    //OnMouseEnter is called when the mouse entered the GUIElement or Colider
     private void OnMouseEnter()
     {
         Debug.Log("Mouse enter " + gameObject.name);
         m_diceUI.gameObject.SetActive(true);
     }
 
+    //OnMouseOver is called every frame while the mouse is over the GUIElement or Colider
     private void OnMouseOver()
     {
         Debug.Log("Mouse is over " + gameObject.name);
@@ -130,12 +148,15 @@ public class Dice : MonoBehaviour
         }
     }
 
+    //OnMouseExit is called when the mouse is no longer over the GUIElement or Colider
     private void OnMouseExit()
     {
         Debug.Log("Mouse exit " + gameObject.name);
         m_diceUI.gameObject.SetActive(m_diceUI.GetChild(1).gameObject.activeSelf);
     }
-
+    /// <summary>
+    /// Change the on hover menu values
+    /// </summary>
     void UpdateValue()
     {
         Transform topNum = null;

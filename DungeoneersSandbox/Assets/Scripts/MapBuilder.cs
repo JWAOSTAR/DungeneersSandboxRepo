@@ -53,6 +53,9 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function called when the width value is changed on the new map GUI
+    /// </summary>
     public void OnWidthInputChange()
     {
         int num;
@@ -66,6 +69,9 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function called when the height(depth) value is changed on the new map GUI
+    /// </summary>
     public void OnHeightInputChange()
     {
         int num;
@@ -79,6 +85,9 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function called when the level/floor value is changed on the new map GUI
+    /// </summary>
     public void OnLevelInputChange()
     {
         int num;
@@ -92,6 +101,9 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instanciate and arrange all tiles when the confirmation button is clicked
+    /// </summary>
     public void OnNewMapConfirm()
     {
 
@@ -114,6 +126,9 @@ public class MapBuilder : MonoBehaviour
         Camera.main.transform.position = new Vector3(0.0f, 0.75f, 0.0f);
     }
 
+    /// <summary>
+    /// Resets all the new map GUI values to default
+    /// </summary>
     public void OnNewMapCancel()
     {
         m_width = 1;
@@ -124,11 +139,19 @@ public class MapBuilder : MonoBehaviour
         m_levelInput.text = "";
     }
 
+    /// <summary>
+    /// Sets the width value for the map
+    /// </summary>
+    /// <param name="_width">Float value the width of the map is to be changed to</param>
     void SetWidth(int _width)
     {
         m_width = _width;
     }
 
+    /// <summary>
+    /// Sets the height value for the map
+    /// </summary>
+    /// <param name="_height">Float value the height of the map is to be changed to</param>
     void SetHeight(int _height)
     {
         m_height = _height;

@@ -181,14 +181,14 @@ public class ColorPicker : MonoBehaviour
     {
         if (mark)
         {
-            //Check if all current color values(RGB) are equal then set handle to the top left corner(White in interpolated block for the 2D slider) or the bottom left corner(Black in interpolated block for the 2D slider)
+            //Check if all current color values(RGB) are equal then set handle to a ratio based position between the top left corner(White in interpolated block for the 2D slider) or the bottom left corner(Black in interpolated block for the 2D slider)
             if ((Mathf.Floor(10.0f * currentColor.r) == Mathf.Floor(10.0f * currentColor.g)) && (Mathf.Floor(10.0f * currentColor.g) == Mathf.Floor(10.0f * currentColor.b)))
             {
                 colorBlockHandle.localPosition = /*initialColorBlockHandlePosition.position +*/ new Vector3(-75.0f, (currentColor.r * 148.0f) - 75.0f, 0.0f);
                 colorBoxSlider.SetValueWithoutNotify(0, (currentColor.r * 148.0f));
                 //mark = false;
             }
-            //Check if the base hue is equal to the current color then set the mhandle to the top right(Base hue/color in interpolated block for the 2D slider)
+            //Check if the base hue is equal to the current color then set the handle to the top right(Base hue/color in interpolated block for the 2D slider)
             else if (((Mathf.Floor(10.0f * topRight.r) == Mathf.Floor(10.0f * currentColor.r)) && (Mathf.Floor(10.0f * topRight.g) == Mathf.Floor(10.0f * currentColor.g)) && (Mathf.Floor(10.0f * topRight.b) == Mathf.Floor(10.0f * currentColor.b))) || (topRight == currentColor))
             {
                 colorBlockHandle.localPosition = new Vector3(73.0f, 73.0f, 0.0f);
@@ -626,7 +626,7 @@ public class ColorPicker : MonoBehaviour
         }
     }
     /// <summary>
-    /// 
+    /// Updates all the sliders in the color picker
     /// </summary>
     void UpdateColorPicker()
     {
@@ -638,19 +638,21 @@ public class ColorPicker : MonoBehaviour
         currentColorPanel.color = currentColor;
     }
     /// <summary>
-    /// 
+    /// Calculate the base color of the color picker's 2D slider area from a given color value
     /// </summary>
-    /// <param name="_color"></param>
-    /// <returns></returns>
+    /// <param name="_color">Color value used ot calculate base color</param>
+    /// <returns>The calculated base color</returns>
     Color GetBaseColor(Color _color)
     {
         Color _base = defaultColor;
-        if((Mathf.Floor(10.0f*_color.r) == Mathf.Floor(10.0f * _color.g)) && (Mathf.Floor(10.0f * _color.g) == Mathf.Floor(10.0f * _color.b)))
+        //Check if all current color values(RGB) are equal then set handle to a ratio based position between the top left corner(White in interpolated block for the 2D slider) or the bottom left corner(Black in interpolated block for the 2D slider)
+        if ((Mathf.Floor(10.0f*_color.r) == Mathf.Floor(10.0f * _color.g)) && (Mathf.Floor(10.0f * _color.g) == Mathf.Floor(10.0f * _color.b)))
         {
             colorBlockHandle.localPosition = /*initialColorBlockHandlePosition.position +*/ new Vector3(-75.0f, (_color.r * 148.0f) - 75.0f, 0.0f);
             colorBoxSlider.SetValueWithoutNotify(0.0f, (_color.r*148.0f));
         }
-        else if((Mathf.Floor(10.0f * _color.r) == Mathf.Floor(10.0f * _color.g)) || (Mathf.Floor(10.0f * _color.g) == Mathf.Floor(10.0f * _color.b)) || (Mathf.Floor(10.0f * _color.r) == Mathf.Floor(10.0f * _color.b)))
+        //Check if two of the colors are equal to eachother and if so set the base color to the combination of the two equal color values or the inequal color depending on which is higher
+        else if ((Mathf.Floor(10.0f * _color.r) == Mathf.Floor(10.0f * _color.g)) || (Mathf.Floor(10.0f * _color.g) == Mathf.Floor(10.0f * _color.b)) || (Mathf.Floor(10.0f * _color.r) == Mathf.Floor(10.0f * _color.b)))
         {
             if (Mathf.Floor(10.0f * _color.r) == Mathf.Floor(10.0f * _color.g))
             {
@@ -665,6 +667,7 @@ public class ColorPicker : MonoBehaviour
                 _base = (_color.r > _color.g) ? Color.magenta : Color.green;
             }
         }
+        //Set the mediam color value to value based the max and min values
         else
         {
             _base = _color;
@@ -728,7 +731,7 @@ public class ColorPicker : MonoBehaviour
         return _base;
     }
     /// <summary>
-    /// 
+    /// Change the coordinate values indicating the position of the 2D slider handle
     /// </summary>
     public void UpdateCoordinates()
     {

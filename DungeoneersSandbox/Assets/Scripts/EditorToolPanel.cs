@@ -27,10 +27,19 @@ public class EditorToolPanel : MonoBehaviour
     [SerializeField]
     Texture2D[] m_cursors;
 
+    /// <summary>
+    /// The primary color for the tool editor's panel
+    /// </summary>
     public Color PrimaryColor { get { return m_primaryPanel.color; } }
+    /// <summary>
+    /// The secondary color for the tool editor's panel
+    /// </summary>
     public Color SecondaryColor { get { return m_secondaryPanel.color; } }
-
+    /// <summary>
+    /// The current tool of the tool editor
+    /// </summary>
     public ToolType CurrentTool { get { return m_tool; } }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +58,9 @@ public class EditorToolPanel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the default values for the colors and color panel
+    /// </summary>
     public void SetPanelsToDefault()
     {
         m_primaryPanel.color = Color.black;
@@ -59,6 +71,9 @@ public class EditorToolPanel : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Swap the primery and secondary color values
+    /// </summary>
     public void SwitchColors()
     {
         Color temp_color = m_primaryPanel.color;
@@ -69,34 +84,63 @@ public class EditorToolPanel : MonoBehaviour
         m_secondaryColorPicker.SetCurrentColor(m_secondaryPanel.color, true);
     }
 
+    /// <summary>
+    /// Set the color value of the primary color
+    /// </summary>
+    /// <param name="_color">Color to set the primary color to</param>
     public void SetPrimaryColor(Color _color)
     {
         m_primaryPanel.color = _color;
         m_primaryColorPicker.SetCurrentColor(m_primaryPanel.color, true);
     }
 
+    /// <summary>
+    /// Set the color value of the primary color
+    /// </summary>
+    /// <param name="_r">Float value for the red channel of the primary color</param>
+    /// <param name="_g">Float value for the green channel of the primary color</param>
+    /// <param name="_b">Float value for the blue channel of the primary color</param>
+    /// <param name="_a">Float value for the alpha channel of the primary color</param>
     public void SetPrimaryColor(float _r, float _g, float _b, float _a)
     {
         m_primaryPanel.color = new Color(_r, _g, _b, _a);
     }
 
+    /// <summary>
+    /// Set the color value of the secondary color
+    /// </summary>
+    /// <param name="_color"></param>
     public void SetSecondaryColor(Color _color)
     {
         m_secondaryPanel.color = _color;
         m_secondaryColorPicker.SetCurrentColor(m_secondaryPanel.color, true);
     }
 
+    /// <summary>
+    /// Set the color value of the secondary color
+    /// </summary>
+    /// <param name="_r">Float value for the red channel of the secondary color</param>
+    /// <param name="_g">Float value for the green channel of the secondary color</param>
+    /// <param name="_b">Float value for the blue channel of the secondary color</param>
+    /// <param name="_a">Float value for the alpha channel of the secondary color</param>
     public void SetSecondaryColor(float _r, float _g, float _b, float _a)
     {
         m_secondaryPanel.color = new Color(_r, _g, _b, _a);
     }
 
+    /// <summary>
+    /// Set the current tool of the editor tool's panel
+    /// </summary>
+    /// <param name="_tool">Integer representing the enum value of the ToolType enum</param>
     public void SetTool(int _tool)
     {
         m_tool = (ToolType)_tool;
         Cursor.SetCursor(m_cursors[_tool], ((_tool == 0) ? new Vector2(8.0f, 24.0f) : new Vector2(0.0f, 0.0f)), CursorMode.ForceSoftware);
     }
 
+    /// <summary>
+    /// A parallel process used when the eye droper is clicked
+    /// </summary>
     IEnumerator EyeDropperClicked()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

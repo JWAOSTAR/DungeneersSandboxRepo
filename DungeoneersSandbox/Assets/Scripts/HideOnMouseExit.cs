@@ -30,6 +30,9 @@ public class HideOnMouseExit : MonoBehaviour
         //int i = 0;
     }
 
+    /// <summary>
+    /// Toggles the active state of the game object
+    /// </summary>
     public void ToggleActive()
     {
         gameObject.SetActive(!gameObject.activeSelf);
