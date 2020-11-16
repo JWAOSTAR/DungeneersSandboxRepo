@@ -18,11 +18,11 @@ MonoBehaviour:
   itemType: 0
   price: 13.93
   files:
-  - Assets/Shop/Non-Consumables/Dice/D4 Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D6 Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D8 Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D10(1s) Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D10(10s) Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D12 Tie Dye Skin.dsd
-  - Assets/Shop/Non-Consumables/Dice/D20 Tie Dye Skin.dsd
+  - Shop/Non-Consumables/Dice/D4 Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D6 Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D8 Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D10(1s) Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D10(10s) Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D12 Tie Dye Skin
+  - Shop/Non-Consumables/Dice/D20 Tie Dye Skin
   isCollection: 1

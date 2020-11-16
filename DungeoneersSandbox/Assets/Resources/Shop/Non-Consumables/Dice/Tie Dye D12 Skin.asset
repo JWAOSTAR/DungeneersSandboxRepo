@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b968c3f3b7e8d514ea37ea7589df4c8a, type: 3}
-  m_Name: Tie Dye D10(1s) Skin
+  m_Name: Tie Dye D12 Skin
   m_EditorClassIdentifier: 
-  thumbnail: {fileID: 2800000, guid: c1ba0d588ade7474dadf561826358293, type: 3}
-  itemID: com.RedJacketStudios.DungeoneersSandbox.d10_1s_tie_dye_skin
-  title: D10(1s) Tie Dye Skin
+  thumbnail: {fileID: 2800000, guid: 2a3ae2f19755ee94b8546d334dd41611, type: 3}
+  itemID: com.RedJacketStudios.DungeoneersSandbox.d12_tie_dye_skin
+  title: D12 Tie Dye Skin
   itemType: 0
   price: 1.99
   files:
-  - Assets/Shop/Non-Consumables/Dice/D10(1s) Tie Dye Skin.dsd
+  - Shop/Non-Consumables/Dice/D12 Tie Dye Skin
+  isCollection: 0

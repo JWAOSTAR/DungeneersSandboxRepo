@@ -146,7 +146,9 @@ public class Shop : MonoBehaviour
                     for(int i =0; i < purchasedFiles.Length; i++)
                     {
                         if (!collectionsMenu.activeSelf) {
-                            if (BinaryFilesEqual(purchasedFiles[i], m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0]))
+                            TextAsset bin_asset = Resources.Load(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0]) as TextAsset;
+                            byte[] temp = (bin_asset).bytes;
+                            if (BinaryFilesEqual(purchasedFiles[i], temp))
                             {
                                 m_purchaseButton.enabled = false;
                                 m_purchaseButton.transform.GetChild(1).gameObject.SetActive(true);
@@ -162,7 +164,7 @@ public class Shop : MonoBehaviour
                         {
                             for(int j = 0; j < m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files.Count; j++)
                             {
-                                if (BinaryFilesEqual(purchasedFiles[i], m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[j]))
+                                if (BinaryFilesEqual(purchasedFiles[i], Resources.Load<TextAsset>(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[j]).bytes))
                                 {
                                     m_purchaseButton.enabled = false;
                                     m_purchaseButton.transform.GetChild(1).gameObject.SetActive(true);
@@ -182,7 +184,7 @@ public class Shop : MonoBehaviour
                         }
                     }
 #endif
-                    BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
+                    BinaryReader file = new BinaryReader(new MemoryStream(Resources.Load<TextAsset>(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0]).bytes));
 
                     bool isTexture = file.ReadBoolean();
                     int diceType = file.ReadInt32();
@@ -207,7 +209,7 @@ public class Shop : MonoBehaviour
                 break;
             case ShopItem.ItemType.DiceTray:
                 {
-                    BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0], FileMode.Open));
+                    BinaryReader file = new BinaryReader(new MemoryStream(Resources.Load<TextAsset>(m_itmes.FindAll(searchFuncs[currentItemType])[_item + currentItemPageIndex * 10].files[0]).bytes));
 
                     int trayType = file.ReadInt32();
                     int matType = file.ReadInt32();
@@ -300,7 +302,7 @@ public class Shop : MonoBehaviour
                 {
                     case ShopItem.ItemType.Dice:
                         {
-                            BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1], FileMode.Open));
+                            BinaryReader file = new BinaryReader(new MemoryStream(Resources.Load<TextAsset>(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1]).bytes));
 
                             bool isTexture = file.ReadBoolean();
                             int diceType = file.ReadInt32();
@@ -324,7 +326,7 @@ public class Shop : MonoBehaviour
                         break;
                     case ShopItem.ItemType.DiceTray:
                         {
-                            BinaryReader file = new BinaryReader(File.Open(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1], FileMode.Open));
+                            BinaryReader file = new BinaryReader(new MemoryStream(Resources.Load<TextAsset>(m_itmes.FindAll(searchFuncs[currentItemType])[currentItemIndex + currentItemPageIndex * 10].files[currentModelIndex - 1]).bytes));
 
                             int trayType = file.ReadInt32();
                             int matType = file.ReadInt32();
@@ -441,6 +443,28 @@ public class Shop : MonoBehaviour
         if(_bytes_0.Length == _bytes_1.Length)
         {
             if(_bytes_0.Take(_bytes_0.Length).SequenceEqual(_bytes_1.Take(_bytes_1.Length)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool BinaryFilesEqual(string _file_0, byte[] _file_1)
+	{
+        byte[] _bytes_0 = File.ReadAllBytes(_file_0);
+        //byte[] _bytes_1 = File.ReadAllBytes(_file_1);
+
+        if (_bytes_0.Length == _file_1.Length)
+        {
+            if (_bytes_0.Take(_bytes_0.Length).SequenceEqual(_file_1.Take(_file_1.Length)))
             {
                 return true;
             }

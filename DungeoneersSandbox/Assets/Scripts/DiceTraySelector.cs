@@ -378,9 +378,9 @@ public class DiceTraySelector : MonoBehaviour
         if(patternImageOpenDialog.ShowDialog() == DialogResult.OK)
         {
             m_patternPropertiesMenu.SetActive(true);
-            Texture2D newTex = new Texture2D(2, 2);
+            Texture2D newTex = new Texture2D(2, 2, TextureFormat.Alpha8, false);
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
-            newTex.alphaIsTransparency = true;
+            //newTex.alphaIsTransparency = true;
             m_InnerPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
             Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
             tempTex.LoadImage(newTex.EncodeToPNG());
@@ -417,9 +417,9 @@ public class DiceTraySelector : MonoBehaviour
         if (patternImageOpenDialog.ShowDialog() == DialogResult.OK)
         {
             m_patternPropertiesMenu.SetActive(true);
-            Texture2D newTex = new Texture2D(2, 2);
+            Texture2D newTex = new Texture2D(2, 2, TextureFormat.Alpha8, false);
             newTex.LoadImage(File.ReadAllBytes(patternImageOpenDialog.FileName));
-            newTex.alphaIsTransparency = true;
+            //newTex.alphaIsTransparency = true;
             m_OutterPatternImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
             Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
             tempTex.LoadImage(newTex.EncodeToPNG());

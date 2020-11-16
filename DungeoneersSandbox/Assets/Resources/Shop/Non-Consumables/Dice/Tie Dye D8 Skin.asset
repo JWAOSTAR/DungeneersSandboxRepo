@@ -18,4 +18,5 @@ MonoBehaviour:
   itemType: 0
   price: 1.99
   files:
-  - Assets/Shop/Non-Consumables/Dice/D8 Tie Dye Skin.dsd
+  - Shop/Non-Consumables/Dice/D8 Tie Dye Skin
+  isCollection: 0
