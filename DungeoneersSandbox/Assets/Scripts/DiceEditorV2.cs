@@ -147,6 +147,7 @@ public class DiceEditorV2 : MonoBehaviour
         {
             cam.RemoveCommandBuffer(CameraEvent.AfterDepthTexture, m_commandBuffer);
         }
+
         //Incrument frame
         numFrams++;
 

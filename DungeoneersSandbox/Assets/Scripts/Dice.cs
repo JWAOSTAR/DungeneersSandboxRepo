@@ -52,6 +52,8 @@ public class Dice : MonoBehaviour
     DiceEvent m_onDiceDelete = new DiceEvent();
     [SerializeField]
     DiceEvent m_onMouseClick = new DiceEvent();
+    [SerializeField]
+    GameObject m_globalDiceUI;
     Transform m_diceUI;
 
     // Start is called before the first frame update
@@ -99,6 +101,7 @@ public class Dice : MonoBehaviour
     {
        //m_diceUI.gameObject.SetActive(false);
         m_onMove.Invoke();
+        FindObjectOfType<DiceRoller>().ResetTimer();
     }
 
     /// <summary>
@@ -144,7 +147,10 @@ public class Dice : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             m_diceUI.GetChild(0).gameObject.SetActive(false);
-            m_diceUI.GetChild(1).gameObject.SetActive(true);
+            //m_diceUI.GetChild(1).gameObject.SetActive(true);
+            m_globalDiceUI.SetActive(true);
+            m_globalDiceUI.GetComponent<DiceMenu>().SetDie(this);
+
         }
     }
 

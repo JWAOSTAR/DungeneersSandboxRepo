@@ -282,36 +282,41 @@ public class DiceRoller : MonoBehaviour
     /// Roll dice presently in queue
     /// </summary>
     public void RollDiceInQueue()
-    {
-        if (!in_roll)
-        {
-            rollSets.Add(new List<Dice>());
-            in_roll = true;
-        }
+	{
+		if (!in_roll)
+		{
+			rollSets.Add(new List<Dice>());
+			in_roll = true;
+		}
 
-        foreach (RollTypes d in diceQueue)
-        {
-            RollDice((int)d);
-        }
+		foreach (RollTypes d in diceQueue)
+		{
+			RollDice((int)d);
+		}
 
-        if (!CR_CDT)
-        {
-            CR_CDT = true;
-            CR_Running = StartCoroutine(ClearTimer());
-        }
-        else
-        {
-            StopCoroutine(CR_Running);
-            CR_Running = StartCoroutine(ClearTimer());
-        }
+		ResetTimer();
 
-    }
+	}
 
-    /// <summary>
-    /// Instanciates and rolls given die
-    /// </summary>
-    /// <param name="die">Integer value for RollType struct to instantiate</param>
-    void RollDice(int die)
+	public void ResetTimer()
+	{
+		if (!CR_CDT)
+		{
+			CR_CDT = true;
+			CR_Running = StartCoroutine(ClearTimer());
+		}
+		else
+		{
+			StopCoroutine(CR_Running);
+			CR_Running = StartCoroutine(ClearTimer());
+		}
+	}
+
+	/// <summary>
+	/// Instanciates and rolls given die
+	/// </summary>
+	/// <param name="die">Integer value for RollType struct to instantiate</param>
+	void RollDice(int die)
     {
         if (die == (int)RollTypes.D100)
         {
