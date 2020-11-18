@@ -15,6 +15,7 @@ public class OnHoverHighlight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Change shader based on whether the the mouse is over this object or not
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit) && hit.transform.gameObject == this.gameObject)

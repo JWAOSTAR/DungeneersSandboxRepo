@@ -65,6 +65,9 @@ public class RollerCameraMover : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Switches between the camera's top-down view and 3/4s view
+    /// </summary>
     public void ToggleView()
     {
         topDown = !topDown;

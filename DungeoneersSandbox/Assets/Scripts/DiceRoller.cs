@@ -297,7 +297,9 @@ public class DiceRoller : MonoBehaviour
 		ResetTimer();
 
 	}
-
+    /// <summary>
+    /// Resets the timer that clears the tray after a given time period has elapsed
+    /// </summary>
 	public void ResetTimer()
 	{
 		if (!CR_CDT)

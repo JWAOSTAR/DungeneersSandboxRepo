@@ -85,6 +85,7 @@ public class Slider2D : MonoBehaviour
     [SerializeField]
     Slider2DEvent m_onValueChange = new Slider2DEvent();
 
+    //This function is called when the script is loaded or value is changed in the inspector(Called in the editor only)
     void OnValidate()
     {
         if(m_xValue > m_maxXValue)
@@ -108,6 +109,7 @@ public class Slider2D : MonoBehaviour
         }
     }
 
+    // Start is called before the first frame update
     void Start()
     {
         m_xOffset = transform.parent.GetComponent<RectTransform>().anchoredPosition.x;
@@ -117,6 +119,7 @@ public class Slider2D : MonoBehaviour
 
     }
 
+    // Update is called once per frame
     void Update()
     {
         if(Input.GetMouseButton(0))
@@ -152,6 +155,7 @@ public class Slider2D : MonoBehaviour
         }
     }
 
+    //OnMouseDrag is called when the user has clicked on a GUIElement or Collider and is still holding down on the mouse
     private void OnMouseDrag()
     {
         Vector2 pos;
@@ -159,18 +163,31 @@ public class Slider2D : MonoBehaviour
         knob.position = canvus.transform.TransformPoint(pos);
     }
 
+    /// <summary>
+    /// Sets the horizantal coordinate of the Slider2D handle without notifying listening objects
+    /// </summary>
+    /// <param name="x">New horizantal coordinate</param>
     public void SetXWithoutNotify(float x)
     {
         m_xValue = x;
         //knob.position = new Vector3(x, knob.position.y, 0.0f);
     }
 
+    /// <summary>
+    /// Sets the vertical coordinate of the Slider2D handle without notifying listening objects
+    /// </summary>
+    /// <param name="y">New vertical coordinate</param>
     public void SetYWithoutNotify(float y)
     {
         m_yValue = y;
         //knob.position = new Vector3(knob.position.x, y, 0.0f);
     }
 
+    /// <summary>
+    /// Sets the coordinates of the Slider2D handle without notifying listening objects
+    /// </summary>
+    /// <param name="x">New horizantal coordinate</param>
+    /// <param name="y">New vertical coordinate</param>
     public void SetValueWithoutNotify(float x, float y)
     {
         SetXWithoutNotify(x);

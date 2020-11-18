@@ -19,6 +19,12 @@ public static class OBJImporter
         public MeshTopology topology;
     }
 
+    /// <summary>
+    /// Loads OBJ mesh data from given file into a given OBJ struct object
+    /// </summary>
+    /// <param name="_path">Path of the file to be read in</param>
+    /// <param name="_obj">The given OBJ struct the data is to be stored in</param>
+    /// <returns></returns>
     public static bool LoadOBJ(string _path, out OBJ _obj)
     {
         _obj = new OBJ();
@@ -38,19 +44,24 @@ public static class OBJImporter
 
         if (File.Exists(_path))
         {
+            //Read in file to an IO stream
             StreamReader _file = File.OpenText(_path);
             int sides = 0;
             while(true)
-            { 
+            {
+                //Get the first line of the file
                 string line = string.Empty;
-
                 line = _file.ReadLine();
-                /*if(line.StartsWith("o"))
-                {
-                    int startingIndicie = _obj.vertexIndices.Count;
-                    _obj.subMeshStarts.Add(startingIndicie);
-                }
-                else*/ if(line.StartsWith("vn"))
+
+				//if (line.StartsWith("o"))
+				//{
+				//	int startingIndicie = _obj.vertexIndices.Count;
+				//	_obj.subMeshStarts.Add(startingIndicie);
+				//}
+				//else
+
+                //Collects data if line starts with 'vn' representing Vertex Normal
+				if (line.StartsWith("vn"))
                 {
                     Vector3 normal = new Vector3();
                     float.TryParse(line.Split(' ')[1], out normal.x);
@@ -59,6 +70,7 @@ public static class OBJImporter
                     //temp_normals.Add(normal);
                     _obj.normals.Add(normal);
                 }
+                //Collects data if the line starts with 'vt' representing Vertex TexCoords
                 else if (line.StartsWith("vt"))
                 {
                     Vector2 uv = new Vector2();
@@ -67,6 +79,7 @@ public static class OBJImporter
                     //temp_uvs.Add(uv);
                     _obj.uvs.Add(uv);
                 }
+                //Collects data if the line starts with 'v' representing a Vertex
                 else if (line.StartsWith("v"))
                 {
                     Vector3 vertex = new Vector3();
@@ -76,21 +89,26 @@ public static class OBJImporter
                     // temp_vertices.Add(vertex);
                     _obj.verticies.Add(vertex);
                 }
+                //Notes new sub mesh if the line starts with 'usemtl' representing the end of vertex data and the start of material data 
                 else if(line.StartsWith("usemtl"))
                 {
                     int startingIndicie = _obj.vertexIndices.Count;
                     _obj.subMeshStarts.Add(startingIndicie);
                 }
+                //Collects data if the line starts with 'f' representing a face
                 else if(line.StartsWith("f"))
                 {
+                    //Sets up collections for the diffrent mesh veriable indecie
                     int[] vertexIndecies = new int[line.Split(' ').Length - 1];
                     int[] uvIndecies = new int[line.Split(' ').Length - 1];
                     int[] normalIndecies = new int[line.Split(' ').Length - 1];
+                    //Store indecie data in appropriate collection
                     for (int i = 1; i < line.Split(' ').Length; i++) {
                         if (!int.TryParse(line.Split(' ')[i].Split('/')[0], out vertexIndecies[i-1])) { return false; }
                         if (!int.TryParse(line.Split(' ')[i].Split('/')[1], out uvIndecies[i-1])) { return false; }
                         if (!int.TryParse(line.Split(' ')[i].Split('/')[2], out normalIndecies[i-1])) { return false; }
                     }
+                    //Store the collected data in the refrenced OBJ struct object
                     for(int iv = 0; iv < vertexIndecies.Length; iv++)
                     {
                         _obj.vertexIndices.Add(vertexIndecies[iv]);
@@ -103,7 +121,7 @@ public static class OBJImporter
                     {
                         _obj.normalIndices.Add(normalIndecies[ip]);
                     }
-
+                    //Determin topology of mesh
                     if(sides == 0)
                     {
                         sides = vertexIndecies.Length;
@@ -157,8 +175,14 @@ public static class OBJImporter
         return true;
     }
 
+    /// <summary>
+    /// Converts OBJ data stored in a struct OBJ object to a UnityEngine Mesh format
+    /// </summary>
+    /// <param name="_obj"></param>
+    /// <param name="_mesh"></param>
     public static void OBJToMesh(OBJ _obj, out Mesh _mesh)
     {
+        //Set up mesh
         _mesh = new Mesh();
         _mesh.subMeshCount = _obj.subMeshStarts.Count;
         //_mesh.vertices = _obj.verticies.ToArray();
@@ -166,10 +190,13 @@ public static class OBJImporter
         //_mesh.uv = _obj.uvs.ToArray();
         //_mesh.triangles = _obj.vertexIndices.ToArray();
 
+        //Create data collections
         List<Vector3> vertecies = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
         List<Vector3> normals = new List<Vector3>();
         List<int> tris = new List<int>();
+
+        //Loop through the OBJ struct object and collect pertenant data
         for (int s = 0; s < _obj.subMeshStarts.Count; s++) {
             for (int i = _obj.subMeshStarts[s]; i < (((s + 1) < _obj.subMeshStarts.Count) ? (_obj.subMeshStarts[s + 1]) : _obj.vertexIndices.Count); i++)
             {
@@ -183,6 +210,7 @@ public static class OBJImporter
             }
         }
 
+        //Sort collected data
         _mesh.vertices = vertecies.ToArray();
         for (int j = 0; j < _obj.subMeshStarts.Count; j++)
         {
@@ -197,19 +225,27 @@ public static class OBJImporter
         //_mesh.Optimize();
     }
 
+    /// <summary>
+    /// Loads OBJ material data from given file into a given UnityEngine Material colection
+    /// </summary>
+    /// <param name="_path"></param>
+    /// <param name="_materials"></param>
+    /// <returns></returns>
     public static bool LoadMaterials(string _path, out Material[] _materials)
     {
         if (File.Exists(_path))
         {
+            //Read in file to an IO stream
             StreamReader _file = File.OpenText(_path);
             string _mtlFilePath = string.Empty;
 
             while(true)
             {
+                //Get the first line of the file
                 string line = string.Empty;
-
                 line = _file.ReadLine();
 
+                //Gets the path to the material file if the line starts with 'mtllib' representing indication that a material is used on the mesh
                 if(line.StartsWith("mtllib"))
                 {
                     if (_path.Split('/').Length > 1)
@@ -229,6 +265,7 @@ public static class OBJImporter
                 }
             }
             _file.Close();
+            //Check if material is attached to mesh
             if(_mtlFilePath == string.Empty || !File.Exists(_mtlFilePath))
             {
                 _materials = null;
@@ -236,21 +273,26 @@ public static class OBJImporter
             }
             else
             {
+                //Read in file to an IO stream
                 _file = File.OpenText(_mtlFilePath);
+                //Create collection to hold materials
                 List<Material> materials = new List<Material>();
                 while(true)
                 {
+                    //Get the first line of the file
                     string line = string.Empty;
-
                     line = _file.ReadLine();
 
+                    //Attempt to replicate materail properties:
+                    //Create new material and add it to the collection if the line starts with 'newmtl' meaning that it is the start of a new material
                     if(line.StartsWith("newmtl"))
                     {
                         Material newmtl = new Material(Shader.Find("Standard (Specular setup)"));
                         newmtl.name = line.Replace("newmtl", "");
                         materials.Add(newmtl);
                     }
-                    else if(line.StartsWith("Ka"))
+                    //Collects and stores data if the line starts with 'Ka' representing the ambiant color value(RGB)[Range: 0-1] and is stored in the _EmissionColor variable of Unity's legacy 'Standard (Specular setup)' shader
+                    else if (line.StartsWith("Ka"))
                     {
                         UnityEngine.Color col = new UnityEngine.Color();
                         if(!float.TryParse(line.Split(' ')[1], out col.r)) { _materials = null;  return false; }
@@ -260,6 +302,7 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetColor("_EmissionColor", col);
                     }
+                    //Collects and stores data if the line starts with 'Kd' represnting the diffuse color value(RGB)[Range: 0-1] and is stored in the _Color variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("Kd"))
                     {
                         UnityEngine.Color col = new UnityEngine.Color();
@@ -270,6 +313,7 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetColor("_Color", col);
                     }
+                    //Collects and stores data if the line starts with 'Ks' represnting the specular color value(RGB)[Range: 0-1](0,0,0 => off) and is stored in the _SpecColor variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("Ks"))
                     {
                         UnityEngine.Color col = new UnityEngine.Color();
@@ -280,6 +324,7 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetColor("_SpecColor", col);
                     }
+                    //Collects and stores data if the line starts with 'Ns' represnting the specular exponent(float)[Range: 1-1000] and is stored in the _SpecularHighlights variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("Ns"))
                     {
                         float exp;
@@ -287,6 +332,7 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetFloat("_SpecularHighlights", exp);
                     }
+                    //Collects and stores data if the line starts with 'd' represnting the transparency value(float)[Range: 0-1](1=>opaque) and is stored in the alpha component of the _Color variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("d"))
                     {
                         UnityEngine.Color col = materials[materials.Count - 1].GetColor("_Color");
@@ -294,6 +340,7 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetColor("_Color", col);
                     }
+                    //Collects and stores data if the line starts with 'Tr' represnting the transparency value(float)[Range: 0-1](1=>opaque) and is stored in the alpha component of the _Color variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("Tr"))
                     {
                         UnityEngine.Color col = materials[materials.Count - 1].GetColor("_Color");
@@ -302,44 +349,55 @@ public static class OBJImporter
 
                         materials[materials.Count - 1].SetColor("_Color", col);
                     }
+                    //Collects and stores data if the line starts with 'Ni' represnting the IOR(Index of Refraction) value(float)[Range: 0.001-10] and is stored in the _GlossyReflections variable of Unity's legacy 'Standard (Specular setup)' shader
                     else if (line.StartsWith("Ni"))
                     {
                         float ior;
                         if (!float.TryParse(line.Split(' ')[1], out ior)) { _materials = null; return false; }
                         materials[materials.Count - 1].SetFloat("_GlossyReflections", ior);
                     }
+                    //Checks if the line starts with 'illum' representing the Illumination model(Range: 0-10)[ref model sheet->https://en.wikipedia.org/wiki/Wavefront_.obj_file] used by the model
                     else if (line.StartsWith("illum"))
                     {
                         
                     }
+                    //Checks if the line starts with 'map_' meaning the line refrences a image texture for a few of the previouse values
                     else if(line.StartsWith("map_"))
                     {
+                        //Set up texture to store image texture data
                         Texture2D _tex = new Texture2D(2, 2);
-                        if(line.StartsWith("map_Ka"))
+
+                        //Loads in the texture data if the line starts with 'map_Ka' representing the image texture for the ambiant component of the material and is stored in the _EmissionMap variable of Unity's legacy 'Standard (Specular setup)' shader
+                        if (line.StartsWith("map_Ka"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Ka ", ""))));
                             materials[materials.Count - 1].SetTexture("_EmissionMap", _tex);
                         }
-                        else if(line.StartsWith("map_Kd"))
+                        //Loads in the texture data if the line starts with 'map_Kd' representing the image texture for the diffuse component of the material and is stored in the _MainTex variable of Unity's legacy 'Standard (Specular setup)' shader
+                        else if (line.StartsWith("map_Kd"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Kd ", ""))));
                             materials[materials.Count - 1].SetTexture("_MainTex", _tex);
                         }
+                        //Loads in the texture data if the line starts with 'map_Ks' representing the image texture for the specular component of the material and is stored in the _SpecGlossMap variable of Unity's legacy 'Standard (Specular setup)' shader
                         else if (line.StartsWith("map_Ks"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Ks ", ""))));
                             materials[materials.Count - 1].SetTexture("_SpecGlossMap", _tex);
                         }
+                        //Loads in the texture data if the line starts with 'map_d' representing the image texture for the trancparency of the material and is stored in the _OcclusionMap variable of Unity's legacy 'Standard (Specular setup)' shader
                         else if (line.StartsWith("map_d"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_d ", ""))));
                             materials[materials.Count - 1].SetTexture("_OcclusionMap", _tex);
                         }
+                        //Loads in the texture data if the line starts with 'map_bump' representing the image texture for the normals destorted by the material and is stored in the _BumpMap variable of Unity's legacy 'Standard (Specular setup)' shader
                         else if (line.StartsWith("map_bump"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_bump ", ""))));
                             materials[materials.Count - 1].SetTexture("_BumpMap", _tex);
                         }
+                        //Loads in the texture data if the line starts with 'map_bump' representing the image texture for the normals destorted by the material and is stored in the _BumpMap variable of Unity's legacy 'Standard (Specular setup)' shader
                         else if (line.StartsWith("map_Bump"))
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Bump ", ""))));

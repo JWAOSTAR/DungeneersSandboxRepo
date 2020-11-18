@@ -86,6 +86,9 @@ public class Shop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// After 10 seconds of inaction starts auto rotation
+    /// </summary>
     IEnumerator StartRotationCountdown()
     {
         yield return new WaitForSeconds(10);
@@ -93,6 +96,10 @@ public class Shop : MonoBehaviour
         m_rotator.SetMobility(!m_modelMobile);
     }
 
+    /// <summary>
+    /// Switches between current menu to a given menu reprisented by an intiger value
+    /// </summary>
+    /// <param name="_menu">Intiger value of the menu to switch to</param>
     public void OpenMenu(int _menu)
     {
         if (menues[2].activeSelf && _menu != 2)
@@ -113,6 +120,10 @@ public class Shop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    ///Set up item menu filling it up with the stored shop items
+    /// </summary>
+    /// <param name="_itemType">Interger representing the item type (i.e Dice)</param>
     public void SetItemMenu(int _itemType)
     {
         for (int j = 0; j < itemPannels.Length; j++)
@@ -129,6 +140,10 @@ public class Shop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the purchase button to execute the purchase of a given item or make none exacutable if item is already purchased
+    /// </summary>
+    /// <param name="_item">Index of the item to be purchased on button click</param>
     public void SetPurchaseButton(int _item)
     {
         currentItemIndex = _item;
@@ -287,6 +302,9 @@ public class Shop : MonoBehaviour
         //m_mesh
     }
 
+    /// <summary>
+    /// Changes model to the next model listed in the current collection in purchase view
+    /// </summary>
     public void NextItemInCollection()
     {
         currentModelIndex++;
@@ -405,36 +423,44 @@ public class Shop : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Changes model to the previous model listed in the current collection in purchase view
+    /// </summary>
     public void PrevItemInCollection()
     {
 
     }
 
+    //Search predicates
     private static bool FindDice(ShopItem _item)
     {
         return (_item.itemType == ShopItem.ItemType.Dice);
     }
-
     private static bool FindTrays(ShopItem _item)
     {
         return (_item.itemType == ShopItem.ItemType.DiceTray);
     }
-
     private static bool FindMapBlock(ShopItem _item)
     {
         return (_item.itemType == ShopItem.ItemType.MapBlock);
     }
-
     private static bool FindMinitures(ShopItem _item)
     {
         return (_item.itemType == ShopItem.ItemType.Miniture);
     }
 
+    //[OBSALETE]
     bool FindAllItemType(ShopItem _item, ShopItem.ItemType _itemType)
     {
         return (_item.itemType == _itemType);
     }
 
+    /// <summary>
+    /// BinaryFilesEqual checks whether two binary files contain the exact same data
+    /// </summary>
+    /// <param name="_file_0">Path for the first binary file</param>
+    /// <param name="_file_1">Path for the second binary file</param>
+    /// <returns></returns>
     bool BinaryFilesEqual(string _file_0, string _file_1)
     {
         byte[] _bytes_0 = File.ReadAllBytes(_file_0);
@@ -457,6 +483,12 @@ public class Shop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// BinaryFilesEqual checks whether two binary files contain the exact same data
+    /// </summary>
+    /// <param name="_file_0">Path for the first binary file</param>
+    /// <param name="_file_1">Array of bytes contained in the second file</param>
+    /// <returns></returns>
     bool BinaryFilesEqual(string _file_0, byte[] _file_1)
 	{
         byte[] _bytes_0 = File.ReadAllBytes(_file_0);

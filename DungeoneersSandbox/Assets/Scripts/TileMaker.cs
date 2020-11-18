@@ -24,6 +24,9 @@ public class TileMaker : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// ImportOBJ opens a dialog to allow user to import an OBJ into the program
+    /// </summary>
     public void ImportOBJ()
     {
         string file_path = string.Empty;
