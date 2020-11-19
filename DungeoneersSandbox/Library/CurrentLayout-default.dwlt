@@ -115,7 +115,7 @@ MonoBehaviour:
   m_MinSize: {x: 679, y: 342}
   m_MaxSize: {x: 12004, y: 8042}
   vertical: 0
-  controlID: 115
+  controlID: 44
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_MinSize: {x: 403, y: 342}
   m_MaxSize: {x: 8003, y: 8042}
   vertical: 1
-  controlID: 116
+  controlID: 85
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_MinSize: {x: 403, y: 221}
   m_MaxSize: {x: 8003, y: 4021}
   vertical: 0
-  controlID: 117
+  controlID: 86
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -211,8 +211,8 @@ MonoBehaviour:
     y: 0
     width: 1156
     height: 691
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 16}
@@ -449,10 +449,10 @@ MonoBehaviour:
   m_ViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 199}
-      m_SelectedIDs: 5e78ffff
-      m_LastClickedID: -34722
-      m_ExpandedIDs: 5e78ffffaa78ffff447bffffcccaffffccd0ffff44faffff6cfbffff78400000d2670000aa68000046690000f4690000
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 90440000
+      m_LastClickedID: 0
+      m_ExpandedIDs: d2f6ffff46fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -656,20 +656,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Scenes
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\JWAOSTAR\Desktop\Personal\Unity Projects\DnDProject\DungeneersSandboxRepo\DungeoneersSandbox
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 149}
-    m_SelectedIDs: ee3c0000
-    m_LastClickedID: 15598
-    m_ExpandedIDs: 000000008c3c00008e3c0000903c0000e23c0000e43c000000ca9a3b
+    scrollPos: {x: 0, y: 69}
+    m_SelectedIDs: 68410000
+    m_LastClickedID: 16744
+    m_ExpandedIDs: 0000000006410000084100000a41000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -697,7 +697,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000008c3c00008e3c0000903c0000
+    m_ExpandedIDs: 0000000006410000084100000a410000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -722,8 +722,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: cccaffff
-    m_LastClickedInstanceID: -13620
+    m_SelectedInstanceIDs: 90440000
+    m_LastClickedInstanceID: 17552
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000605c0100be290100625c0100645c01005e5c01005a5c01005c5c0100f83a0000083b0000183b0000283b0000383b0000483b0000703f00006a3f00005a3f00004a3f00003a3f00002a3f0000003b0000103f0000783f0000b43b0000b23b0000623e0000de550000e45500000a3d00001a3d000000000000e03c0000fc45000056420000024600000a460000
     m_RenameOverlay:
@@ -749,7 +749,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 72}
+    m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 64
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 162
@@ -816,7 +816,7 @@ MonoBehaviour:
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 100
+  m_LastVerticalScrollValue: 0
 --- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52

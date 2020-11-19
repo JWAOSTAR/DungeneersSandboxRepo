@@ -15,7 +15,8 @@ public class TileMaker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        FBXImporter.FBX test;
+        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube.fbx", out test);
     }
 
     // Update is called once per frame
