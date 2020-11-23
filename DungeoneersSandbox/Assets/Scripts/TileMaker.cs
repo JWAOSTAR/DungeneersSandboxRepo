@@ -16,7 +16,7 @@ public class TileMaker : MonoBehaviour
     void Start()
     {
         FBXImporter.FBX test;
-        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube.fbx", out test);
+        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_bin2.fbx", out test);
     }
 
     // Update is called once per frame
