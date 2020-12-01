@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Linq;
 using UnityEngine;
 
 public static class FBXImporter
@@ -19,9 +20,10 @@ public static class FBXImporter
 		v7_4 = 7400,
 		v7_5 = 7500,
 	}
-	public struct Properties
+	public class Properties
 	{
-		public char TypeCode;
+		public char TypeCode = ' ';
+		public int Length = -1;
 		public byte[] Data;
 	}
 	public class Node
@@ -69,7 +71,7 @@ public static class FBXImporter
 				current.properties = new Properties[current.NumProperties];
 				for (ulong i = 0; i < current.NumProperties; i++)
 				{
-					current.properties[i].TypeCode = (char)_file.ReadByte();
+					current.properties[i] = new Properties { TypeCode = (char)_file.ReadByte() };
 					switch (current.properties[i].TypeCode)
 					{
 						case 'Y':
@@ -92,7 +94,7 @@ public static class FBXImporter
 							break;
 						case 'f':
 							{
-								int length = _file.ReadInt32();
+								int length = current.properties[i].Length = _file.ReadInt32();
 								int encoding = _file.ReadInt32();
 								int compressedLength = _file.ReadInt32();
 								float[] _data = new float[length];
@@ -116,13 +118,13 @@ public static class FBXImporter
 								{
 									_file.BaseStream.Position = endPos;
 								}
-								current.properties[i].Data = new byte[_data.Length * 4];
+								current.properties[i].Data = new byte[_data.Length * sizeof(float)];
 								Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 							}
 							break;
 						case 'd':
 							{
-								int length = _file.ReadInt32();
+								int length = current.properties[i].Length = _file.ReadInt32();
 								int encoding = _file.ReadInt32();
 								int compressedLength = _file.ReadInt32();
 								double[] _data = new double[length];
@@ -146,13 +148,13 @@ public static class FBXImporter
 								{
 									_file.BaseStream.Position = endPos;
 								}
-								current.properties[i].Data = new byte[_data.Length * 4];
+								current.properties[i].Data = new byte[_data.Length * sizeof(double)];
 								Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 							}
 							break;
 						case 'l':
 							{
-								int length = _file.ReadInt32();
+								int length = current.properties[i].Length = _file.ReadInt32();
 								int encoding = _file.ReadInt32();
 								int compressedLength = _file.ReadInt32();
 								long[] _data = new long[length];
@@ -176,13 +178,13 @@ public static class FBXImporter
 								{
 									_file.BaseStream.Position = endPos;
 								}
-								current.properties[i].Data = new byte[_data.Length * 4];
+								current.properties[i].Data = new byte[_data.Length * sizeof(long)];
 								Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 							}
 							break;
 						case 'i':
 							{
-								int length = _file.ReadInt32();
+								int length = current.properties[i].Length = _file.ReadInt32();
 								int encoding = _file.ReadInt32();
 								int compressedLength = _file.ReadInt32();
 								int[] _data = new int[length];
@@ -206,13 +208,13 @@ public static class FBXImporter
 								{
 									_file.BaseStream.Position = endPos;
 								}
-								current.properties[i].Data = new byte[_data.Length * 4];
+								current.properties[i].Data = new byte[_data.Length * sizeof(int)];
 								Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 							}
 							break;
 						case 'b':
 							{
-								int length = _file.ReadInt32();
+								int length = current.properties[i].Length = _file.ReadInt32();
 								int encoding = _file.ReadInt32();
 								int compressedLength = _file.ReadInt32();
 								bool[] _data = new bool[length];
@@ -236,7 +238,7 @@ public static class FBXImporter
 								{
 									_file.BaseStream.Position = endPos;
 								}
-								current.properties[i].Data = new byte[_data.Length * 4];
+								current.properties[i].Data = new byte[_data.Length * sizeof(bool)];
 								Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 							}
 							break;
@@ -325,7 +327,7 @@ public static class FBXImporter
 					current.properties = new Properties[current.NumProperties];
 					for (ulong i = 0; i < current.NumProperties; i++)
 					{
-						current.properties[i].TypeCode = (char)_file.ReadByte();
+						current.properties[i] = new Properties { TypeCode = (char)_file.ReadByte() };
 						switch (current.properties[i].TypeCode)
 						{
 							case 'Y':
@@ -348,7 +350,7 @@ public static class FBXImporter
 								break;
 							case 'f':
 								{
-									int length = _file.ReadInt32();
+									int length = current.properties[i].Length = _file.ReadInt32();
 									int encoding = _file.ReadInt32();
 									int compressedLength = _file.ReadInt32();
 									float[] _data = new float[length];
@@ -372,13 +374,13 @@ public static class FBXImporter
 									{
 										_file.BaseStream.Position = endPos;
 									}
-									current.properties[i].Data = new byte[_data.Length * 4];
+									current.properties[i].Data = new byte[_data.Length * sizeof(float)];
 									Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 								}
 								break;
 							case 'd':
 								{
-									int length = _file.ReadInt32();
+									int length = current.properties[i].Length = _file.ReadInt32();
 									int encoding = _file.ReadInt32();
 									int compressedLength = _file.ReadInt32();
 									double[] _data = new double[length];
@@ -402,13 +404,13 @@ public static class FBXImporter
 									{
 										_file.BaseStream.Position = endPos;
 									}
-									current.properties[i].Data = new byte[_data.Length * 4];
+									current.properties[i].Data = new byte[_data.Length * sizeof(double)];
 									Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 								}
 								break;
 							case 'l':
 								{
-									int length = _file.ReadInt32();
+									int length = current.properties[i].Length = _file.ReadInt32();
 									int encoding = _file.ReadInt32();
 									int compressedLength = _file.ReadInt32();
 									long[] _data = new long[length];
@@ -432,13 +434,13 @@ public static class FBXImporter
 									{
 										_file.BaseStream.Position = endPos;
 									}
-									current.properties[i].Data = new byte[_data.Length * 4];
+									current.properties[i].Data = new byte[_data.Length * sizeof(long)];
 									Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 								}
 								break;
 							case 'i':
 								{
-									int length = _file.ReadInt32();
+									int length = current.properties[i].Length = _file.ReadInt32();
 									int encoding = _file.ReadInt32();
 									int compressedLength = _file.ReadInt32();
 									int[] _data = new int[length];
@@ -462,13 +464,13 @@ public static class FBXImporter
 									{
 										_file.BaseStream.Position = endPos;
 									}
-									current.properties[i].Data = new byte[_data.Length * 4];
+									current.properties[i].Data = new byte[_data.Length * sizeof(int)];
 									Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 								}
 								break;
 							case 'b':
 								{
-									int length = _file.ReadInt32();
+									int length = current.properties[i].Length = _file.ReadInt32();
 									int encoding = _file.ReadInt32();
 									int compressedLength = _file.ReadInt32();
 									bool[] _data = new bool[length];
@@ -492,7 +494,7 @@ public static class FBXImporter
 									{
 										_file.BaseStream.Position = endPos;
 									}
-									current.properties[i].Data = new byte[_data.Length * 4];
+									current.properties[i].Data = new byte[_data.Length * sizeof(bool)];
 									Buffer.BlockCopy(_data, 0, current.properties[i].Data, 0, current.properties[i].Data.Length);
 								}
 								break;
@@ -564,32 +566,127 @@ public static class FBXImporter
 		List<Vector3> vertecies = new List<Vector3>();
 		List<Vector2> uvs = new List<Vector2>();
 		List<Vector3> normals = new List<Vector3>();
+		int[] vertexIndices;
+		int[] uvIndices;
+		//int[] normalIndices;
 		List<int> tris = new List<int>();
 
-		Node objectNode;
+		Node MeshNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.Find(n => n.Name == "Geometry");
+		MeshTopology topology;
 
-		for(int i = 0; i < _fbx.node.NestedNodes.Count; i++)
+		Node VerteciesNode = MeshNode.NestedNodes.Find(n => n.Name == "Vertices");
+		double[] verts = new double[(VerteciesNode.properties[0].Length)];
+		Buffer.BlockCopy(VerteciesNode.properties[0].Data, 0, verts, 0, VerteciesNode.properties[0].Data.Length);
+		for (int l = 0; l < verts.Length; l += 3)
 		{
-			if(_fbx.node.NestedNodes[i].Name == "Objects")
-			{
-				for(int j = 0; j < _fbx.node.NestedNodes[i].NestedNodes.Count; j++)
-				{
-					if(_fbx.node.NestedNodes[i].NestedNodes[j].Name == "Geometry")
-					{
-						for(int k = 0; k < _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes.Count; k++)
-						{
-							if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "Vertices")
-							{
-								int tester = 0;
-							}
-						}
+			vertecies.Add(new Vector3((float)verts[l], (float)verts[l + 1], (float)verts[l + 2]));
+		}
 
-					}
+		Node VertexIndeciesNode = MeshNode.NestedNodes.Find(n => n.Name == "PolygonVertexIndex");
+		vertexIndices = new int[(VertexIndeciesNode.properties[0].Length)];
+		Buffer.BlockCopy(VertexIndeciesNode.properties[0].Data, 0, vertexIndices, 0, VertexIndeciesNode.properties[0].Data.Length);
+		for (int l = 0; vertexIndices.Length > l; l++)
+		{
+			if (vertexIndices[l] < 0)
+			{
+				vertexIndices[l] = -(vertexIndices[l] + 1);
+				if (l == 3)
+				{
+					topology = MeshTopology.Quads;
+				}
+				else if (l == 2)
+				{
+					topology = MeshTopology.Triangles;
 				}
 			}
 		}
 
-		vertecies.Add(new Vector3());
+		Node NormalNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "Normals");
+		double[] norms = new double[(NormalNode.properties[0].Length)];
+		Buffer.BlockCopy(NormalNode.properties[0].Data, 0, norms, 0, NormalNode.properties[0].Data.Length);
+		Node NormalWNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "NormalsW");
+
+		double[] normsW = new double[0];
+		if (NormalWNode != null)
+		{
+			normsW = new double[(NormalWNode.properties[0].Length)];
+			Buffer.BlockCopy(NormalWNode.properties[0].Data, 0, normsW, 0, NormalWNode.properties[0].Data.Length);
+		}
+
+		for (int i = 0, j = 0; i < norms.Length; i+=3, j++)
+		{
+			normals.Add(new Vector3((float)(norms[i]/((NormalWNode == null)?1.0D:normsW[j])), (float)(norms[i + 1] / ((NormalWNode == null) ? 1 : normsW[j])), (float)(norms[i + 2] / ((NormalWNode == null) ? 1 : normsW[j]))));
+		}
+
+		Node UVNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UV");
+		double[] texcords = new double[(UVNode.properties[0].Length)];
+		Buffer.BlockCopy(UVNode.properties[0].Data, 0, texcords, 0, UVNode.properties[0].Data.Length);
+		for(int i = 0; i < texcords.Length; i += 2)
+		{
+			uvs.Add(new Vector2((float)texcords[i], (float)texcords[i + 1]));
+		}
+
+		Node UVIndeciesNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UVIndex");
+		uvIndices = new int[(UVIndeciesNode.properties[0].Length)];
+		Buffer.BlockCopy(UVIndeciesNode.properties[0].Data, 0, uvIndices, 0, UVIndeciesNode.properties[0].Data.Length);
+
+
+
+		/*/for (int i = 0; i < _fbx.node.NestedNodes.Count; i++)
+		//{
+		//	if(_fbx.node.NestedNodes[i].Name == "Objects")
+		//	{
+		//		for(int j = 0; j < _fbx.node.NestedNodes[i].NestedNodes.Count; j++)
+		//		{
+		//			if(_fbx.node.NestedNodes[i].NestedNodes[j].Name == "Geometry")
+		//			{
+		//				for(int k = 0; k < _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes.Count; k++)
+		//				{
+		//					if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "Vertices")
+		//					{
+		//						majorNode = _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k];
+		//						double[] verts = new double[(majorNode.properties[0].Length)];
+		//						Buffer.BlockCopy(majorNode.properties[0].Data, 0, verts, 0, _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].properties[0].Data.Length);
+		//						for (int l = 0; l < verts.Length; l += 3)
+		//						{
+		//							vertecies.Add(new Vector3((float)verts[l], (float)verts[l + 1], (float)verts[l + 2]));
+		//						}
+		//					}
+		//					else if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "PolygonVertexIndex")
+		//					{
+		//						majorNode = _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k];
+		//						vertexIndices = new int[(majorNode.properties[0].Length)];
+		//						Buffer.BlockCopy(majorNode.properties[0].Data, 0, vertexIndices, 0, _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].properties[0].Data.Length);
+		//						for(int l = 0; vertexIndices.Length > l; l++)
+		//						{
+		//							if(vertexIndices[l] < 0)
+		//							{
+		//								vertexIndices[l] = -(vertexIndices[l] + 1);
+		//								if(l == 3)
+		//								{
+		//									topology = MeshTopology.Quads;
+		//								}
+		//								else if(l == 2)
+		//								{
+		//									topology = MeshTopology.Triangles;
+		//								}
+		//							}
+		//						}
+
+		//					}
+		//					else if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "LayerElementNormal")
+		//					{
+
+		//					}
+
+		//				}
+
+		//			}
+		//		}
+		//	}
+		//}
+
+		//vertecies.Add(new Vector3());*/
 
 		return true;
 	}
