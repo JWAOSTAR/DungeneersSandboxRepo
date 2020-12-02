@@ -566,127 +566,111 @@ public static class FBXImporter
 		List<Vector3> vertecies = new List<Vector3>();
 		List<Vector2> uvs = new List<Vector2>();
 		List<Vector3> normals = new List<Vector3>();
-		int[] vertexIndices;
-		int[] uvIndices;
+		int[] vertexIndices = new int[0];
+		int[] uvIndices = new int[0];
 		//int[] normalIndices;
 		List<int> tris = new List<int>();
+		List<int> submeshStarts = new List<int>();
 
-		Node MeshNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.Find(n => n.Name == "Geometry");
-		MeshTopology topology;
-
-		Node VerteciesNode = MeshNode.NestedNodes.Find(n => n.Name == "Vertices");
-		double[] verts = new double[(VerteciesNode.properties[0].Length)];
-		Buffer.BlockCopy(VerteciesNode.properties[0].Data, 0, verts, 0, VerteciesNode.properties[0].Data.Length);
-		for (int l = 0; l < verts.Length; l += 3)
+		List<Node> MeshNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Geometry");
+		if(MeshNode == null)
 		{
-			vertecies.Add(new Vector3((float)verts[l], (float)verts[l + 1], (float)verts[l + 2]));
+			return false;
 		}
-
-		Node VertexIndeciesNode = MeshNode.NestedNodes.Find(n => n.Name == "PolygonVertexIndex");
-		vertexIndices = new int[(VertexIndeciesNode.properties[0].Length)];
-		Buffer.BlockCopy(VertexIndeciesNode.properties[0].Data, 0, vertexIndices, 0, VertexIndeciesNode.properties[0].Data.Length);
-		for (int l = 0; vertexIndices.Length > l; l++)
-		{
-			if (vertexIndices[l] < 0)
+		List<MeshTopology> topology = new List<MeshTopology>();
+		for (int k = 0; k < MeshNode.Count; k++) {
+			submeshStarts.Add(vertexIndices.Length);
+			Node VerteciesNode = MeshNode[k].NestedNodes.Find(n => n.Name == "Vertices");
+			if (VerteciesNode == null)
 			{
-				vertexIndices[l] = -(vertexIndices[l] + 1);
-				if (l == 3)
+				return false;
+			}
+			double[] verts = new double[(VerteciesNode.properties[0].Length)];
+			Buffer.BlockCopy(VerteciesNode.properties[0].Data, 0, verts, 0, VerteciesNode.properties[0].Data.Length);
+			for (int l = 0; l < verts.Length; l += 3)
+			{
+				vertecies.Add(new Vector3((float)verts[l], (float)verts[l + 1], (float)verts[l + 2]));
+			}
+
+			Node VertexIndeciesNode = MeshNode[k].NestedNodes.Find(n => n.Name == "PolygonVertexIndex");
+			if (VertexIndeciesNode == null)
+			{
+				return false;
+			}
+			vertexIndices = vertexIndices.Concat(new int[(VertexIndeciesNode.properties[0].Length)]).ToArray();
+			Buffer.BlockCopy(VertexIndeciesNode.properties[0].Data, 0, vertexIndices, (submeshStarts[k]*sizeof(int)), VertexIndeciesNode.properties[0].Data.Length);
+			for (int l = submeshStarts[k]; vertexIndices.Length > l; l++)
+			{
+				if (vertexIndices[l] < 0)
 				{
-					topology = MeshTopology.Quads;
-				}
-				else if (l == 2)
-				{
-					topology = MeshTopology.Triangles;
+					vertexIndices[l] = -(vertexIndices[l] + 1);
+					if (l == (3 + submeshStarts[k]))
+					{
+						topology.Add(MeshTopology.Quads);
+					}
+					else if (l == (2 + submeshStarts[k]))
+					{
+						topology.Add(MeshTopology.Triangles);
+					}
 				}
 			}
+
+			Node NormalNode = MeshNode[k].NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "Normals");
+			if (NormalNode == null)
+			{
+				return false;
+			}
+			double[] norms = new double[(NormalNode.properties[0].Length)];
+			Buffer.BlockCopy(NormalNode.properties[0].Data, 0, norms, 0, NormalNode.properties[0].Data.Length);
+			Node NormalWNode = MeshNode[k].NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "NormalsW");
+
+			double[] normsW = new double[0];
+			if (NormalWNode != null)
+			{
+				normsW = new double[(NormalWNode.properties[0].Length)];
+				Buffer.BlockCopy(NormalWNode.properties[0].Data, 0, normsW, 0, NormalWNode.properties[0].Data.Length);
+			}
+
+			for (int i = 0, j = 0; i < norms.Length; i += 3, j++)
+			{
+				normals.Add(new Vector3((float)(norms[i] / ((NormalWNode == null) ? 1.0D : normsW[j])), (float)(norms[i + 1] / ((NormalWNode == null) ? 1.0D : normsW[j])), (float)(norms[i + 2] / ((NormalWNode == null) ? 1.0D : normsW[j]))));
+			}
+
+			Node UVNode = MeshNode[k].NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UV");
+			if (UVNode == null)
+			{
+				return false;
+			}
+			double[] texcords = new double[(UVNode.properties[0].Length)];
+			Buffer.BlockCopy(UVNode.properties[0].Data, 0, texcords, 0, UVNode.properties[0].Data.Length);
+			for (int i = 0; i < texcords.Length; i += 2)
+			{
+				uvs.Add(new Vector2((float)texcords[i], (float)texcords[i + 1]));
+			}
+
+			Node UVIndeciesNode = MeshNode[k].NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UVIndex");
+			uvIndices = uvIndices.Concat(new int[(UVIndeciesNode.properties[0].Length)]).ToArray();
+			Buffer.BlockCopy(UVIndeciesNode.properties[0].Data, 0, uvIndices, (submeshStarts[k]*sizeof(int)), UVIndeciesNode.properties[0].Data.Length);
 		}
-
-		Node NormalNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "Normals");
-		double[] norms = new double[(NormalNode.properties[0].Length)];
-		Buffer.BlockCopy(NormalNode.properties[0].Data, 0, norms, 0, NormalNode.properties[0].Data.Length);
-		Node NormalWNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementNormal").NestedNodes.Find(n => n.Name == "NormalsW");
-
-		double[] normsW = new double[0];
-		if (NormalWNode != null)
+		List<Vector3> out_verts = new List<Vector3>();
+		List<Vector3> out_normals = new List<Vector3>();
+		List<Vector2> out_uvs = new List<Vector2>();
+		List<int> indecies = new List<int>();
+		for (int i = 0; i < vertexIndices.Length; i++)
 		{
-			normsW = new double[(NormalWNode.properties[0].Length)];
-			Buffer.BlockCopy(NormalWNode.properties[0].Data, 0, normsW, 0, NormalWNode.properties[0].Data.Length);
+			out_verts.Add(vertecies[vertexIndices[i]]);
+			//out_normals.Add(normals[vertexIndices[i]]);
+			out_uvs.Add(uvs[uvIndices[i]]);
+			indecies.Add(i);
 		}
-
-		for (int i = 0, j = 0; i < norms.Length; i+=3, j++)
-		{
-			normals.Add(new Vector3((float)(norms[i]/((NormalWNode == null)?1.0D:normsW[j])), (float)(norms[i + 1] / ((NormalWNode == null) ? 1 : normsW[j])), (float)(norms[i + 2] / ((NormalWNode == null) ? 1 : normsW[j]))));
+		_mesh.subMeshCount = submeshStarts.Count;
+		_mesh.vertices = out_verts.ToArray();
+		_mesh.normals = normals.ToArray();
+		_mesh.uv = out_uvs.ToArray();
+		for (int j = 0; j < submeshStarts.Count; j++) {
+			_mesh.SetIndices(indecies.GetRange(submeshStarts[j], (((j+1) != submeshStarts.Count) ? submeshStarts[j + 1] : (indecies.Count - submeshStarts[j]))).ToArray(), topology[j], j, true);
+			int[] check = _mesh.GetIndices(j);
 		}
-
-		Node UVNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UV");
-		double[] texcords = new double[(UVNode.properties[0].Length)];
-		Buffer.BlockCopy(UVNode.properties[0].Data, 0, texcords, 0, UVNode.properties[0].Data.Length);
-		for(int i = 0; i < texcords.Length; i += 2)
-		{
-			uvs.Add(new Vector2((float)texcords[i], (float)texcords[i + 1]));
-		}
-
-		Node UVIndeciesNode = MeshNode.NestedNodes.Find(n => n.Name == "LayerElementUV").NestedNodes.Find(n => n.Name == "UVIndex");
-		uvIndices = new int[(UVIndeciesNode.properties[0].Length)];
-		Buffer.BlockCopy(UVIndeciesNode.properties[0].Data, 0, uvIndices, 0, UVIndeciesNode.properties[0].Data.Length);
-
-
-
-		/*/for (int i = 0; i < _fbx.node.NestedNodes.Count; i++)
-		//{
-		//	if(_fbx.node.NestedNodes[i].Name == "Objects")
-		//	{
-		//		for(int j = 0; j < _fbx.node.NestedNodes[i].NestedNodes.Count; j++)
-		//		{
-		//			if(_fbx.node.NestedNodes[i].NestedNodes[j].Name == "Geometry")
-		//			{
-		//				for(int k = 0; k < _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes.Count; k++)
-		//				{
-		//					if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "Vertices")
-		//					{
-		//						majorNode = _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k];
-		//						double[] verts = new double[(majorNode.properties[0].Length)];
-		//						Buffer.BlockCopy(majorNode.properties[0].Data, 0, verts, 0, _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].properties[0].Data.Length);
-		//						for (int l = 0; l < verts.Length; l += 3)
-		//						{
-		//							vertecies.Add(new Vector3((float)verts[l], (float)verts[l + 1], (float)verts[l + 2]));
-		//						}
-		//					}
-		//					else if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "PolygonVertexIndex")
-		//					{
-		//						majorNode = _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k];
-		//						vertexIndices = new int[(majorNode.properties[0].Length)];
-		//						Buffer.BlockCopy(majorNode.properties[0].Data, 0, vertexIndices, 0, _fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].properties[0].Data.Length);
-		//						for(int l = 0; vertexIndices.Length > l; l++)
-		//						{
-		//							if(vertexIndices[l] < 0)
-		//							{
-		//								vertexIndices[l] = -(vertexIndices[l] + 1);
-		//								if(l == 3)
-		//								{
-		//									topology = MeshTopology.Quads;
-		//								}
-		//								else if(l == 2)
-		//								{
-		//									topology = MeshTopology.Triangles;
-		//								}
-		//							}
-		//						}
-
-		//					}
-		//					else if(_fbx.node.NestedNodes[i].NestedNodes[j].NestedNodes[k].Name == "LayerElementNormal")
-		//					{
-
-		//					}
-
-		//				}
-
-		//			}
-		//		}
-		//	}
-		//}
-
-		//vertecies.Add(new Vector3());*/
 
 		return true;
 	}

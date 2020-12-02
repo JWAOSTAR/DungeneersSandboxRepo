@@ -196,7 +196,7 @@ public static class OBJImporter
         List<Vector3> normals = new List<Vector3>();
         List<int> tris = new List<int>();
 
-        //Loop through the OBJ struct object and collect pertenant data
+        //Loop through the OBJ struct object and collect and arrange pertenant data
         for (int s = 0; s < _obj.subMeshStarts.Count; s++) {
             for (int i = _obj.subMeshStarts[s]; i < (((s + 1) < _obj.subMeshStarts.Count) ? (_obj.subMeshStarts[s + 1]) : _obj.vertexIndices.Count); i++)
             {

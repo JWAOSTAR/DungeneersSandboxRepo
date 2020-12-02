@@ -16,9 +16,15 @@ public class TileMaker : MonoBehaviour
     void Start()
     {
         FBXImporter.FBX test;
-        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_bin2.fbx", out test);
+        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_multimesh_bin2.fbx", out test);
         Mesh _mesh;
         FBXImporter.FBXToMesh(test, out _mesh);
+        GameObject newTile = new GameObject();
+        MeshFilter filter = newTile.AddComponent<MeshFilter>();
+        MeshRenderer renderer = newTile.AddComponent<MeshRenderer>();
+        MeshCollider collider = newTile.AddComponent<MeshCollider>();
+        filter.mesh = _mesh;
+        collider.sharedMesh = _mesh;
     }
 
     // Update is called once per frame
