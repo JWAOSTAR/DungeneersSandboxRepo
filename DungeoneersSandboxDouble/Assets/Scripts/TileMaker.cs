@@ -9,22 +9,28 @@ using UnityEngine;
 
 public class TileMaker : MonoBehaviour
 {
-    List<OBJImporter.OBJ> m_objects = new List<OBJImporter.OBJ>();
+    List<OBJImporter.OBJ> m_OBJobjects = new List<OBJImporter.OBJ>();
+    List<FBXImporter.FBX> m_FBXobjects = new List<FBXImporter.FBX>();
     Tile m_tile = new Tile();
 
     // Start is called before the first frame update
     void Start()
     {
-        FBXImporter.FBX test;
-        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_multimesh_bin2.fbx", out test);
+        FBXImporter.FBX newFBX;
+        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_multimesh_bin2.fbx", out newFBX);
         Mesh _mesh;
-        FBXImporter.FBXToMesh(test, out _mesh);
+        FBXImporter.FBXToMesh(newFBX, out _mesh);
         GameObject newTile = new GameObject();
         MeshFilter filter = newTile.AddComponent<MeshFilter>();
         MeshRenderer renderer = newTile.AddComponent<MeshRenderer>();
         MeshCollider collider = newTile.AddComponent<MeshCollider>();
+        Material[] materials;
+        FBXImporter.LoadMaterials(newFBX, out materials);
         filter.mesh = _mesh;
         collider.sharedMesh = _mesh;
+        renderer.materials = materials;
+        m_tile.objects.Add(newTile);
+        m_FBXobjects.Add(newFBX);
     }
 
     // Update is called once per frame
@@ -67,7 +73,7 @@ public class TileMaker : MonoBehaviour
             collider.sharedMesh = mesh;
             renderer.materials = materials;
             m_tile.objects.Add(newTile);
-            m_objects.Add(newOBJ);
+            m_OBJobjects.Add(newOBJ);
 
         }
     }
