@@ -693,6 +693,31 @@ public static class FBXImporter
 		List<Node> ModelNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Model");
 		List<Node> MaterialNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Material");
 		_materials = new Material[ModelNode.Count];
+
+		for (int i = 0; i < MaterialNode.Count; i++)
+		{
+			string shadingMethod = Encoding.ASCII.GetString(MaterialNode[i].NestedNodes.Find(n => n.Name == "ShadingModel").properties[0].Data);
+
+			if (shadingMethod != "lambert" && shadingMethod != "phong")
+			{
+				return false;
+			}
+			else if (shadingMethod == "phong")
+			{
+				Node specularColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "SpecularColor");
+				Color specularColor = new Color ( (float)BitConverter.ToDouble(specularColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[6].Data, 0) );
+				float reflectionFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "ReflectionFactor").properties[4].Data, 0);
+
+			}
+
+			Node ambientColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "AmbientColor");
+			Node diffuseColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseColor");
+			Color ambientColor = new Color ( (float)BitConverter.ToDouble(ambientColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[6].Data, 0) );
+			Color diffuseColor = new Color ( (float)BitConverter.ToDouble(diffuseColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(diffuseColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(diffuseColorNode.properties[6].Data, 0) );
+			float diffuseFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseFactor").properties[4].Data, 0);
+			float transparencyFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "TransparencyFactor").properties[4].Data, 0);
+			float opacity = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "Opacity").properties[4].Data, 0);
+		}
 		return true;
 	}
 }
