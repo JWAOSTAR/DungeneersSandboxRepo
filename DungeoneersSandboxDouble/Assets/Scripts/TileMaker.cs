@@ -17,7 +17,7 @@ public class TileMaker : MonoBehaviour
     void Start()
     {
         FBXImporter.FBX newFBX;
-        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_multimesh_bin2.fbx", out newFBX);
+        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_mix_material_bin.fbx", out newFBX);
         Mesh _mesh;
         FBXImporter.FBXToMesh(newFBX, out _mesh);
         GameObject newTile = new GameObject();

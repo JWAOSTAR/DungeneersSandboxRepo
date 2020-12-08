@@ -583,8 +583,13 @@ public static class FBXImporter
 
 		for (int k = 0; k < MeshNode.Count; k++) {
 			submeshStarts.Add(vertexIndices.Length);
-			vertexTranslation.Add( new Vector3((float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[4].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[5].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[6].Data, 0)));
-
+			if (Encoding.ASCII.GetString(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[0].Data).Contains("Translation")) {
+				vertexTranslation.Add(new Vector3((float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[4].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[5].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[6].Data, 0)));
+			}
+			else
+			{
+				vertexTranslation.Add(Vector3.one);
+			}
 			Node VertexIndeciesNode = MeshNode[k].NestedNodes.Find(n => n.Name == "PolygonVertexIndex");
 			if (VertexIndeciesNode == null)
 			{
@@ -692,10 +697,19 @@ public static class FBXImporter
 	{
 		List<Node> ModelNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Model");
 		List<Node> MaterialNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Material");
+		Node ConnectionsNode = _fbx.node.NestedNodes.Find(n => n.Name == "Connections");
 		_materials = new Material[ModelNode.Count];
+
+
 
 		for (int i = 0; i < MaterialNode.Count; i++)
 		{
+			Material _newMat = new Material(Shader.Find("Standard (Specular setup)"));
+			List<Node> MaterialRefrenceNode = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[1].Data, 0) == (BitConverter.ToInt64(MaterialNode[i].properties[0].Data, 0)))));
+			if (MaterialRefrenceNode == null || MaterialRefrenceNode.Count == 0)
+			{
+				continue;
+			}
 			string shadingMethod = Encoding.ASCII.GetString(MaterialNode[i].NestedNodes.Find(n => n.Name == "ShadingModel").properties[0].Data);
 
 			if (shadingMethod != "lambert" && shadingMethod != "phong")
@@ -705,18 +719,30 @@ public static class FBXImporter
 			else if (shadingMethod == "phong")
 			{
 				Node specularColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "SpecularColor");
-				Color specularColor = new Color ( (float)BitConverter.ToDouble(specularColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[6].Data, 0) );
-				float reflectionFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "ReflectionFactor").properties[4].Data, 0);
-
+				_newMat.SetColor("_SpecColor", new Color ( (float)BitConverter.ToDouble(specularColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[6].Data, 0) ));
+				_newMat.SetFloat("_GlossyReflections", (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "ReflectionFactor").properties[4].Data, 0));
 			}
 
 			Node ambientColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "AmbientColor");
 			Node diffuseColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseColor");
-			Color ambientColor = new Color ( (float)BitConverter.ToDouble(ambientColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[6].Data, 0) );
-			Color diffuseColor = new Color ( (float)BitConverter.ToDouble(diffuseColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(diffuseColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(diffuseColorNode.properties[6].Data, 0) );
-			float diffuseFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseFactor").properties[4].Data, 0);
+			_newMat.SetColor("_EmissionColor", new Color ( (float)BitConverter.ToDouble(ambientColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[6].Data, 0) ));
 			float transparencyFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "TransparencyFactor").properties[4].Data, 0);
+			float diffuseFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseFactor").properties[4].Data, 0);
+			_newMat.SetColor("_Color", new Color ( (float)BitConverter.ToDouble(diffuseColorNode.properties[4].Data, 0)* diffuseFactor, (float)BitConverter.ToDouble(diffuseColorNode.properties[5].Data, 0)*diffuseFactor, (float)BitConverter.ToDouble(diffuseColorNode.properties[6].Data, 0)* diffuseFactor, transparencyFactor));
 			float opacity = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "Opacity").properties[4].Data, 0);
+
+			for (int j = 0; j < ModelNode.Count; j++)
+			{
+				for (int k = 0; k < MaterialRefrenceNode.Count; k++)
+				{
+					if (ModelNode[j].properties != null && MaterialRefrenceNode[k].properties != null && BitConverter.ToInt64(ModelNode[j].properties[0].Data, 0) == BitConverter.ToInt64(MaterialRefrenceNode[k].properties[2].Data, 0))
+					{
+						_materials[j] = _newMat;
+						Console.WriteLine(Encoding.ASCII.GetString(ModelNode[j].properties[1].Data) + " LINKED TO " + Encoding.ASCII.GetString(MaterialNode[i].properties[1].Data));
+					}
+				}
+			}
+
 		}
 		return true;
 	}
