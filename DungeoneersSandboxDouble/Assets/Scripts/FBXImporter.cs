@@ -697,10 +697,26 @@ public static class FBXImporter
 	{
 		List<Node> ModelNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Model");
 		List<Node> MaterialNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Material");
+		List<Node> ImageNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Video");
+		List<Node> TextureNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Texture");
 		Node ConnectionsNode = _fbx.node.NestedNodes.Find(n => n.Name == "Connections");
 		_materials = new Material[ModelNode.Count];
+		Dictionary<long, List<Texture2D>> TextureImages = new Dictionary<long, List<Texture2D>>();
 
-
+		if (ImageNode != null && ImageNode.Count > 0) 
+		{
+			List<Node> TextureRefrenceNode = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[1].Data, 0) == (BitConverter.ToInt64(ImageNode[0].properties[0].Data, 0)))));
+			for (int i = 0; i < TextureRefrenceNode.Count; i++) {
+				Node contentNode = ImageNode.Find(n => (n.properties != null && (BitConverter.ToInt64(n.properties[0].Data, 0)) == (BitConverter.ToInt64(TextureRefrenceNode[i].properties[1].Data, 0)))).NestedNodes.Find(n => n.Name == "Content");
+				if (contentNode != null)
+				{
+					long texID = BitConverter.ToInt64(TextureRefrenceNode[i].properties[2].Data, 0);
+					TextureImages.Add(texID, new List<Texture2D>());
+					TextureImages[texID].Add(new Texture2D(2, 2));
+					TextureImages[texID].Last().LoadImage(contentNode.properties[0].Data);
+				}
+			}
+		}
 
 		for (int i = 0; i < MaterialNode.Count; i++)
 		{
