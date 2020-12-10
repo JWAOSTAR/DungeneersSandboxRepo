@@ -372,6 +372,7 @@ public static class OBJImporter
                         {
                             _tex.LoadImage(File.ReadAllBytes(_path.Replace(((_path.Split('/').Length > 1) ? _path.Split('/')[_path.Split('/').Length - 1] : _path.Split('\\')[_path.Split('\\').Length - 1]), line.Replace("map_Ka ", ""))));
                             materials[materials.Count - 1].SetTexture("_EmissionMap", _tex);
+                            materials[materials.Count - 1].EnableKeyword("_EMISSION");
                         }
                         //Loads in the texture data if the line starts with 'map_Kd' representing the image texture for the diffuse component of the material and is stored in the _MainTex variable of Unity's legacy 'Standard (Specular setup)' shader
                         else if (line.StartsWith("map_Kd"))

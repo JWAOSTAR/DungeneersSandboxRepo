@@ -583,12 +583,12 @@ public static class FBXImporter
 
 		for (int k = 0; k < MeshNode.Count; k++) {
 			submeshStarts.Add(vertexIndices.Length);
-			if (Encoding.ASCII.GetString(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[0].Data).Contains("Translation")) {
+			if (ModelNode[k].NestedNodes.Find(n => n.Name == "Properties70").NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data).Contains("Translation")) != null) {
 				vertexTranslation.Add(new Vector3((float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[4].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[5].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[6].Data, 0)));
 			}
 			else
 			{
-				vertexTranslation.Add(Vector3.one);
+				vertexTranslation.Add(Vector3.zero);
 			}
 			Node VertexIndeciesNode = MeshNode[k].NestedNodes.Find(n => n.Name == "PolygonVertexIndex");
 			if (VertexIndeciesNode == null)
@@ -701,19 +701,32 @@ public static class FBXImporter
 		List<Node> TextureNode = _fbx.node.NestedNodes.Find(n => n.Name == "Objects").NestedNodes.FindAll(n => n.Name == "Texture");
 		Node ConnectionsNode = _fbx.node.NestedNodes.Find(n => n.Name == "Connections");
 		_materials = new Material[ModelNode.Count];
-		Dictionary<long, List<Texture2D>> TextureImages = new Dictionary<long, List<Texture2D>>();
+		Dictionary<long, Texture2D> TextureImages = new Dictionary<long, Texture2D>();
 
 		if (ImageNode != null && ImageNode.Count > 0) 
 		{
-			List<Node> TextureRefrenceNode = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[1].Data, 0) == (BitConverter.ToInt64(ImageNode[0].properties[0].Data, 0)))));
-			for (int i = 0; i < TextureRefrenceNode.Count; i++) {
-				Node contentNode = ImageNode.Find(n => (n.properties != null && (BitConverter.ToInt64(n.properties[0].Data, 0)) == (BitConverter.ToInt64(TextureRefrenceNode[i].properties[1].Data, 0)))).NestedNodes.Find(n => n.Name == "Content");
-				if (contentNode != null)
+			for (int j = 0; j < ImageNode.Count; j++)
+			{
+				List<Node> TextureRefrenceNode = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[1].Data, 0) == (BitConverter.ToInt64(ImageNode[j].properties[0].Data, 0)))));
+				for (int i = 0; i < TextureRefrenceNode.Count; i++)
 				{
-					long texID = BitConverter.ToInt64(TextureRefrenceNode[i].properties[2].Data, 0);
-					TextureImages.Add(texID, new List<Texture2D>());
-					TextureImages[texID].Add(new Texture2D(2, 2));
-					TextureImages[texID].Last().LoadImage(contentNode.properties[0].Data);
+					Node contentNode = ImageNode.Find(n => (n.properties != null && (BitConverter.ToInt64(n.properties[0].Data, 0)) == (BitConverter.ToInt64(TextureRefrenceNode[i].properties[1].Data, 0)))).NestedNodes.Find(n => n.Name == "Content");
+					if (contentNode != null)
+					{
+						long texID = BitConverter.ToInt64(TextureRefrenceNode[i].properties[2].Data, 0);
+						TextureImages.Add(texID, new Texture2D(2, 2));
+						TextureImages[texID].LoadImage(contentNode.properties[0].Data);
+					}
+					else if (ImageNode[j].NestedNodes.Find(n => n.Name == "Filename") != null)
+					{
+						string texturePath = Encoding.ASCII.GetString(ImageNode[j].NestedNodes.Find(n => n.Name == "Filename").properties[0].Data);
+						if(File.Exists(texturePath))
+						{
+							long texID = BitConverter.ToInt64(TextureRefrenceNode[i].properties[2].Data, 0);
+							TextureImages.Add(texID, new Texture2D(2, 2));
+							TextureImages[texID].LoadImage(File.ReadAllBytes(texturePath));
+						}
+					}
 				}
 			}
 		}
@@ -722,17 +735,47 @@ public static class FBXImporter
 		{
 			Material _newMat = new Material(Shader.Find("Standard (Specular setup)"));
 			List<Node> MaterialRefrenceNode = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[1].Data, 0) == (BitConverter.ToInt64(MaterialNode[i].properties[0].Data, 0)))));
+			List<Node> MaterialComponents = ConnectionsNode.NestedNodes.FindAll(n => (n.properties != null && (BitConverter.ToInt64(n.properties[2].Data, 0) == (BitConverter.ToInt64(MaterialNode[i].properties[0].Data, 0)))));
 			if (MaterialRefrenceNode == null || MaterialRefrenceNode.Count == 0)
 			{
 				continue;
 			}
+
+			if(MaterialComponents != null)
+			{
+				for (int j = 0; j < MaterialComponents.Count; j++) {
+					if (TextureImages.ContainsKey(BitConverter.ToInt64(MaterialComponents[j].properties[1].Data, 0))) {
+						switch (Encoding.ASCII.GetString(MaterialComponents[j].properties[3].Data))
+						{
+							case "DiffuseColor":
+								_newMat.SetTexture("_MainTex", TextureImages[BitConverter.ToInt64(MaterialComponents[j].properties[1].Data, 0)]);
+								break;
+							case "AmbientColor":
+								{
+									_newMat.SetTexture("_EmissionMap", TextureImages[BitConverter.ToInt64(MaterialComponents[j].properties[1].Data, 0)]);
+									_newMat.EnableKeyword("_EMISSION");
+								}
+								break;
+							case "Transparency":
+								_newMat.SetTexture("_OcclusionMap", TextureImages[BitConverter.ToInt64(MaterialComponents[j].properties[1].Data, 0)]);
+								break;
+							case "Bump Mapping":
+								_newMat.SetTexture("_BumpMap", TextureImages[BitConverter.ToInt64(MaterialComponents[j].properties[1].Data, 0)]);
+								break;
+							default:
+								break;
+						}
+					}
+				}
+			}
+
 			string shadingMethod = Encoding.ASCII.GetString(MaterialNode[i].NestedNodes.Find(n => n.Name == "ShadingModel").properties[0].Data);
 
-			if (shadingMethod != "lambert" && shadingMethod != "phong")
+			if (!shadingMethod.Equals("lambert", StringComparison.CurrentCultureIgnoreCase) && !shadingMethod.Equals("phong", StringComparison.CurrentCultureIgnoreCase))
 			{
 				return false;
 			}
-			else if (shadingMethod == "phong")
+			else if (shadingMethod.Equals("phong", StringComparison.CurrentCultureIgnoreCase))
 			{
 				Node specularColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "SpecularColor");
 				_newMat.SetColor("_SpecColor", new Color ( (float)BitConverter.ToDouble(specularColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(specularColorNode.properties[6].Data, 0) ));
@@ -742,10 +785,10 @@ public static class FBXImporter
 			Node ambientColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "AmbientColor");
 			Node diffuseColorNode = MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseColor");
 			_newMat.SetColor("_EmissionColor", new Color ( (float)BitConverter.ToDouble(ambientColorNode.properties[4].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[5].Data, 0), (float)BitConverter.ToDouble(ambientColorNode.properties[6].Data, 0) ));
-			float transparencyFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "TransparencyFactor").properties[4].Data, 0);
-			float diffuseFactor = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseFactor").properties[4].Data, 0);
-			_newMat.SetColor("_Color", new Color ( (float)BitConverter.ToDouble(diffuseColorNode.properties[4].Data, 0)* diffuseFactor, (float)BitConverter.ToDouble(diffuseColorNode.properties[5].Data, 0)*diffuseFactor, (float)BitConverter.ToDouble(diffuseColorNode.properties[6].Data, 0)* diffuseFactor, transparencyFactor));
-			float opacity = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "Opacity").properties[4].Data, 0);
+			/*float*/Node transparencyFactor = /*(float)BitConverter.ToDouble(*/MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data) == "TransparencyFactor");//.properties[4].Data, 0);
+			Node diffuseFactor = /*(float)BitConverter.ToDouble(*/MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data) == "DiffuseFactor")/*.properties[4].Data, 0)*/;
+			_newMat.SetColor("_Color", new Color ( (float)BitConverter.ToDouble(diffuseColorNode.properties[4].Data, 0)*((diffuseFactor != null) ? (float)BitConverter.ToDouble(diffuseFactor.properties[4].Data, 0) : 1.0f), (float)BitConverter.ToDouble(diffuseColorNode.properties[5].Data, 0)*((diffuseFactor != null) ? (float)BitConverter.ToDouble(diffuseFactor.properties[4].Data, 0) : 1.0f), (float)BitConverter.ToDouble(diffuseColorNode.properties[6].Data, 0)*((diffuseFactor != null) ? (float)BitConverter.ToDouble(diffuseFactor.properties[4].Data, 0) : 1.0f), ((transparencyFactor != null) ? (float)BitConverter.ToDouble(transparencyFactor.properties[4].Data, 0):1.0f)));
+			//float opacity = (float)BitConverter.ToDouble(MaterialNode[i].NestedNodes[3].NestedNodes.Find(n => Encoding.ASCII.GetString(n.properties[0].Data) == "Opacity").properties[4].Data, 0);
 
 			for (int j = 0; j < ModelNode.Count; j++)
 			{
