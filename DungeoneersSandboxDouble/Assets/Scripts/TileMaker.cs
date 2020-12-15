@@ -11,32 +11,44 @@ public class TileMaker : MonoBehaviour
 {
     List<OBJImporter.OBJ> m_OBJobjects = new List<OBJImporter.OBJ>();
     List<FBXImporter.FBX> m_FBXobjects = new List<FBXImporter.FBX>();
-    Tile m_tile = new Tile();
+
+    [SerializeField]
+    TransformTool _transformTool;
+    [SerializeField]
+    Tile m_tile;
 
     // Start is called before the first frame update
     void Start()
     {
         FBXImporter.FBX newFBX;
-        FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_blender.fbx", out newFBX);
-        Mesh _mesh;
-        FBXImporter.FBXToMesh(newFBX, out _mesh);
-        GameObject newTile = new GameObject();
-        MeshFilter filter = newTile.AddComponent<MeshFilter>();
-        MeshRenderer renderer = newTile.AddComponent<MeshRenderer>();
-        MeshCollider collider = newTile.AddComponent<MeshCollider>();
-        Material[] materials;
-        FBXImporter.LoadMaterials(newFBX, out materials);
-        filter.mesh = _mesh;
-        collider.sharedMesh = _mesh;
-        renderer.materials = materials;
-        m_tile.objects.Add(newTile);
-        m_FBXobjects.Add(newFBX);
-    }
+		FBXImporter.LoadFBX("C:\\Users\\JWAOSTAR\\Desktop\\Blender\\test_cube_blender.fbx", out newFBX);
+		Mesh _mesh;
+		FBXImporter.FBXToMesh(newFBX, out _mesh);
+		GameObject newTile = new GameObject();
+		MeshFilter filter = newTile.AddComponent<MeshFilter>();
+		MeshRenderer renderer = newTile.AddComponent<MeshRenderer>();
+		MeshCollider collider = newTile.AddComponent<MeshCollider>();
+		Material[] materials;
+		FBXImporter.LoadMaterials(newFBX, out materials);
+		filter.mesh = _mesh;
+		collider.sharedMesh = _mesh;
+		renderer.materials = materials;
+		m_tile.objects.Add(newTile);
+		m_FBXobjects.Add(newFBX);
+	}
 
     // Update is called once per frame
     void Update()
     {
-        
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0) && Physics.Raycast(ray, out hit))
+        {
+            if(hit.transform.gameObject != m_tile.gameObject)
+			{
+                _transformTool.CurrentGameObject = hit.transform.gameObject;
+			}
+        }
     }
 
     /// <summary>
