@@ -44,7 +44,7 @@ public class TileMaker : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButtonDown(0) && Physics.Raycast(ray, out hit))
         {
-            if(hit.transform.gameObject != m_tile.gameObject)
+            if(m_tile.objects.Contains(hit.transform.gameObject))
 			{
                 _transformTool.CurrentGameObject = hit.transform.gameObject;
 			}

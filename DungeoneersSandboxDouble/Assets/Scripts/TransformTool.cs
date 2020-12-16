@@ -29,6 +29,10 @@ public class TransformTool : MonoBehaviour
     bool activeSelect = false;
 
     int activeAxis = 0;
+
+    FreeMovingCameraController camControl;
+
+    Vector3 initialScale = Vector3.one;
     public GameObject CurrentGameObject 
     { 
         get 
@@ -37,9 +41,14 @@ public class TransformTool : MonoBehaviour
         } 
         set 
         { 
-            _currentGameObject = value; 
+            _currentGameObject = value;
+            if (_currentGameObject != null && _currentGameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
+            {
+                collider.enabled = false;
+                transform.position = _currentGameObject.transform.position;
+            }
 
-            if(activeTransform[1])
+            if (activeTransform[1])
 			{
                 SwitchActiveTransforms(1);
             }
@@ -78,6 +87,7 @@ public class TransformTool : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
+        initialScale = transform.localScale;
         RotX.SetActive(false);
         RotY.SetActive(false);
         RotZ.SetActive(false);
@@ -85,6 +95,7 @@ public class TransformTool : MonoBehaviour
         SclY.SetActive(false);
         SclZ.SetActive(false);
         CurrentGameObject = null;
+        camControl = FindObjectOfType<FreeMovingCameraController>();
         SwitchActiveTransforms(3);
     }
 
@@ -130,7 +141,7 @@ public class TransformTool : MonoBehaviour
                 else if (hit.transform.gameObject == RotZ)
                 {
                     RotZ.GetComponent<MeshRenderer>().material.color = Color.yellow;
-                    activeAxis = 3;
+                    activeAxis = 4;
                 }
                 activeSelect = true;
             }
@@ -149,80 +160,218 @@ public class TransformTool : MonoBehaviour
                 else if (hit.transform.gameObject == SclZ)
                 {
                     SclZ.GetComponent<MeshRenderer>().material.color = Color.yellow;
-                    activeAxis = 3;
+                    activeAxis = 4;
                 }
                 activeSelect = true;
             }
             else if(transform.GetChild(0).gameObject == hit.transform.gameObject)
 			{
-                Debug.Log("Hit Center");
-			}
-		}
+                if (PosX.activeSelf)
+                {
+                    Array.ForEach(Position, pos => { pos.GetComponent<MeshRenderer>().material.color = Color.yellow; });
+                }
+                else if (RotX.activeSelf)
+                {
+                    Array.ForEach(Rotation, pos => { pos.GetComponent<MeshRenderer>().material.color = Color.yellow; });
+                }
+                else if (SclX.activeSelf)
+                {
+                    Array.ForEach(Scaling, pos => { pos.GetComponent<MeshRenderer>().material.color = Color.yellow; });
+                }
+                activeAxis = 7;
+                activeSelect = true;
+            }
+        }
         else if(Input.GetMouseButton(0) && activeSelect)
 		{
             if (PosX.activeSelf)
             {
-
+				if (((activeAxis & 1) == 1))
+				{
+					if (Input.GetAxis("Mouse X") < 0)
+					{
+                        CurrentGameObject.transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
+                        transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
+                    }
+                    else if(Input.GetAxis("Mouse X") > 0)
+					{
+                        CurrentGameObject.transform.position += new Vector3(0.05f, 0.0f, 0.0f);
+                        transform.position += new Vector3(0.05f, 0.0f, 0.0f);
+                    }
+				}
+                if((activeAxis & 2) == 2)
+				{
+                    if (Input.GetAxis("Mouse Y") < 0)
+                    {
+                        CurrentGameObject.transform.position -= new Vector3(0.0f, 0.05f, 0.0f);
+                        transform.position -= new Vector3(0.0f, 0.05f, 0.0f);
+                    }
+                    else if (Input.GetAxis("Mouse Y") > 0)
+                    {
+                        CurrentGameObject.transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+                        transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+                    }
+                }
+                if((activeAxis & 4) == 4)
+				{
+                    if (Input.GetAxis("Mouse X") < 0)
+                    {
+                        CurrentGameObject.transform.position -= new Vector3(0.0f, 0.0f, 0.05f);
+                        transform.position -= new Vector3(0.0f, 0.0f, 0.05f);
+                    }
+                    else if (Input.GetAxis("Mouse X") > 0)
+                    {
+                        CurrentGameObject.transform.position += new Vector3(0.0f, 0.0f, 0.05f);
+                        transform.position += new Vector3(0.0f, 0.0f, 0.05f);
+                    }
+                }
             }
             else if(RotX.activeSelf)
 			{
-
-			}
+                if (((activeAxis & 1) == 1))
+                {
+                    if (Input.GetAxis("Mouse Y") < 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(-0.5f, 0.0f, 0.0f), Space.World);
+                    }
+                    else if (Input.GetAxis("Mouse Y") > 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(0.5f, 0.0f, 0.0f), Space.World);
+                    }
+                }
+                if ((activeAxis & 2) == 2)
+                {
+                    if (Input.GetAxis("Mouse X") < 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.5f, 0.0f), Space.World);
+                    }
+                    else if (Input.GetAxis("Mouse X") > 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, -0.5f, 0.0f), Space.World);
+                    }
+                }
+                if ((activeAxis & 4) == 4)
+                {
+                    if (Input.GetAxis("Mouse Y") < 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, -0.5f), Space.World);
+                    }
+                    else if (Input.GetAxis("Mouse Y") > 0)
+                    {
+                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, 0.5f), Space.World);
+                    }
+                }
+            }
             else if(SclX.activeSelf)
 			{
-
-			}
+                if (activeAxis != 7)
+                {
+                    if (((activeAxis & 1) == 1))
+                    {
+                        if (Input.GetAxis("Mouse X") < 0)
+                        {
+                            CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.0f, 0.0f);
+                        }
+                        else if (Input.GetAxis("Mouse X") > 0)
+                        {
+                            CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.0f, 0.0f);
+                        }
+                    }
+                    if ((activeAxis & 2) == 2)
+                    {
+                        if (Input.GetAxis("Mouse Y") < 0)
+                        {
+                            CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.05f, 0.0f);
+                        }
+                        else if (Input.GetAxis("Mouse Y") > 0)
+                        {
+                            CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.05f, 0.0f);
+                        }
+                    }
+                    if ((activeAxis & 4) == 4)
+                    {
+                        if (Input.GetAxis("Mouse X") < 0)
+                        {
+                            CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.0f, 0.05f);
+                        }
+                        else if (Input.GetAxis("Mouse X") > 0)
+                        {
+                            CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.0f, 0.05f);
+                        }
+                    }
+                }
+				else
+				{
+                    if (Input.GetAxis("Mouse X") < 0)
+                    {
+                        CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                    }
+                    else if (Input.GetAxis("Mouse Y") < 0)
+					{
+                        CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                    }
+                    else if (Input.GetAxis("Mouse X") > 0)
+                    {
+                        CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                    }
+                    else if(Input.GetAxis("Mouse Y") > 0)
+					{
+                        CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                    }
+                }
+            }
 		}
         if(Input.GetMouseButtonUp(0) && activeSelect)
 		{
             activeSelect = false;
+            camControl.Mobility = true;
             activeAxis = 0;
             if (Array.Find(Position, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null) 
             {
-                GameObject obj = Array.Find(Position, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
-                if(obj == PosX)
+                GameObject[] obj = Array.FindAll(Position, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
+                if(obj.Contains(PosX))
 				{
-                    obj.GetComponent<MeshRenderer>().material.color = Color.red;
-				}
-                else if(obj == PosY)
-				{
-                    obj.GetComponent<MeshRenderer>().material.color = Color.green;
+                    PosX.GetComponent<MeshRenderer>().material.color = Color.red;
                 }
-                else if(obj == PosZ)
+                if(obj.Contains(PosY))
 				{
-                    obj.GetComponent<MeshRenderer>().material.color = Color.blue;
+                    PosY.GetComponent<MeshRenderer>().material.color = Color.green;
+                }
+                if(obj.Contains(PosZ))
+				{
+                    PosZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
             }
             else if(Array.Find(Rotation, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
-                GameObject obj = Array.Find(Rotation, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
-                if (obj == RotX)
+                GameObject[] obj = Array.FindAll(Rotation, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
+                if (obj.Contains(RotX))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.red;
+                    RotX.GetComponent<MeshRenderer>().material.color = Color.red;
                 }
-                else if (obj == RotY)
+                if (obj.Contains(RotY))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.green;
+                    RotY.GetComponent<MeshRenderer>().material.color = Color.green;
                 }
-                else if (obj == RotZ)
+                if (obj.Contains(RotZ))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.blue;
+                    RotZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
             }
             else if(Array.Find(Scaling, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
-                GameObject obj = Array.Find(Scaling, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
-                if (obj == SclX)
+                GameObject[] obj = Array.FindAll(Scaling, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow));
+                if (obj.Contains(SclX))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.red;
+                    SclX.GetComponent<MeshRenderer>().material.color = Color.red;
                 }
-                else if (obj == SclY)
+                if (obj.Contains(SclY))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.green;
+                    SclY.GetComponent<MeshRenderer>().material.color = Color.green;
                 }
-                else if (obj == SclZ)
+                if (obj.Contains(SclZ))
                 {
-                    obj.GetComponent<MeshRenderer>().material.color = Color.blue;
+                    SclZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
             }
 		}
@@ -236,7 +385,7 @@ public class TransformTool : MonoBehaviour
         {
             SwitchActiveTransforms(0);
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S) && camControl != null && !camControl.Mobility)
         {
             SwitchActiveTransforms(2);
         }
@@ -259,6 +408,11 @@ public class TransformTool : MonoBehaviour
 		{
             activeAxis ^= 4;
         }
+
+        float distance = (Camera.main.transform.position - transform.position).magnitude;
+        float size = distance * 0.7f;
+        transform.localScale = initialScale * size;
+        //transform.forward = transform.position - Camera.main.transform.position;
     }
 
     /// <summary>
@@ -271,6 +425,10 @@ public class TransformTool : MonoBehaviour
         {
             Array.Clear(activeTransform, 0, activeTransform.Length);
             activeTransform[_activeTool] = true;
+            if (camControl != null)
+            {
+                camControl.Mobility = false;
+            }
         }
         switch(_activeTool)
 		{
@@ -311,6 +469,10 @@ public class TransformTool : MonoBehaviour
                     PosY.transform.parent.gameObject.SetActive(false);
                     PosZ.transform.parent.gameObject.SetActive(false);
                     //TODO: Add camera movment unlock
+                    if (camControl != null)
+                    {
+                        camControl.Mobility = true;
+                    }
                 }
                 break;
             default:

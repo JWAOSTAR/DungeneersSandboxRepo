@@ -7,10 +7,11 @@ public class RollerCameraMover : MonoBehaviour
     bool topDown = false;
     float speed = 0.025f;
     float zoomSpeed = 0.05f;
+    Vector2 previousRotation = Vector2.zero;
     // Start is called before the first frame update
     void Start()
     {
-        
+        previousRotation = new Vector2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.z);
     }
 
     // Update is called once per frame
@@ -45,22 +46,26 @@ public class RollerCameraMover : MonoBehaviour
         }
 
         if (Input.GetMouseButton(2)) {
-            if (Input.GetAxis("Mouse Y") > 0)
-            {
-                Camera.main.transform.Rotate(Camera.main.transform.right, 0.01f);
-            }
-            if (Input.GetAxis("Mouse Y") < 0)
-            {
-                Camera.main.transform.Rotate(Camera.main.transform.right, -0.01f);
-            }
-            if (Input.GetAxis("Mouse X") > 0)
-            {
-                Camera.main.transform.Rotate(Camera.main.transform.up, -0.01f);
-            }
-            if (Input.GetAxis("Mouse X") < 0)
-            {
-                Camera.main.transform.Rotate(Camera.main.transform.up, 0.01f);
-            }
+            //if (Input.GetAxis("Mouse Y") > 0)
+            //{
+            //    Camera.main.transform.Rotate(Camera.main.transform.right, 0.1f, Space.Self);
+            //}
+            //else if (Input.GetAxis("Mouse Y") < 0)
+            //{
+            //    Camera.main.transform.Rotate(Camera.main.transform.right, -0.1f, Space.Self);
+            //}
+            //else if (Input.GetAxis("Mouse X") > 0)
+            //{
+            //    Camera.main.transform.Rotate(Camera.main.transform.up, -0.1f, Space.Self);
+            //}
+            //else if (Input.GetAxis("Mouse X") < 0)
+            //{
+            //    Camera.main.transform.Rotate(Camera.main.transform.up, 0.1f, Space.Self);
+            //}
+            previousRotation.x += Input.GetAxis("Mouse X") * 10.0f;
+            previousRotation.y -= Input.GetAxis("Mouse Y") * 10.0f;
+            previousRotation.x = Mathf.Repeat(previousRotation.x, 360.0f);
+            Camera.main.transform.rotation = Quaternion.Euler(previousRotation.y, previousRotation.x, 0);
         }
 
     }
