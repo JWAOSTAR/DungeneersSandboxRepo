@@ -3,9 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TransformTool : MonoBehaviour
 {
+    [Serializable]
+    public class TransformChangeEvent : UnityEvent<float, float, float> { }
+
     [SerializeField]
     GameObject _currentGameObject;
     [SerializeField]
@@ -14,6 +18,13 @@ public class TransformTool : MonoBehaviour
     GameObject[] Rotation = new GameObject[3];
     [SerializeField]
     GameObject[] Scaling = new GameObject[3];
+    [SerializeField]
+    TransformChangeEvent m_OnPositionChange = new TransformChangeEvent();
+    [SerializeField]
+    TransformChangeEvent m_OnRotationChange = new TransformChangeEvent();
+    [SerializeField]
+    TransformChangeEvent m_OnScalingChange = new TransformChangeEvent();
+
     public GameObject PosX { get { return Position[0]; } }
     public GameObject PosY { get { return Position[1]; } }
     public GameObject PosZ { get { return Position[2]; } }
@@ -42,10 +53,25 @@ public class TransformTool : MonoBehaviour
         set 
         { 
             _currentGameObject = value;
+            MeshCollider[] cols = Resources.FindObjectsOfTypeAll<MeshCollider>();
+            foreach (MeshCollider col in cols)
+            {
+                col.enabled = true;
+            }
+
             if (_currentGameObject != null && _currentGameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
             {
                 collider.enabled = false;
                 transform.position = _currentGameObject.transform.position;
+                m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
+                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.x, CurrentGameObject.transform.rotation.y, CurrentGameObject.transform.rotation.z);
+                m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
+
+            }
+            else
+			{
+                SwitchActiveTransforms(3);
+                return;
             }
 
             if (activeTransform[1])
@@ -341,6 +367,7 @@ public class TransformTool : MonoBehaviour
 				{
                     PosZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
+                m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
             }
             else if(Array.Find(Rotation, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
@@ -357,6 +384,7 @@ public class TransformTool : MonoBehaviour
                 {
                     RotZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
+                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.x, CurrentGameObject.transform.rotation.y, CurrentGameObject.transform.rotation.z);
             }
             else if(Array.Find(Scaling, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
@@ -373,6 +401,7 @@ public class TransformTool : MonoBehaviour
                 {
                     SclZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
+                m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
             }
 		}
 
