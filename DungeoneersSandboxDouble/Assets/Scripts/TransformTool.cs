@@ -64,7 +64,7 @@ public class TransformTool : MonoBehaviour
                 collider.enabled = false;
                 transform.position = _currentGameObject.transform.position;
                 m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
-                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.x, CurrentGameObject.transform.rotation.y, CurrentGameObject.transform.rotation.z);
+                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.eulerAngles.x, CurrentGameObject.transform.rotation.eulerAngles.y, CurrentGameObject.transform.rotation.eulerAngles.z);
                 m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
 
             }
@@ -218,6 +218,7 @@ public class TransformTool : MonoBehaviour
 					{
                         CurrentGameObject.transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
                         transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
+                        
                     }
                     else if(Input.GetAxis("Mouse X") > 0)
 					{
@@ -251,6 +252,7 @@ public class TransformTool : MonoBehaviour
                         transform.position += new Vector3(0.0f, 0.0f, 0.05f);
                     }
                 }
+                m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
             }
             else if(RotX.activeSelf)
 			{
@@ -287,6 +289,7 @@ public class TransformTool : MonoBehaviour
                         CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, 0.5f), Space.World);
                     }
                 }
+                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.eulerAngles.x, CurrentGameObject.transform.rotation.eulerAngles.y, CurrentGameObject.transform.rotation.eulerAngles.z);
             }
             else if(SclX.activeSelf)
 			{
@@ -325,6 +328,7 @@ public class TransformTool : MonoBehaviour
                             CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.0f, 0.05f);
                         }
                     }
+                    m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
                 }
 				else
 				{
@@ -344,6 +348,7 @@ public class TransformTool : MonoBehaviour
 					{
                         CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
                     }
+                    m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
                 }
             }
 		}
@@ -367,7 +372,6 @@ public class TransformTool : MonoBehaviour
 				{
                     PosZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
-                m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
             }
             else if(Array.Find(Rotation, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
@@ -384,7 +388,6 @@ public class TransformTool : MonoBehaviour
                 {
                     RotZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
-                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.x, CurrentGameObject.transform.rotation.y, CurrentGameObject.transform.rotation.z);
             }
             else if(Array.Find(Scaling, (n => n.GetComponent<MeshRenderer>().material.color == Color.yellow)) != null)
 			{
@@ -401,41 +404,42 @@ public class TransformTool : MonoBehaviour
                 {
                     SclZ.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
-                m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
             }
 		}
 
-        //Check for shortcut clicks for the transformation tools and change to the appropriate ones
-        if(Input.GetKeyDown(KeyCode.R))
-		{
-            SwitchActiveTransforms(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.G))
-        {
-            SwitchActiveTransforms(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.S) && camControl != null && !camControl.Mobility)
-        {
-            SwitchActiveTransforms(2);
-        }
-        else if(Input.GetKeyDown(KeyCode.M))
-		{
-            SwitchActiveTransforms(3);
-		}
+        if (CurrentGameObject != null) {
+            //Check for shortcut clicks for the transformation tools and change to the appropriate ones
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SwitchActiveTransforms(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                SwitchActiveTransforms(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.S) && camControl != null && !camControl.Mobility)
+            {
+                SwitchActiveTransforms(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                SwitchActiveTransforms(3);
+            }
 
-        //Check for extentions for the short cut click 
-		if (activeTransform[0] && Input.GetKeyDown(KeyCode.X))
-		{
-            activeAxis ^= 1;
+            //Check for extentions for the short cut click 
+            if (activeTransform[0] && Input.GetKeyDown(KeyCode.X))
+            {
+                activeAxis ^= 1;
 
-        }
-        else if(activeTransform[1] && Input.GetKeyDown(KeyCode.Y))
-		{
-            activeAxis ^= 2;
-        }
-        else if(activeTransform[2] && Input.GetKeyDown(KeyCode.Z))
-		{
-            activeAxis ^= 4;
+            }
+            else if (activeTransform[1] && Input.GetKeyDown(KeyCode.Y))
+            {
+                activeAxis ^= 2;
+            }
+            else if (activeTransform[2] && Input.GetKeyDown(KeyCode.Z))
+            {
+                activeAxis ^= 4;
+            }
         }
 
         float distance = (Camera.main.transform.position - transform.position).magnitude;
@@ -450,7 +454,7 @@ public class TransformTool : MonoBehaviour
     /// <param name="_activeTool">Integer representing the transform tool type</param>
     public void SwitchActiveTransforms(int _activeTool)
 	{
-        if (_activeTool < activeTransform.Length && _activeTool >= 0)
+        if (_activeTool < activeTransform.Length && _activeTool >= 0 && CurrentGameObject != null)
         {
             Array.Clear(activeTransform, 0, activeTransform.Length);
             activeTransform[_activeTool] = true;
@@ -463,6 +467,10 @@ public class TransformTool : MonoBehaviour
 		{
             case 0:
                 {
+                    if (CurrentGameObject == null)
+                    {
+                        break;
+                    }
                     PosX.transform.parent.gameObject.SetActive(true);
                     PosY.transform.parent.gameObject.SetActive(true);
                     PosZ.transform.parent.gameObject.SetActive(true);
@@ -473,6 +481,10 @@ public class TransformTool : MonoBehaviour
                 break;
             case 1:
                 {
+                    if (CurrentGameObject == null)
+                    {
+                        break;
+                    }
                     PosX.transform.parent.gameObject.SetActive(true);
                     PosY.transform.parent.gameObject.SetActive(true);
                     PosZ.transform.parent.gameObject.SetActive(true);
@@ -483,6 +495,10 @@ public class TransformTool : MonoBehaviour
                 break;
             case 2:
                 {
+                    if (CurrentGameObject == null)
+                    {
+                        break;
+                    }
                     PosX.transform.parent.gameObject.SetActive(true);
                     PosY.transform.parent.gameObject.SetActive(true);
                     PosZ.transform.parent.gameObject.SetActive(true);

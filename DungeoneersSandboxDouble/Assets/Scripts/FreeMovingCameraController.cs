@@ -21,19 +21,19 @@ public class FreeMovingCameraController : MonoBehaviour
     {
         if (Mobility)
         {
-            if (Input.GetKey(KeyCode.W) || (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") > 0))
+            if (Input.GetKey(KeyCode.W) /*|| (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") > 0)*/)
             {
                 transform.localPosition = transform.localPosition + transform.forward * speed;
             }
-            if (Input.GetKey(KeyCode.S) || (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") < 0))
+            if (Input.GetKey(KeyCode.S) /*|| (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") < 0)*/)
             {
                 transform.localPosition = transform.localPosition - transform.forward * speed;
             }
-            if (Input.GetKey(KeyCode.D) || (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") > 0))
+            if (Input.GetKey(KeyCode.D) /*|| (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") > 0)*/)
             {
                 transform.localPosition = transform.localPosition + transform.right * speed;
             }
-            if (Input.GetKey(KeyCode.A) || (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") < 0))
+            if (Input.GetKey(KeyCode.A) /*|| (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") < 0)*/)
             {
                 transform.localPosition = transform.localPosition - transform.right * speed;
             }

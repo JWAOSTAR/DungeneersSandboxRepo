@@ -10,8 +10,19 @@ using UnityEngine.UI;
 
 public class TileMaker : MonoBehaviour
 {
+    public enum TileFace
+	{
+        Bottom = 1,
+        South,
+        West, 
+        North,
+        Top,
+        East
+	}
+
     List<OBJImporter.OBJ> m_OBJobjects = new List<OBJImporter.OBJ>();
     List<FBXImporter.FBX> m_FBXobjects = new List<FBXImporter.FBX>();
+    Material m_tileMaterial;
 
     [SerializeField]
     TransformTool _transformTool;
@@ -23,6 +34,10 @@ public class TileMaker : MonoBehaviour
     InputField[] m_rotationInputs = new InputField[3];
     [SerializeField]
     InputField[] m_scaleInputs = new InputField[3];
+    [SerializeField]
+    Texture2D baseTile;
+    [SerializeField]
+    Image[] TileFaces = new Image[6];
 
     private void OnValidate()
     {
@@ -43,13 +58,21 @@ public class TileMaker : MonoBehaviour
         {
             Array.Resize(ref m_scaleInputs, 3);
         }
+
+        //Make sure array size for TileFaces can not be changed in editor
+        if (TileFaces.Length > 6)
+        {
+            Array.Resize(ref TileFaces, 6);
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
         //m_tile.objects.Add(GameObject.Instantiate(newTile));
-	}
+        m_tileMaterial = new Material(Shader.Find("Standard"));
+        m_tile.GetComponent<MeshRenderer>().material = m_tileMaterial;
+    }
 
     // Update is called once per frame
     void Update()
@@ -166,4 +189,104 @@ public class TileMaker : MonoBehaviour
         m_scaleInputs[1].text = y.ToString("0.0000");
         m_scaleInputs[2].text = z.ToString("0.0000");
     }
+
+    public void SetObjectScaleX(string _val)
+	{
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.localScale = new Vector3(float.Parse(_val), _transformTool.CurrentGameObject.transform.localScale.y, _transformTool.CurrentGameObject.transform.localScale.z);
+        }
+    }
+
+    public void SetObjectScaleY(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {        
+            _transformTool.CurrentGameObject.transform.localScale = new Vector3(_transformTool.CurrentGameObject.transform.localScale.x, float.Parse(_val), _transformTool.CurrentGameObject.transform.localScale.z);
+        }
+
+
+    }
+
+    public void SetObjectScaleZ(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.localScale = new Vector3(_transformTool.CurrentGameObject.transform.localScale.x, _transformTool.CurrentGameObject.transform.localScale.y, float.Parse(_val));
+        }
+    }
+
+    public void SetObjectPositionX(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.position = new Vector3(float.Parse(_val), _transformTool.CurrentGameObject.transform.position.y, _transformTool.CurrentGameObject.transform.position.z);
+        }
+    }
+
+    public void SetObjectPositionY(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.position = new Vector3(_transformTool.CurrentGameObject.transform.position.x, float.Parse(_val), _transformTool.CurrentGameObject.transform.position.z);
+        }
+    }
+
+    public void SetObjectPositionZ(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.position = new Vector3(_transformTool.CurrentGameObject.transform.position.x, _transformTool.CurrentGameObject.transform.position.y, float.Parse(_val));
+        }
+    }
+
+    public void SetObjectRotationX(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.rotation = Quaternion.Euler(float.Parse(_val), _transformTool.CurrentGameObject.transform.rotation.eulerAngles.y, _transformTool.CurrentGameObject.transform.rotation.eulerAngles.z);
+        }
+    }
+
+    public void SetObjectRotationY(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.rotation = Quaternion.Euler(_transformTool.CurrentGameObject.transform.rotation.eulerAngles.x, float.Parse(_val), _transformTool.CurrentGameObject.transform.rotation.eulerAngles.z);
+        }
+    }
+
+    public void SetObjectRotationZ(string _val)
+    {
+        if (_transformTool.CurrentGameObject != null)
+        {
+            _transformTool.CurrentGameObject.transform.rotation = Quaternion.Euler(_transformTool.CurrentGameObject.transform.rotation.eulerAngles.x, _transformTool.CurrentGameObject.transform.rotation.eulerAngles.y, float.Parse(_val));
+        }
+    }
+
+    public void SetFaceTexture(int face)
+	{
+        string file_path = string.Empty;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog openFileDialog1 = new OpenFileDialog();
+        openFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/";
+        openFileDialog1.Filter = "PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+        openFileDialog1.FilterIndex = 0;
+        openFileDialog1.RestoreDirectory = false;
+
+        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            file_path = openFileDialog1.FileName;
+        }
+#endif
+        if (file_path != string.Empty && file_path != "")
+        {
+            Texture2D newTex = new Texture2D(2, 2);
+            newTex.LoadImage(File.ReadAllBytes(file_path));
+            TileFaces[face - 1].sprite = Sprite.Create(newTex, new Rect(0.0f, 0.0f, newTex.width, newTex.height), new Vector2(0.0f, 0.0f));
+            //TextureScale.
+        }
+	}
+
+
 }
