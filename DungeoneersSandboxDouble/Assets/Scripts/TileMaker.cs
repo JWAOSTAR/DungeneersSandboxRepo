@@ -7,6 +7,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using RedExtentions;
+using System.Linq;
 
 public class TileMaker : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class TileMaker : MonoBehaviour
     List<OBJImporter.OBJ> m_OBJobjects = new List<OBJImporter.OBJ>();
     List<FBXImporter.FBX> m_FBXobjects = new List<FBXImporter.FBX>();
     Material m_tileMaterial;
+    Vector4[] TileFaceCoordinates = new Vector4[6];
 
     [SerializeField]
     TransformTool _transformTool;
@@ -72,6 +75,44 @@ public class TileMaker : MonoBehaviour
         //m_tile.objects.Add(GameObject.Instantiate(newTile));
         m_tileMaterial = new Material(Shader.Find("Standard"));
         m_tile.GetComponent<MeshRenderer>().material = m_tileMaterial;
+        Color[] faceColors = new Color[] { Color.blue, Color.green, Color.cyan, Color.red, Color.magenta, new Color(1.0f, 1.0f, 0.0f) };
+        for (int i = 0; i < faceColors.Length; i++) 
+        {
+            bool foundCol = false;
+            TileFaceCoordinates[i].x = 0.0f;
+            TileFaceCoordinates[i].y = -1.0f;
+            TileFaceCoordinates[i].z = -1.0f;
+            TileFaceCoordinates[i].w = -1.0f;
+            for (int y = 0; y < baseTile.height; y++)
+            {
+                for (int x = (int)TileFaceCoordinates[i].x; x < baseTile.width; x++)
+                {
+                    if (!foundCol && baseTile.GetPixel(x, y) == faceColors[i])
+                    {
+                        foundCol = true;
+                        TileFaceCoordinates[i].x = x;
+                        TileFaceCoordinates[i].y = y;
+                    }
+                    else if(foundCol && baseTile.GetPixel(x, y) != faceColors[i])
+					{
+                        if(x == (int)TileFaceCoordinates[i].x)
+						{
+                            TileFaceCoordinates[i].y = y - 1;
+                        }
+                        if(TileFaceCoordinates[i].z == -1.0f)
+						{
+                            TileFaceCoordinates[i].z = x - 1;
+                        }
+                        break;
+					}
+                }
+                if(TileFaceCoordinates[i].y != -1.0f)
+				{
+                    break;
+				}
+            }
+        }
+
     }
 
     // Update is called once per frame
@@ -284,7 +325,21 @@ public class TileMaker : MonoBehaviour
             Texture2D newTex = new Texture2D(2, 2);
             newTex.LoadImage(File.ReadAllBytes(file_path));
             TileFaces[face - 1].sprite = Sprite.Create(newTex, new Rect(0.0f, 0.0f, newTex.width, newTex.height), new Vector2(0.0f, 0.0f));
-            //TextureScale.
+            newTex.ScaleBilinear((int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y));
+            
+            if(m_tileMaterial.mainTexture == null)
+			{
+                m_tileMaterial.mainTexture = new Texture2D((int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y));
+                ((Texture2D)(m_tileMaterial.mainTexture)).SetPixels(Enumerable.Repeat(Color.clear, ((Texture2D)(m_tileMaterial.mainTexture)).GetPixels().Length).ToArray());
+            }
+
+            for(int y = (int)TileFaceCoordinates[face - 1].y; y < (int)TileFaceCoordinates[face - 1].w; y++)
+			{
+                for(int x = (int)TileFaceCoordinates[face - 1].x; x < (int)TileFaceCoordinates[face - 1].z; x++)
+				{
+                    ((Texture2D)(m_tileMaterial.mainTexture)).SetPixel(x, y, newTex.GetPixel(x, y));
+                }
+			}
         }
 	}
 
