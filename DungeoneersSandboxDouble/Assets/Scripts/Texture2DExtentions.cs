@@ -44,13 +44,13 @@ namespace RedExtentions
 			Col = new Color[width * height];
 			if(bilinear)
 			{
-				ratioX = 1.0f / (float)(width / (tex.width - 1));
-				ratioY = 1.0f / (float)(height / (tex.height - 1));
+				ratioX = 1.0f / ((float)width / (tex.width - 1));
+				ratioY = 1.0f / ((float)height / (tex.height - 1));
 			}
 			else
 			{
-				ratioX = (float)(tex.width / width);
-				ratioY = (float)(tex.height / height);
+				ratioX = ((float)tex.width / width);
+				ratioY = ((float)tex.height / height);
 			}
 
 			texWidth = tex.width;
@@ -63,7 +63,7 @@ namespace RedExtentions
 			{
 				mutex = new Mutex(false);
 			}
-			if(cores > 1)
+			if(/*cores > 1*/ false)
 			{
 				int i = 0;
 				ThreadData td;
@@ -83,7 +83,7 @@ namespace RedExtentions
 				{
 					PointScale(td);
 				}
-				while(finishCount < cores)
+				while(finishCount <= cores)
 				{
 					Thread.Sleep(1);
 				}
@@ -122,7 +122,12 @@ namespace RedExtentions
 				{
 					int xF = (int)Mathf.Floor(x * ratioX);
 					float ratio = x * ratioX - xF;
-					Col[Row + x] = Color.LerpUnclamped(Color.LerpUnclamped(texCol[y1 + xF], texCol[y1 + xF + 1], ratio), Color.LerpUnclamped(texCol[y2 + xF], texCol[y2 + xF + 1], ratio), y * ratioY - yF);
+					if ((Row + x) > Col.Length || (y1 + xF) >= texCol.Length || (y2 + xF) >= texCol.Length || (y1 + xF) < 0 || (y1 + xF + 1) < 0 || (y2 + xF) < 0 || (y2 + xF + 1) < 0)
+					{
+						int test = 0;
+						continue;
+					}
+					Col[Row + x] = Color.LerpUnclamped(Color.LerpUnclamped(texCol[y1 + xF], texCol[y1 + xF + (((y1 + xF + 1) < texCol.Length) ? 1:0)], ratio), Color.LerpUnclamped(texCol[y2 + xF], texCol[y2 + xF + (((y2 + xF + 1) < texCol.Length) ? 1 : 0)], ratio), y * ratioY - yF);
 				}
 
 				mutex.WaitOne();

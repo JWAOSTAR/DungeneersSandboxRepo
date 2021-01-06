@@ -73,8 +73,9 @@ public class TileMaker : MonoBehaviour
     void Start()
     {
         //m_tile.objects.Add(GameObject.Instantiate(newTile));
+        bool test = baseTile.GetPixels().Contains(Color.magenta);
         m_tileMaterial = new Material(Shader.Find("Standard"));
-        m_tile.GetComponent<MeshRenderer>().material = m_tileMaterial;
+        m_tile.tile.GetComponent<MeshRenderer>().material = m_tileMaterial;
         Color[] faceColors = new Color[] { Color.blue, Color.green, Color.cyan, Color.red, Color.magenta, new Color(1.0f, 1.0f, 0.0f) };
         for (int i = 0; i < faceColors.Length; i++) 
         {
@@ -97,20 +98,24 @@ public class TileMaker : MonoBehaviour
 					{
                         if(x == (int)TileFaceCoordinates[i].x)
 						{
-                            TileFaceCoordinates[i].y = y - 1;
+                            TileFaceCoordinates[i].w = y + 1;
                         }
                         if(TileFaceCoordinates[i].z == -1.0f)
 						{
-                            TileFaceCoordinates[i].z = x - 1;
+                            TileFaceCoordinates[i].z = x + 1;
                         }
                         break;
 					}
                 }
-                if(TileFaceCoordinates[i].y != -1.0f)
+                if(TileFaceCoordinates[i].w != -1.0f)
 				{
                     break;
 				}
-            }
+				else if (TileFaceCoordinates[i].w == -1.0f && y + 1 == baseTile.height)
+				{
+					TileFaceCoordinates[i].w = baseTile.height - 1;
+				}
+			}
         }
 
     }
@@ -324,22 +329,28 @@ public class TileMaker : MonoBehaviour
         {
             Texture2D newTex = new Texture2D(2, 2);
             newTex.LoadImage(File.ReadAllBytes(file_path));
-            TileFaces[face - 1].sprite = Sprite.Create(newTex, new Rect(0.0f, 0.0f, newTex.width, newTex.height), new Vector2(0.0f, 0.0f));
-            newTex.ScaleBilinear((int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y));
-            
-            if(m_tileMaterial.mainTexture == null)
+            TileFaces[face - 1].sprite = Sprite.Create(newTex, new Rect(0.0f, 0.0f, (int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y)), new Vector2(0.0f, 0.0f));
+			newTex.ScaleBilinear((int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y));
+
+			if (m_tileMaterial.mainTexture == null)
 			{
-                m_tileMaterial.mainTexture = new Texture2D((int)(TileFaceCoordinates[face - 1].z - TileFaceCoordinates[face - 1].x), (int)(TileFaceCoordinates[face - 1].w - TileFaceCoordinates[face - 1].y));
-                ((Texture2D)(m_tileMaterial.mainTexture)).SetPixels(Enumerable.Repeat(Color.clear, ((Texture2D)(m_tileMaterial.mainTexture)).GetPixels().Length).ToArray());
+				m_tileMaterial.mainTexture = new Texture2D(baseTile.width, baseTile.height);
+				((Texture2D)(m_tileMaterial.mainTexture)).SetPixels(Enumerable.Repeat(Color.clear, ((Texture2D)(m_tileMaterial.mainTexture)).GetPixels().Length).ToArray());
+                ((Texture2D)(m_tileMaterial.mainTexture)).alphaIsTransparency = true;
+                ((Texture2D)(m_tileMaterial.mainTexture)).filterMode = FilterMode.Bilinear;
+                ((Texture2D)(m_tileMaterial.mainTexture)).wrapMode = TextureWrapMode.Repeat;
+
             }
 
-            for(int y = (int)TileFaceCoordinates[face - 1].y; y < (int)TileFaceCoordinates[face - 1].w; y++)
+			for (int y = (int)TileFaceCoordinates[face - 1].y, ny = 0; y < (int)TileFaceCoordinates[face - 1].w; y++, ny++)
 			{
-                for(int x = (int)TileFaceCoordinates[face - 1].x; x < (int)TileFaceCoordinates[face - 1].z; x++)
+				for (int x = (int)TileFaceCoordinates[face - 1].x, nx = 0; x < (int)TileFaceCoordinates[face - 1].z; x++, nx++)
 				{
-                    ((Texture2D)(m_tileMaterial.mainTexture)).SetPixel(x, y, newTex.GetPixel(x, y));
-                }
+					((Texture2D)(m_tileMaterial.mainTexture)).SetPixel(x, y, newTex.GetPixel(nx, ny));
+				}
 			}
+            ((Texture2D)(m_tileMaterial.mainTexture)).Apply();
+
         }
 	}
 
