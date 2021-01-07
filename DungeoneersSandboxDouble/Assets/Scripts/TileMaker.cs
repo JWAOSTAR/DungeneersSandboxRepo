@@ -41,6 +41,8 @@ public class TileMaker : MonoBehaviour
     Texture2D baseTile;
     [SerializeField]
     Image[] TileFaces = new Image[6];
+    [SerializeField]
+    Image FullTexture;
 
     private void OnValidate()
     {
@@ -91,8 +93,8 @@ public class TileMaker : MonoBehaviour
                     if (!foundCol && baseTile.GetPixel(x, y) == faceColors[i])
                     {
                         foundCol = true;
-                        TileFaceCoordinates[i].x = x;
-                        TileFaceCoordinates[i].y = y;
+                        TileFaceCoordinates[i].x = x - ((x > 0) ? 1 : 0);
+                        TileFaceCoordinates[i].y = y - ((y > 0) ? 1 : 0);
                     }
                     else if(foundCol && baseTile.GetPixel(x, y) != faceColors[i])
 					{
@@ -339,7 +341,7 @@ public class TileMaker : MonoBehaviour
                 ((Texture2D)(m_tileMaterial.mainTexture)).alphaIsTransparency = true;
                 ((Texture2D)(m_tileMaterial.mainTexture)).filterMode = FilterMode.Bilinear;
                 ((Texture2D)(m_tileMaterial.mainTexture)).wrapMode = TextureWrapMode.Repeat;
-
+                FullTexture.sprite = Sprite.Create(((Texture2D)(m_tileMaterial.mainTexture)), new Rect(0.0f, 0.0f, m_tileMaterial.mainTexture.width, m_tileMaterial.mainTexture.height), Vector2.zero);
             }
 
 			for (int y = (int)TileFaceCoordinates[face - 1].y, ny = 0; y < (int)TileFaceCoordinates[face - 1].w; y++, ny++)
@@ -354,5 +356,88 @@ public class TileMaker : MonoBehaviour
         }
 	}
 
+    public void SetTexuture()
+	{
+        string file_path = string.Empty;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog openFileDialog1 = new OpenFileDialog();
+        openFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/";
+        openFileDialog1.Filter = "PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+        openFileDialog1.FilterIndex = 0;
+        openFileDialog1.RestoreDirectory = false;
 
+        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            file_path = openFileDialog1.FileName;
+        }
+#endif
+
+        if(file_path != string.Empty && file_path != "")
+		{
+            m_tileMaterial.mainTexture = new Texture2D(2, 2);
+            ((Texture2D)(m_tileMaterial.mainTexture)).LoadImage(File.ReadAllBytes(file_path));
+            FullTexture.sprite = Sprite.Create(((Texture2D)(m_tileMaterial.mainTexture)), new Rect(0.0f, 0.0f, m_tileMaterial.mainTexture.width, m_tileMaterial.mainTexture.height), Vector2.zero);
+        }
+
+    }
+
+    public void SetObjectTexuture()
+    {
+        if (_transformTool.CurrentGameObject != null) {
+            string file_path = string.Empty;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/";
+            openFileDialog1.Filter = "PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 0;
+            openFileDialog1.RestoreDirectory = false;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                file_path = openFileDialog1.FileName;
+            }
+#endif
+
+            if (file_path != string.Empty && file_path != "")
+            {
+                m_tileMaterial.mainTexture = new Texture2D(2, 2);
+                if (_transformTool.CurrentGameObject.GetComponent<MeshRenderer>().material.mainTexture != null)
+                {
+                    ((Texture2D)(_transformTool.CurrentGameObject.GetComponent<MeshRenderer>().material.mainTexture)).LoadImage(File.ReadAllBytes(file_path));
+                }
+				else
+				{
+                    Texture2D tex = new Texture2D(2, 2);
+                    tex.LoadImage(File.ReadAllBytes(file_path));
+                    _transformTool.CurrentGameObject.GetComponent<MeshRenderer>().material.mainTexture = tex;
+                }
+                //FullTexture.sprite = Sprite.Create(((Texture2D)(m_tileMaterial.mainTexture)), new Rect(0.0f, 0.0f, m_tileMaterial.mainTexture.width, m_tileMaterial.mainTexture.height), Vector2.zero);
+            }
+        }
+
+    }
+
+    public void SaveTile()
+	{
+        string path;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        path = "C:/Users/" + Environment.UserName + "/AppData/Local/DungeoneersSamdbox/";
+#endif
+        if (!Directory.Exists(path + "tiles/"))
+        {
+            Directory.CreateDirectory(path + "tiles/");
+        }
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        TextInputDialog textInputDialog1 = new TextInputDialog();
+        textInputDialog1.Label = "New tile name:";
+        textInputDialog1.Title = "Save tile";
+        textInputDialog1.Text = "Untitled";
+
+        if (textInputDialog1.ShowDialog() == DialogResult.OK)
+		{
+            path += textInputDialog1.Text + ".dsmt";
+		}
+#endif
+        BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
+    }
 }
