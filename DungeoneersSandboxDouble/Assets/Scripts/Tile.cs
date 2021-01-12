@@ -13,6 +13,16 @@ public class Tile : MonoBehaviour
 
     ulong id;
 
+    string tileName = "untitled";
+
+    Vector3 size = new Vector3();
+    Vector3 center = new Vector3();
+
+    public string Name { get { return tileName; } set { tileName = value; } }
+    public ulong ID { get { return id; } set { id = value; } }
+    public Vector3 Size {  get { return size; } set { size = value; } }
+    public Vector3 Center {  get { return center; } set { center = value; } }
+
     // Start is called before the first frame update
     void Start()
 	{
