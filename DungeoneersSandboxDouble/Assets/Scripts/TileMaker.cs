@@ -83,33 +83,34 @@ public class TileMaker : MonoBehaviour
         Color[] faceColors = new Color[] { Color.blue, Color.green, Color.cyan, Color.red, Color.magenta, new Color(1.0f, 1.0f, 0.0f) };
         for (int i = 0; i < faceColors.Length; i++)
         {
-            bool foundCol = false;
+            bool firlstContact = false;
             TileFaceCoordinates[i].x = 0.0f;
             TileFaceCoordinates[i].y = -1.0f;
             TileFaceCoordinates[i].z = -1.0f;
             TileFaceCoordinates[i].w = -1.0f;
             for (int y = 0; y < baseTile.height; y++)
             {
+                bool foundCol = false;
                 for (int x = (int)TileFaceCoordinates[i].x; x < baseTile.width; x++)
                 {
-                    if (!foundCol && baseTile.GetPixel(x, y) == faceColors[i])
+                    if (!firlstContact && baseTile.GetPixel(x, y) == faceColors[i])
                     {
-                        foundCol = true;
+                        firlstContact = true;
                         TileFaceCoordinates[i].x = x - ((x > 0) ? 1 : 0);
                         TileFaceCoordinates[i].y = y - ((y > 0) ? 1 : 0);
                     }
-                    else if (foundCol && baseTile.GetPixel(x, y) != faceColors[i])
+                    else if (firlstContact && baseTile.GetPixel(x, y) != faceColors[i] && TileFaceCoordinates[i].z == -1.0f)
                     {
-                        if (x == (int)TileFaceCoordinates[i].x)
-                        {
-                            TileFaceCoordinates[i].w = y + 1;
-                        }
-                        if (TileFaceCoordinates[i].z == -1.0f)
-                        {
-                            TileFaceCoordinates[i].z = x + 1;
-                        }
-                        break;
+                        TileFaceCoordinates[i].z = x + 1;
                     }
+                    else if (baseTile.GetPixel(x, y) == faceColors[i])
+					{
+                        foundCol = true;
+					}
+                }
+                if (firlstContact && !foundCol)
+                {
+                    TileFaceCoordinates[i].w = y + 1;
                 }
                 if (TileFaceCoordinates[i].w != -1.0f)
                 {
@@ -461,7 +462,6 @@ public class TileMaker : MonoBehaviour
         BinaryWriter file = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
 
         file.Write(m_tile.ID);
-
         file.Write(m_tile.Size.x);
         file.Write(m_tile.Size.y);
         file.Write(m_tile.Size.z);
@@ -478,7 +478,8 @@ public class TileMaker : MonoBehaviour
             file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices.Length);
             for (int vert = 0; vert < m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices.Length; vert++)
             {
-                file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices[vert].x);
+                float vertX = m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices[vert].x;
+                file.Write(vertX);
                 file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices[vert].y);
                 file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.vertices[vert].z);
             }
@@ -496,6 +497,16 @@ public class TileMaker : MonoBehaviour
                 file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.normals[norm].z);
             }
 
+            for (int ind = 0; ind < m_tile.objects[i].GetComponent<MeshFilter>().mesh.subMeshCount; ind++)
+            {
+                file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.GetIndexCount(ind));
+                for (int j = 0; j < m_tile.objects[i].GetComponent<MeshFilter>().mesh.GetIndexCount(ind); j++)
+                {
+                    file.Write(m_tile.objects[i].GetComponent<MeshFilter>().mesh.GetIndices(ind)[j]);
+                }
+                file.Write((int)m_tile.objects[i].GetComponent<MeshFilter>().mesh.GetTopology(ind));
+            }
+
             file.Write(m_tile.objects[i].GetComponent<MeshRenderer>().materials.Length);
             for(int mat = 0; mat < m_tile.objects[i].GetComponent<MeshRenderer>().materials.Length; mat++)
 			{
@@ -507,6 +518,26 @@ public class TileMaker : MonoBehaviour
                     file.Write(((Texture2D)(m_tile.objects[i].GetComponent<MeshRenderer>().materials[mat].mainTexture)).EncodeToPNG());
                 }
 			}
+
+            file.Write(m_tile.objects[i].transform.position.x);
+            file.Write(m_tile.objects[i].transform.position.y);
+            file.Write(m_tile.objects[i].transform.position.z);
+
+            file.Write(m_tile.objects[i].transform.rotation.eulerAngles.x);
+            file.Write(m_tile.objects[i].transform.rotation.eulerAngles.y);
+            file.Write(m_tile.objects[i].transform.rotation.eulerAngles.z);
+
+            file.Write(m_tile.objects[i].transform.localScale.x);
+            file.Write(m_tile.objects[i].transform.localScale.y);
+            file.Write(m_tile.objects[i].transform.localScale.z);
+        }
+
+        bool tileTexExists = (m_tileMaterial.mainTexture != null);
+        file.Write(tileTexExists);
+        if(tileTexExists)
+		{
+            file.Write(((Texture2D)(m_tileMaterial.mainTexture)).EncodeToPNG().Length);
+            file.Write(((Texture2D)(m_tileMaterial.mainTexture)).EncodeToPNG());
         }
 
         file.Close();
@@ -545,22 +576,36 @@ public class TileMaker : MonoBehaviour
                 Mesh _mesh = new Mesh();
 
                 _mesh.subMeshCount = file.ReadInt32();
-                _mesh.vertices = new Vector3[file.ReadInt32()];
-                for (int vert = 0; vert < _mesh.vertices.Length; vert++)
+                Vector3[] newVerts = new Vector3[file.ReadInt32()];
+                for (int vert = 0; vert < newVerts.Length; vert++)
                 {
-                    _mesh.vertices[vert] = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    
+                    newVerts[vert] = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
                 }
+                _mesh.vertices = newVerts;
 
-                _mesh.uv = new Vector2[file.ReadInt32()];
-                for (int uvs = 0; uvs < _mesh.uv.Length; uvs++)
+                Vector2[] newUVs = new Vector2[file.ReadInt32()];
+                for (int uvs = 0; uvs < newUVs.Length; uvs++)
                 {
-                    _mesh.uv[uvs] = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    newUVs[uvs] = new Vector2(file.ReadSingle(), file.ReadSingle());
                 }
+                _mesh.uv = newUVs;
 
-                _mesh.normals = new Vector3[file.ReadInt32()];
-                for (int norm = 0; norm < _mesh.normals.Length; norm++)
+                Vector3[] newNorm = new Vector3[file.ReadInt32()];
+                for (int norm = 0; norm < newNorm.Length; norm++)
                 {
-                    _mesh.normals[norm] = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    newNorm[norm] = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                }
+                _mesh.normals = newNorm;
+
+                for (int ind = 0; ind < _mesh.subMeshCount; ind++)
+				{
+                    int[] newInd = new int[file.ReadInt32()];
+                    for(int j = 0; j < newInd.Length; j++)
+					{
+                        newInd[j] = file.ReadInt32();
+					}
+                    _mesh.SetIndices(newInd, (MeshTopology)file.ReadInt32(), ind);
                 }
 
                 Material[] materials = new Material[file.ReadInt32()];
@@ -574,11 +619,22 @@ public class TileMaker : MonoBehaviour
                         materials[tex].mainTexture = newTex;
 					}
 				}
+
+                newTile.transform.position = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                newTile.transform.rotation = Quaternion.Euler(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                newTile.transform.localScale = new Vector3(file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+
                 filter.mesh = _mesh;
                 collider.sharedMesh = _mesh;
                 renderer.materials = materials;
                 m_tile.objects.Add(newTile);
             }
+            if(file.ReadBoolean())
+			{
+                Texture2D newTex = new Texture2D(2, 2);
+                newTex.LoadImage(file.ReadBytes(file.ReadInt32()));
+                m_tileMaterial.mainTexture = newTex;
+			}
         }
     }
 }
