@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+
     [SerializeField]
     GameObject m_tile;
+    [SerializeField]
+    List<string> m_tags = new List<string>();
 
     public List<GameObject> objects = new List<GameObject>();
     public GameObject tile { get { return m_tile; } set { m_tile = value; } }
@@ -34,4 +37,20 @@ public class Tile : MonoBehaviour
         int t = 0;
 	}
 
+    public void AddTag(string tag)
+	{
+        if(!m_tags.Contains(tag))
+		{
+            m_tags.Add(tag);
+		}
+	}
+
+    public void RemoveTag(string tag)
+	{
+        if (m_tags.Contains(tag))
+        {
+            m_tags.Remove(tag);
+        }
+    }
 }
+

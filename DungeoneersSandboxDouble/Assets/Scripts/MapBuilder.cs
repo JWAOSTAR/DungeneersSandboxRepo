@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +26,7 @@ public class MapBuilder : MonoBehaviour
     //[SerializeField]
     //Transform m_startingPos;
     [SerializeField]
-    MapBuilderCameraController m_cameraController;
+    FreeMovingCameraController m_cameraController;
 
     Tile[,,] m_map;
 
@@ -43,13 +44,13 @@ public class MapBuilder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && !m_cameraController.GetMobility())
+        if((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && !m_cameraController.Mobility)
         {
-            m_cameraController.SetMobility(true);
+            m_cameraController.Mobility = true;
         }
-        else if(m_cameraController.GetMobility())
+        else if(m_cameraController.Mobility)
         {
-            m_cameraController.SetMobility(false);
+            m_cameraController.Mobility = false;
         }
     }
 
@@ -126,6 +127,62 @@ public class MapBuilder : MonoBehaviour
         Camera.main.transform.position = new Vector3(0.0f, 0.75f, 0.0f);
     }
 
+    void AddLevel(int l)
+	{
+        if(l > m_level + 1 || l < 0)
+		{
+            //TODO: Add some kind of error display
+            return;
+		}
+        Tile[,,] oldTiles = new Tile[m_width, m_height, m_level];
+        Array.Copy(m_map, oldTiles, m_map.Length);
+        m_level++;
+        m_map = new Tile[m_width, m_height, m_level];
+        for (float z = 0.0f; z < m_level; z++)
+		{
+            for (float y = 0.0f; y < m_height; y++)
+            {
+                for (float x = 0.0f; x < m_width; x++)
+                {
+                    if (z == l) {
+                        m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
+                    }
+                    else if(z < l)
+					{
+                        m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z].tile;
+                    }
+                    else
+					{
+                        m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z].tile;
+                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y+1);
+                    }
+                }
+            }
+
+        }
+    }
+
+    void AddTile(int x, int y, int z)
+    {
+        if(m_map[x,y,z].tile == null)
+		{
+            m_map[x, y, z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+            m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
+        }
+    }
+
+    void DeleteTile(int x, int y, int z)
+	{
+        if (m_map[x, y, z].tile != null)
+        {
+            Destroy(m_map[x, y, z].tile);
+            m_map[x, y, z].tile = null;
+
+        }
+	}
+
+
     /// <summary>
     /// Resets all the new map GUI values to default
     /// </summary>
@@ -156,4 +213,117 @@ public class MapBuilder : MonoBehaviour
     {
         m_height = _height;
     }
+
+    public void ParseCommand(string commandLine)
+	{
+        if(commandLine == string.Empty || commandLine == " ")
+		{
+            return;
+		}
+        string command = commandLine.Split(' ')[0];
+        commandLine = commandLine.Replace(command, "");
+        switch(command)
+		{
+			case "/show":
+
+                break;
+            case "/hide":
+
+                break;
+            case "/delete":
+				{
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            {
+                                //AddLevel(lvl);
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('L', currentInstance);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if (commandLine.Contains("T"))
+                    {
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
+                            int x, y, z;
+                            if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
+                            {
+                                //AddTile(x, y, z);
+                                DeleteTile(x, y, z);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
+                break;
+            case "/add":
+                {
+                    if (commandLine.Contains("L")) 
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(),out lvl))
+                            {
+                                //AddLevel(lvl);
+                            }
+							else
+							{
+                                //TODO: Add some kind of error display
+                                break;
+							}
+                            currentInstance = commandLine.IndexOf('L', currentInstance);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if(commandLine.Contains("T"))
+					{
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, commandLine.IndexOf(')', currentInstance));
+                            int x, y, z;
+                            if(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z) )
+							{
+                                AddTile(x, y, z);
+							}
+							else
+							{
+                                break;
+							}
+                            currentInstance = commandLine.IndexOf('T', currentInstance);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
+                break;
+            case "/tag":
+
+                break;
+		}
+        GetComponentInChildren<InputField>().SetTextWithoutNotify(string.Empty);
+	}
 }
