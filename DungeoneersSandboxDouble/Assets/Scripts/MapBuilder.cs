@@ -7,12 +7,6 @@ using UnityEngine.UI;
 public class MapBuilder : MonoBehaviour
 {
 
-    struct Tile
-    {
-        public int id;
-        public GameObject tile;
-    }
-
     [SerializeField]
     InputField m_widthInput;
     [SerializeField]
@@ -116,6 +110,7 @@ public class MapBuilder : MonoBehaviour
             {
                 for (float x = 0.0f; x < m_width; x++)
                 {
+                    m_map[(int)x, (int)y, (int)z] = new Tile();
                     m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
                     m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                 }
@@ -145,17 +140,20 @@ public class MapBuilder : MonoBehaviour
                 for (float x = 0.0f; x < m_width; x++)
                 {
                     if (z == l) {
+                        //oldTiles[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                         m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+                        m_map[(int)x, (int)y, (int)z].tile.SetActive(true);
                         m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                     }
                     else if(z < l)
 					{
                         m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z].tile;
+
                     }
                     else
 					{
-                        m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z].tile;
-                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y+1);
+                        m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z - 1].tile;
+                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                     }
                 }
             }
@@ -168,6 +166,7 @@ public class MapBuilder : MonoBehaviour
         if(m_map[x,y,z].tile == null)
 		{
             m_map[x, y, z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+            m_map[x, y, z].tile.SetActive(true);
             m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
         }
     }
@@ -214,6 +213,16 @@ public class MapBuilder : MonoBehaviour
         m_height = _height;
     }
 
+    public void Hide()
+	{
+        ParseCommand("/hide " + GetComponentInChildren<InputField>().text);
+    }
+
+    public void Show()
+	{
+        ParseCommand("/show " + GetComponentInChildren<InputField>().text);
+    }
+
     public void ParseCommand(string commandLine)
 	{
         if(commandLine == string.Empty || commandLine == " ")
@@ -225,10 +234,118 @@ public class MapBuilder : MonoBehaviour
         switch(command)
 		{
 			case "/show":
-
+				{
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            {
+                                //AddLevel(lvl);
+                                if (lvl < m_level)
+                                {
+                                    for (int y = 0; y < m_height; y++)
+                                    {
+                                        for (int x = 0; x < m_width; x++)
+                                        {
+                                            m_map[x, y, lvl].tile.SetActive(true);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if (commandLine.Contains("T"))
+                    {
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
+                            int x, y, z;
+                            if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
+                            {
+                                //AddTile(x, y, z);
+                                //DeleteTile(x, y, z);
+                                m_map[x, y, z].tile.SetActive(true);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
                 break;
             case "/hide":
-
+				{
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            {
+                                //AddLevel(lvl);
+                                if (lvl < m_level) 
+                                {
+                                    for (int y = 0; y < m_height; y++)
+                                    {
+                                        for (int x = 0; x < m_width; x++)
+                                        {
+                                            m_map[x, y, lvl].tile.SetActive(false);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if (commandLine.Contains("T"))
+                    {
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
+                            int x, y, z;
+                            if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
+                            {
+                                //AddTile(x, y, z);
+                                //DeleteTile(x, y, z);
+                                m_map[x, y, z].tile.SetActive(false);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
                 break;
             case "/delete":
 				{
@@ -248,7 +365,7 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('L', currentInstance);
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
                         while (lastInstance > currentInstance);
                     }
@@ -270,7 +387,7 @@ public class MapBuilder : MonoBehaviour
                             {
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance);
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
                         while (lastInstance > currentInstance);
                     }
@@ -287,14 +404,14 @@ public class MapBuilder : MonoBehaviour
                             int lvl = 0;
                             if (int.TryParse(commandLine[currentInstance + 1].ToString(),out lvl))
                             {
-                                //AddLevel(lvl);
+                                AddLevel(lvl);
                             }
 							else
 							{
                                 //TODO: Add some kind of error display
                                 break;
 							}
-                            currentInstance = commandLine.IndexOf('L', currentInstance);
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
                         while (lastInstance > currentInstance);
                     }
@@ -304,7 +421,8 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('T');
                         do
                         {
-                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, commandLine.IndexOf(')', currentInstance));
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
                             int x, y, z;
                             if(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z) )
 							{
@@ -314,16 +432,128 @@ public class MapBuilder : MonoBehaviour
 							{
                                 break;
 							}
-                            currentInstance = commandLine.IndexOf('T', currentInstance);
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
                         while (lastInstance > currentInstance);
                     }
                 }
                 break;
-            case "/tag":
-
+            case "/addTag":
+				{
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            {
+                                if (lvl < m_level)
+                                {
+                                    for (int y = 0; y < m_height; y++)
+                                    {
+                                        for (int x = 0; x < m_width; x++)
+                                        {
+                                            string tag = commandLine.Substring(commandLine.IndexOf('"', currentInstance) + 1, commandLine.IndexOf('"', commandLine.IndexOf('"', currentInstance) + 1));
+                                            m_map[x, y, lvl].AddTag(tag);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if (commandLine.Contains("T"))
+                    {
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
+                            int x, y, z;
+                            if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
+                            {
+                                len = commandLine.IndexOf('"', commandLine.IndexOf('"', currentInstance) + 1) - (commandLine.IndexOf('"', currentInstance) + 1);
+                                string tag = commandLine.Substring(commandLine.IndexOf('"', currentInstance) + 1, len);
+                                m_map[x, y, z].AddTag(tag);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance+1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
                 break;
-		}
+
+            case "/removeTag":
+				{
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            int lvl = 0;
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            {
+                                if (lvl < m_level)
+                                {
+                                    for (int y = 0; y < m_height; y++)
+                                    {
+                                        for (int x = 0; x < m_width; x++)
+                                        {
+                                            string tag = commandLine.Substring(commandLine.IndexOf('"', currentInstance) + 1, commandLine.IndexOf('"', commandLine.IndexOf('"', currentInstance) + 1));
+                                            m_map[x, y, lvl].RemoveTag(tag);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                    if (commandLine.Contains("T"))
+                    {
+                        int currentInstance = commandLine.IndexOf('T');
+                        int lastInstance = commandLine.LastIndexOf('T');
+                        do
+                        {
+                            int len = commandLine.IndexOf(')', currentInstance) - (commandLine.IndexOf(commandLine[currentInstance + 1]) + 1);
+                            string coords = commandLine.Substring(commandLine.IndexOf(commandLine[currentInstance + 1]) + 1, len);
+                            int x, y, z;
+                            if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
+                            {
+                                len = commandLine.IndexOf('"', commandLine.IndexOf('"', currentInstance) + 1) - (commandLine.IndexOf('"', currentInstance) + 1);
+                                string tag = commandLine.Substring(commandLine.IndexOf('"', currentInstance) + 1, len);
+                                m_map[x, y, z].RemoveTag(tag);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance);
+                    }
+                }
+                break;
+        }
         GetComponentInChildren<InputField>().SetTextWithoutNotify(string.Empty);
 	}
 }
