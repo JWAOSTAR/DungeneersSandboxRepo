@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+    //OSOLETE
     public class TextInputDialog : CommonDialog
     {
 
@@ -20,6 +21,7 @@ namespace System.Windows.Forms
         TextBox textBox;
         Button buttonOK;
         Button buttonCancel;
+
 
         public string Text { get { return textBox.Text; } set { textBox.Text = value; } }
         public string Label { get { return label.Text; } set { label.Text = value; } }

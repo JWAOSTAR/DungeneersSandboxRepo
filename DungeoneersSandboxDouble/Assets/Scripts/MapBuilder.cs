@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,7 @@ public class MapBuilder : MonoBehaviour
     int m_width;
     int m_height;
     int m_level;
+    List<float> m_spacing = new List<float>();
     // Start is called before the first frame update
     void Start()
     {
@@ -103,9 +105,9 @@ public class MapBuilder : MonoBehaviour
     {
 
         m_map = new Tile[m_width,m_height,m_level];
-
         for (float z = 0.0f; z < m_level; z++)
         {
+            m_spacing.Add(1.0f);
             for (float y = 0.0f; y < m_height; y++)
             {
                 for (float x = 0.0f; x < m_width; x++)
@@ -122,6 +124,10 @@ public class MapBuilder : MonoBehaviour
         Camera.main.transform.position = new Vector3(0.0f, 0.75f, 0.0f);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="l"></param>
     void AddLevel(int l)
 	{
         if(l > m_level + 1 || l < 0)
@@ -161,6 +167,50 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <param name="shift"></param>
+    void RemoveLevel(int lvl, bool shift = false)
+	{
+        for(int y = 0; y < m_height; y++)
+		{
+            for(int x = 0; x < m_width; x++)
+			{
+                if (m_map[x, y, lvl].tile != null)
+                {
+                    Destroy(m_map[x, y, lvl].tile);
+                    m_map[x, y, lvl].tile = null;
+                }
+            }
+		}
+
+        if(lvl != (m_level - 1))
+		{
+            for(int z = lvl+1; z < m_level; z++)
+			{
+                for (int y = 0; y < m_height; y++)
+                {
+                    for (int x = 0; x < m_width; x++)
+                    {
+                        m_map[x, y, z - 1].tile = m_map[x, y, z].tile;
+                        if (shift)
+                        {
+                            m_map[x, y, z - 1].tile.transform.position = new Vector3(x, z - 1, y);
+                        }
+                    }
+                }
+            }
+		}
+	}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
     void AddTile(int x, int y, int z)
     {
         if(m_map[x,y,z].tile == null)
@@ -171,6 +221,12 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
     void DeleteTile(int x, int y, int z)
 	{
         if (m_map[x, y, z].tile != null)
@@ -180,7 +236,6 @@ public class MapBuilder : MonoBehaviour
 
         }
 	}
-
 
     /// <summary>
     /// Resets all the new map GUI values to default
@@ -213,16 +268,26 @@ public class MapBuilder : MonoBehaviour
         m_height = _height;
     }
 
+    /// <summary>
+    /// Hides the tiles and levels in the command line
+    /// </summary>
     public void Hide()
 	{
         ParseCommand("/hide " + GetComponentInChildren<InputField>().text);
     }
 
+    /// <summary>
+    /// Shows the tiles and levels in the command line
+    /// </summary>
     public void Show()
 	{
         ParseCommand("/show " + GetComponentInChildren<InputField>().text);
     }
 
+    /// <summary>
+    /// Parses and executes the commands in the command line
+    /// </summary>
+    /// <param name="commandLine">The string to be parsed for commands</param>
     public void ParseCommand(string commandLine)
 	{
         if(commandLine == string.Empty || commandLine == " ")
@@ -241,10 +306,9 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
                             {
-                                //AddLevel(lvl);
                                 if (lvl < m_level)
                                 {
                                     for (int y = 0; y < m_height; y++)
@@ -261,9 +325,9 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if (commandLine.Contains("T"))
                     {
@@ -276,8 +340,6 @@ public class MapBuilder : MonoBehaviour
                             int x, y, z;
                             if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
                             {
-                                //AddTile(x, y, z);
-                                //DeleteTile(x, y, z);
                                 m_map[x, y, z].tile.SetActive(true);
                             }
                             else
@@ -286,7 +348,7 @@ public class MapBuilder : MonoBehaviour
                             }
                             currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                 }
                 break;
@@ -298,10 +360,9 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
                             {
-                                //AddLevel(lvl);
                                 if (lvl < m_level) 
                                 {
                                     for (int y = 0; y < m_height; y++)
@@ -318,9 +379,9 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if (commandLine.Contains("T"))
                     {
@@ -333,8 +394,6 @@ public class MapBuilder : MonoBehaviour
                             int x, y, z;
                             if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
                             {
-                                //AddTile(x, y, z);
-                                //DeleteTile(x, y, z);
                                 m_map[x, y, z].tile.SetActive(false);
                             }
                             else
@@ -343,7 +402,7 @@ public class MapBuilder : MonoBehaviour
                             }
                             currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                 }
                 break;
@@ -355,19 +414,18 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
                             {
-                                //AddLevel(lvl);
+                                RemoveLevel(lvl);
                             }
                             else
                             {
-                                //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if (commandLine.Contains("T"))
                     {
@@ -380,7 +438,6 @@ public class MapBuilder : MonoBehaviour
                             int x, y, z;
                             if (coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 3 && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], out x) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], out y) && int.TryParse(coords.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], out z))
                             {
-                                //AddTile(x, y, z);
                                 DeleteTile(x, y, z);
                             }
                             else
@@ -389,7 +446,7 @@ public class MapBuilder : MonoBehaviour
                             }
                             currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                 }
                 break;
@@ -401,8 +458,8 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(),out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(),out int lvl))
                             {
                                 AddLevel(lvl);
                             }
@@ -411,9 +468,9 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
 							}
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if(commandLine.Contains("T"))
 					{
@@ -434,7 +491,7 @@ public class MapBuilder : MonoBehaviour
 							}
                             currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                 }
                 break;
@@ -446,8 +503,8 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
                             {
                                 if (lvl < m_level)
                                 {
@@ -466,9 +523,9 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if (commandLine.Contains("T"))
                     {
@@ -491,7 +548,7 @@ public class MapBuilder : MonoBehaviour
                             }
                             currentInstance = commandLine.IndexOf('T', currentInstance+1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                 }
                 break;
@@ -504,8 +561,8 @@ public class MapBuilder : MonoBehaviour
                         int lastInstance = commandLine.LastIndexOf('L');
                         do
                         {
-                            int lvl = 0;
-                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out lvl))
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
                             {
                                 if (lvl < m_level)
                                 {
@@ -524,9 +581,9 @@ public class MapBuilder : MonoBehaviour
                                 //TODO: Add some kind of error display
                                 break;
                             }
-                            currentInstance = commandLine.IndexOf('T', currentInstance + 1);
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
                     }
                     if (commandLine.Contains("T"))
                     {
@@ -549,7 +606,64 @@ public class MapBuilder : MonoBehaviour
                             }
                             currentInstance = commandLine.IndexOf('T', currentInstance + 1);
                         }
-                        while (lastInstance > currentInstance);
+                        while (lastInstance > currentInstance && currentInstance > 0);
+                    }
+                }
+                break;
+            case "/setSpacing":
+				{
+                    string clf = commandLine.Trim().TrimStart('(').TrimEnd(')');
+
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+                            
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
+                            {
+                                
+                                if (lvl < (m_level - 1) && float.TryParse(clf, out float spacing))
+                                {
+                                    m_spacing[lvl] = spacing;
+                                    for (float z = (float)lvl + 1.0f; z < m_level; z++)
+                                    {
+                                        float nSpace = m_spacing.GetRange(0, ((int)(z-1.0f))).ToArray().Sum();
+                                        for (float y = 0.0f; y < m_height; y++)
+                                        {
+                                            for (float x = 0.0f; x < m_width; x++)
+                                            {
+                                                m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance && currentInstance > 0);
+                    }
+                    else if (float.TryParse(clf, out float spacing))
+					{
+                        for (float z = 1.0f; z < m_level; z++)
+                        {
+                            m_spacing[((int)z) - 1] = spacing;
+                            for (float y = 0.0f; y < m_height; y++)
+                            {
+                                for (float x = 0.0f; x < m_width; x++)
+                                {
+                                    m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z*spacing, y);
+                                }
+                            }
+
+                        }
+
                     }
                 }
                 break;

@@ -25,14 +25,41 @@ public class TransformTool : MonoBehaviour
     [SerializeField]
     TransformChangeEvent m_OnScalingChange = new TransformChangeEvent();
 
+    /// <summary>
+    /// Object of the x axis for the current selected object's transfom tool
+    /// </summary>
     public GameObject PosX { get { return Position[0]; } }
+    /// <summary>
+    /// Object of the y axis for the current selected object's transfom tool
+    /// </summary>
     public GameObject PosY { get { return Position[1]; } }
+    /// <summary>
+    /// Object of the z axis for the current selected object's transfom tool
+    /// </summary>
     public GameObject PosZ { get { return Position[2]; } }
+    /// <summary>
+    /// Object of the x axis for the current selected object's rotation tool
+    /// </summary>
     public GameObject RotX { get { return Rotation[0]; } }
+    /// <summary>
+    /// Object of the y axis for the current selected object's rotation tool
+    /// </summary>
     public GameObject RotY { get { return Rotation[1]; } }
+    /// <summary>
+    /// Object of the z axis for the current selected object's rotation tool
+    /// </summary>
     public GameObject RotZ { get { return Rotation[2]; } }
+    /// <summary>
+    /// Object of the x axis for the current selected object's scaling tool
+    /// </summary>
     public GameObject SclX { get { return Scaling[0]; } }
+    /// <summary>
+    /// Object of the y axis for the current selected object's scaling tool
+    /// </summary>
     public GameObject SclY { get { return Scaling[1]; } }
+    /// <summary>
+    /// Object of the z axis for the current selected object's scaling tool
+    /// </summary>
     public GameObject SclZ { get { return Scaling[2]; } }
 
     bool[] activeTransform = new bool[] { true, false, false };
@@ -44,6 +71,10 @@ public class TransformTool : MonoBehaviour
     FreeMovingCameraController camControl;
 
     Vector3 initialScale = Vector3.one;
+
+    /// <summary>
+    /// Sets the currently selected game object
+    /// </summary>
     public GameObject CurrentGameObject 
     { 
         get 
@@ -89,6 +120,7 @@ public class TransformTool : MonoBehaviour
         } 
     }
 
+    //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
 	{
         //Make sure array size for Position can not be changed in editor

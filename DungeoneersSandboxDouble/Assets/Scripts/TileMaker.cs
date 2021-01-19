@@ -46,6 +46,7 @@ public class TileMaker : MonoBehaviour
     [SerializeField]
     InputField saveDialog;
 
+    //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
     {
         //Make sure array size for m_transformInputs can not be changed in editor
@@ -227,6 +228,12 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the text for the input fields dealing with the selected objects transform
+    /// </summary>
+    /// <param name="x">The x axis value of for the transform vector</param>
+    /// <param name="y">The y axis value of for the transform vector</param>
+    /// <param name="z">The z axis value of for the transform vector</param>
     public void SetTransformInputField(float x, float y, float z)
     {
         m_transformInputs[0].text = x.ToString("0.0000");
@@ -234,6 +241,12 @@ public class TileMaker : MonoBehaviour
         m_transformInputs[2].text = z.ToString("0.0000");
     }
 
+    /// <summary>
+    /// Sets the text for the input fields dealing with the selected objects rotation
+    /// </summary>
+    /// <param name="x">The x axis value of for the rotation vector</param>
+    /// <param name="y">The y axis value of for the rotation vector</param>
+    /// <param name="z">The z axis value of for the rotation vector</param>
     public void SetRotationInputField(float x, float y, float z)
     {
         m_rotationInputs[0].text = x.ToString("0.0000");
@@ -241,6 +254,12 @@ public class TileMaker : MonoBehaviour
         m_rotationInputs[2].text = z.ToString("0.0000");
     }
 
+    /// <summary>
+    /// Sets the text for the input fields dealing with the selected objects scaling
+    /// </summary>
+    /// <param name="x">The x axis value of for the scaling vector</param>
+    /// <param name="y">The y axis value of for the scaling vector</param>
+    /// <param name="z">The z axis value of for the scaling vector</param>
     public void SetScaleInputField(float x, float y, float z)
     {
         m_scaleInputs[0].text = x.ToString("0.0000");
@@ -248,6 +267,10 @@ public class TileMaker : MonoBehaviour
         m_scaleInputs[2].text = z.ToString("0.0000");
     }
 
+    /// <summary>
+    /// Set the x value for the selected objects scaling
+    /// </summary>
+    /// <param name="_val">Value x is to be set to</param>
     public void SetObjectScaleX(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -256,6 +279,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the y value for the selected objects scaling
+    /// </summary>
+    /// <param name="_val">Value y is to be set to</param>
     public void SetObjectScaleY(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -266,6 +293,10 @@ public class TileMaker : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Set the z value for the selected objects scaling
+    /// </summary>
+    /// <param name="_val">Value z is to be set to</param>
     public void SetObjectScaleZ(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -274,6 +305,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the x value for the selected objects position
+    /// </summary>
+    /// <param name="_val">Value x is to be set to</param>
     public void SetObjectPositionX(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -282,6 +317,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the y value for the selected objects position
+    /// </summary>
+    /// <param name="_val">Value y is to be set to</param>
     public void SetObjectPositionY(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -290,6 +329,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the z value for the selected objects position
+    /// </summary>
+    /// <param name="_val">Value z is to be set to</param>
     public void SetObjectPositionZ(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -298,6 +341,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the x value for the selected objects rotation
+    /// </summary>
+    /// <param name="_val">Value x is to be set to</param>
     public void SetObjectRotationX(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -306,6 +353,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the y value for the selected objects rotation
+    /// </summary>
+    /// <param name="_val">Value y is to be set to</param>
     public void SetObjectRotationY(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -314,6 +365,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the z value for the selected objects rotation
+    /// </summary>
+    /// <param name="_val">Value z is to be set to</param>
     public void SetObjectRotationZ(string _val)
     {
         if (_transformTool.CurrentGameObject != null)
@@ -322,6 +377,10 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the texture of a given face of the Tile
+    /// </summary>
+    /// <param name="face">Intiger reprisenting a face of the tile</param>
     public void SetFaceTexture(int face)
     {
         string file_path = string.Empty;
@@ -366,6 +425,9 @@ public class TileMaker : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the texture for the tile
+    /// </summary>
     public void SetTexuture()
     {
         string file_path = string.Empty;
@@ -391,6 +453,9 @@ public class TileMaker : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Sets the texture of the selected object
+    /// </summary>
     public void SetObjectTexuture()
     {
         if (_transformTool.CurrentGameObject != null)
@@ -428,6 +493,10 @@ public class TileMaker : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Saves the tile to DS Tile file
+    /// </summary>
+    /// <param name="renameReturn">Boolean that represents whether the user has finished naming the Tile</param>
     public void SaveTile(bool renameReturn = false)
     {
         string path;
@@ -438,6 +507,7 @@ public class TileMaker : MonoBehaviour
         {
             Directory.CreateDirectory(path + "tiles/");
         }
+        path += "tiles/";
         //#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
         //        TextInputDialog textInputDialog1 = new TextInputDialog();
         //        textInputDialog1.Label = "New tile name:";
@@ -543,6 +613,9 @@ public class TileMaker : MonoBehaviour
         file.Close();
     }
 
+    /// <summary>
+    /// Loads a tile from a DS Tile file
+    /// </summary>
     public void LoadTile()
     {
         string file_path = string.Empty;

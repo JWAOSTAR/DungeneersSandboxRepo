@@ -25,19 +25,36 @@ namespace RedExtentions
 		static int _width;
 		static float ratioX;
 		static float ratioY;
-		static Mutex mutex;
-		static int finishCount;
 
+		/// <summary>
+		/// Scales texture using a linear scaling method
+		/// </summary>
+		/// <param name="tex">Texture to be scaled</param>
+		/// <param name="width">The desired width</param>
+		/// <param name="height">The desired height</param>
 		public static void ScalePoint(this Texture2D tex, int width, int height)
 		{
 			ThreadedScaling(tex, width, height, false);
 		}
 
+		/// <summary>
+		/// Scales texture using a bilinear scaling method
+		/// </summary>
+		/// <param name="tex">Texture to be scaled</param>
+		/// <param name="width">The desired width</param>
+		/// <param name="height">The desired height</param>
 		public static void ScaleBilinear(this Texture2D tex, int width, int height)
 		{
 			ThreadedScaling(tex, width, height, true);
 		}
 
+		/// <summary>
+		/// Scales a given texuture to the given desired dimentions
+		/// </summary>
+		/// <param name="tex">Texture to be scaled</param>
+		/// <param name="width">The desired width</param>
+		/// <param name="height">The desired height</param>
+		/// <param name="bilinear">Boolean dictating the method of scaling(linear or bilinear)</param>
 		static void ThreadedScaling (Texture2D tex, int width, int height, bool bilinear)
 		{
 			texCol = tex.GetPixels();
@@ -55,41 +72,7 @@ namespace RedExtentions
 
 			texWidth = tex.width;
 			_width = width;
-			float cores = Mathf.Min(SystemInfo.processorCount, height);
-			float slice = height / cores;
 
-			finishCount = 0;
-			if(mutex == null)
-			{
-				mutex = new Mutex(false);
-			}
-			if(/*cores > 1*/ false)
-			{
-				int i = 0;
-				ThreadData td;
-				for(i = 0;  i < cores-1; i++)
-				{
-					td = new ThreadData((int)(slice * i), (int)(slice * (i + 1)));
-					ParameterizedThreadStart pts = (bilinear) ? new ParameterizedThreadStart(BilinearScale) : new ParameterizedThreadStart(PointScale);
-					Thread thread = new Thread(pts);
-					thread.Start(td);
-				}
-				td = new ThreadData((int)(slice * i), height);
-				if(bilinear)
-				{
-					BilinearScale(td);
-				}
-				else
-				{
-					PointScale(td);
-				}
-				while(finishCount <= cores)
-				{
-					Thread.Sleep(1);
-				}
-			}
-			else
-			{
 				ThreadData td = new ThreadData(0, height);
 				if (bilinear)
 				{
@@ -99,7 +82,7 @@ namespace RedExtentions
 				{
 					PointScale(td);
 				}
-			}
+			
 			tex.Resize(width, height);
 			tex.SetPixels(Col);
 			tex.Apply();
@@ -108,6 +91,10 @@ namespace RedExtentions
 			Col = null;
 		}
 
+		/// <summary>
+		/// Scales a given set of texture data using a bilinear scaling method
+		/// </summary>
+		/// <param name="obj">Set of texture data to be scaled</param>
 		static void BilinearScale(System.Object obj)
 		{
 			ThreadData td = (ThreadData)obj;
@@ -122,20 +109,15 @@ namespace RedExtentions
 				{
 					int xF = (int)Mathf.Floor(x * ratioX);
 					float ratio = x * ratioX - xF;
-					//if ((Row + x) > Col.Length || (y1 + xF) >= texCol.Length || (y2 + xF) >= texCol.Length || (y1 + xF) < 0 || (y1 + xF + 1) < 0 || (y2 + xF) < 0 || (y2 + xF + 1) < 0)
-					//{
-					//	int test = 0;
-					//	continue;
-					//}
 					Col[Row + x] = Color.LerpUnclamped(Color.LerpUnclamped(texCol[((y1 + xF) >= texCol.Length)?texCol.Length - 1:y1 + xF], texCol[((y1 + xF) >= texCol.Length) ?texCol.Length - 1 : y1 + xF + (((y1 + xF + 1) < texCol.Length) ? 1:0)], ratio), Color.LerpUnclamped(texCol[((y2 + xF) >= texCol.Length) ? texCol.Length - 1 : y2 + xF], texCol[((y2 + xF) >= texCol.Length) ? texCol.Length - 1 : y2 + xF + (((y2 + xF + 1) < texCol.Length) ? 1 : 0)], ratio), y * ratioY - yF);
 				}
-
-				mutex.WaitOne();
-				finishCount++;
-				mutex.ReleaseMutex();
 			}
 		}
 
+		/// <summary>
+		/// Scales a given set of texture data using a Linear scaling method
+		/// </summary>
+		/// <param name="obj"></param>
 		static void PointScale(System.Object obj)
 		{
 			ThreadData td = (ThreadData)obj;
@@ -147,9 +129,6 @@ namespace RedExtentions
 				{
 					Col[Row + x] = texCol[(int)(texRow + ratioX * x)];
 				}
-				mutex.WaitOne();
-				finishCount++;
-				mutex.ReleaseMutex();
 			}
 		}
 	}
