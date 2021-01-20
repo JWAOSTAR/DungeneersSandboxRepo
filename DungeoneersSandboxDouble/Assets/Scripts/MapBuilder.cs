@@ -22,8 +22,11 @@ public class MapBuilder : MonoBehaviour
     //Transform m_startingPos;
     [SerializeField]
     FreeMovingCameraController m_cameraController;
+    [SerializeField]
+    List<Light> m_lights = new List<Light>();
 
     Tile[,,] m_map;
+    List<ParticleSystem> m_particleEffects = new List<ParticleSystem>();
 
     int m_width;
     int m_height;
@@ -612,7 +615,9 @@ public class MapBuilder : MonoBehaviour
                 break;
             case "/setSpacing":
 				{
-                    string clf = commandLine.Trim().TrimStart('(').TrimEnd(')');
+                    int len = commandLine.IndexOf(')') - commandLine.IndexOf('(') - 1;
+                    string clf = commandLine.Substring(commandLine.IndexOf('(') + 1, len);
+                    //string clf = commandLine.Trim().TrimStart('(').TrimEnd(')');
 
                     if (commandLine.Contains("L"))
                     {
@@ -627,9 +632,13 @@ public class MapBuilder : MonoBehaviour
                                 if (lvl < (m_level - 1) && float.TryParse(clf, out float spacing))
                                 {
                                     m_spacing[lvl] = spacing;
+                                    if (m_spacing[lvl] < 1)
+                                    {
+                                        m_spacing[lvl] = 1;
+                                    }
                                     for (float z = (float)lvl + 1.0f; z < m_level; z++)
                                     {
-                                        float nSpace = m_spacing.GetRange(0, ((int)(z-1.0f))).ToArray().Sum();
+                                        float nSpace = m_spacing.GetRange(0, ((int)(z))).ToArray().Sum();
                                         for (float y = 0.0f; y < m_height; y++)
                                         {
                                             for (float x = 0.0f; x < m_width; x++)
@@ -654,6 +663,10 @@ public class MapBuilder : MonoBehaviour
                         for (float z = 1.0f; z < m_level; z++)
                         {
                             m_spacing[((int)z) - 1] = spacing;
+                            if (m_spacing[((int)z) - 1] < 1)
+                            {
+                                m_spacing[((int)z) - 1] = 1;
+                            }
                             for (float y = 0.0f; y < m_height; y++)
                             {
                                 for (float x = 0.0f; x < m_width; x++)
@@ -663,7 +676,131 @@ public class MapBuilder : MonoBehaviour
                             }
 
                         }
+                        m_spacing[m_spacing.Count - 1] = spacing;
+                    }
+                }
+                break;
+            case "/addSpacing":
+				{
+                    int len = commandLine.IndexOf(')') - commandLine.IndexOf('(') - 1;
+                    string clf = commandLine.Substring(commandLine.IndexOf('(') + 1, len);
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
 
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
+                            {
+
+                                if (lvl < (m_level - 1) && float.TryParse(clf, out float spacing))
+                                {
+                                    m_spacing[lvl] += spacing;
+                                    for (float z = (float)lvl + 1.0f; z < m_level; z++)
+                                    {
+                                        float nSpace = m_spacing.GetRange(0, ((int)(z - 1.0f))).ToArray().Sum();
+                                        for (float y = 0.0f; y < m_height; y++)
+                                        {
+                                            for (float x = 0.0f; x < m_width; x++)
+                                            {
+                                                m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance && currentInstance > 0);
+                    }
+                    else if (float.TryParse(clf, out float spacing))
+                    {
+                        for (float z = 1.0f; z < m_level; z++)
+                        {
+                            m_spacing[((int)z) - 1] += spacing;
+                            float nSpace = m_spacing.GetRange(0, ((int)(z))).ToArray().Sum();
+                            for (float y = 0.0f; y < m_height; y++)
+                            {
+                                for (float x = 0.0f; x < m_width; x++)
+                                {
+                                    m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                                }
+                            }
+
+                        }
+                        m_spacing[m_spacing.Count - 1] += spacing;
+                    }
+                }
+                break;
+            case "/subtractSpacing":
+				{
+                    int len = commandLine.IndexOf(')') - commandLine.IndexOf('(') - 1;
+                    string clf = commandLine.Substring(commandLine.IndexOf('(') + 1, len);
+                    if (commandLine.Contains("L"))
+                    {
+                        int currentInstance = commandLine.IndexOf('L');
+                        int lastInstance = commandLine.LastIndexOf('L');
+                        do
+                        {
+
+                            if (int.TryParse(commandLine[currentInstance + 1].ToString(), out int lvl))
+                            {
+
+                                if (lvl < (m_level - 1) && float.TryParse(clf, out float spacing))
+                                {
+                                    m_spacing[lvl] -= spacing;
+                                    if (m_spacing[lvl] < 1)
+                                    {
+                                        m_spacing[lvl] = 1;
+                                    }
+                                    for (float z = (float)lvl + 1.0f; z < m_level; z++)
+                                    {
+                                        float nSpace = m_spacing.GetRange(0, ((int)(z))).ToArray().Sum();
+                                        for (float y = 0.0f; y < m_height; y++)
+                                        {
+                                            for (float x = 0.0f; x < m_width; x++)
+                                            {
+                                                m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Add some kind of error display
+                                break;
+                            }
+                            currentInstance = commandLine.IndexOf('L', currentInstance + 1);
+                        }
+                        while (lastInstance > currentInstance && currentInstance > 0);
+                    }
+                    else if (float.TryParse(clf, out float spacing))
+                    {
+                        for (float z = 1.0f; z < m_level; z++)
+                        {
+                            m_spacing[((int)z) - 1] -= spacing;
+							if (m_spacing[((int)z) - 1] < 1) 
+                            {
+                                m_spacing[((int)z) - 1] = 1;
+                            }
+                            float nSpace = m_spacing.GetRange(0, ((int)(z - 1.0f))).ToArray().Sum();
+                            for (float y = 0.0f; y < m_height; y++)
+                            {
+                                for (float x = 0.0f; x < m_width; x++)
+                                {
+                                    m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                                }
+                            }
+
+                        }
+                        m_spacing[m_spacing.Count - 1] -= spacing;
                     }
                 }
                 break;

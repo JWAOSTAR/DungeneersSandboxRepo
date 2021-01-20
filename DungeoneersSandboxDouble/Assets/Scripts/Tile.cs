@@ -12,9 +12,13 @@ public class Tile : MonoBehaviour
     List<string> m_tags = new List<string>();
 
     /// <summary>
-    /// The collection of objects on the tile
+    /// The collection of objects on the Tile
     /// </summary>
     public List<GameObject> objects = new List<GameObject>();
+    /// <summary>
+    /// The collection of particles on the Tile
+    /// </summary>
+    public List<ParticleSystem> particleEffects = new List<ParticleSystem>();
     /// <summary>
     /// The tile base GameObject
     /// </summary>
