@@ -7,6 +7,15 @@ using UnityEngine.UI;
 
 public class MapBuilder : MonoBehaviour
 {
+    public enum MAP_TOOLS
+	{
+        TILE_SELECT,
+        LEVEL_SELECT,
+        LEVEL_SPACING,
+        SHOW,
+        HIDE,
+        DELETE
+	}
 
     [SerializeField]
     InputField m_widthInput;
@@ -26,6 +35,9 @@ public class MapBuilder : MonoBehaviour
     List<Light> m_lights = new List<Light>();
 
     Tile[,,] m_map;
+    MAP_TOOLS currentTool = MAP_TOOLS.TILE_SELECT;
+    //public MAP_TOOLS CurrentTools { get { return currentTool; } set { currentTool = value; } }
+    List<Vector3Int> m_selected = new List<Vector3Int>();
     List<ParticleSystem> m_particleEffects = new List<ParticleSystem>();
 
     int m_width;
@@ -50,6 +62,15 @@ public class MapBuilder : MonoBehaviour
         else if(m_cameraController.Mobility)
         {
             m_cameraController.Mobility = false;
+        }
+
+        if (Input.GetMouseButton(0)) {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile"))
+            {
+                Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
+            }
         }
     }
 
@@ -286,6 +307,76 @@ public class MapBuilder : MonoBehaviour
 	{
         ParseCommand("/show " + GetComponentInChildren<InputField>().text);
     }
+
+    /// <summary>
+    /// Resisters tile(s) selected by user
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="shift"></param>
+    void Select(int l, int x = -1, int y = -1, bool shift = false)
+	{
+		if (currentTool == MAP_TOOLS.LEVEL_SELECT || currentTool == MAP_TOOLS.TILE_SELECT)
+		{
+            if (!shift)
+            {
+                foreach (Vector3Int t in m_selected)
+                {
+                    m_map[t.x, t.y, t.z].tile.GetComponentInChildren<OnHoverHighlight>().Selected = false;
+                    MeshRenderer mr = m_map[t.x, t.y, t.z].tile.GetComponentInChildren<MeshRenderer>();
+                    for (int i = 0; i < mr.materials.Length; i++)
+                    {
+                        mr.materials[i].shader = Shader.Find("Standard");
+                    }
+                }
+                m_selected.Clear();
+            }
+            switch (currentTool)
+			{
+                case MAP_TOOLS.LEVEL_SELECT:
+					{
+                        for (int iy = 0; iy < m_height; iy++)
+						{
+                            for(int ix = 0; ix < m_width; ix++)
+							{
+                                if (!m_selected.Contains(new Vector3Int(ix, iy, l))) 
+                                { 
+                                    m_selected.Add(new Vector3Int(ix, iy, l));
+                                    m_map[ix, iy, l].tile.GetComponentInChildren<OnHoverHighlight>().Selected = true;
+                                    MeshRenderer mr = m_map[ix, iy, l].tile.GetComponentInChildren<MeshRenderer>();
+                                    for (int i = 0; i < mr.materials.Length; i++)
+                                    {
+                                        //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                                        mr.materials[i].shader = Shader.Find("DS/OutlineShader");
+                                        mr.materials[i].SetFloat("_OutlineThickness", 0.02f);
+                                    }
+                                }
+							}
+						}
+					}
+                    break;
+                case MAP_TOOLS.TILE_SELECT:
+					{
+                        if (!m_selected.Contains(new Vector3Int(x, y, l)))
+                        {
+                            m_selected.Add(new Vector3Int(x, y, l));
+                            m_map[x, y, l].tile.GetComponentInChildren<OnHoverHighlight>().Selected = true;
+                            MeshRenderer mr = m_map[x, y, l].tile.GetComponentInChildren<MeshRenderer>();
+                            for (int i = 0; i < mr.materials.Length; i++)
+                            {
+                                //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                                mr.materials[i].shader = Shader.Find("DS/OutlineShader");
+                                mr.materials[i].SetFloat("_OutlineThickness", 0.02f);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+			}
+		}
+	}
 
     /// <summary>
     /// Parses and executes the commands in the command line
@@ -806,5 +897,10 @@ public class MapBuilder : MonoBehaviour
                 break;
         }
         GetComponentInChildren<InputField>().SetTextWithoutNotify(string.Empty);
+	}
+
+    public void SetCurrentTool(int t)
+	{
+        currentTool = (MAP_TOOLS)t;
 	}
 }

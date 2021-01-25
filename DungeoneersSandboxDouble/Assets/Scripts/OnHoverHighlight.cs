@@ -6,6 +6,8 @@ using UnityEngine;
 public class OnHoverHighlight : MonoBehaviour
 {
     MeshRenderer m_meshRenderer;
+    bool selected = false;
+    public bool Selected { get { return selected; } set { selected = value; } }
     // Start is called before the first frame update
     void Start()
     {
@@ -16,22 +18,25 @@ public class OnHoverHighlight : MonoBehaviour
     void Update()
     {
         //Change shader based on whether the the mouse is over this object or not
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit) && hit.transform.gameObject == this.gameObject)
+        if (!selected)
         {
-            for(int i = 0; i < m_meshRenderer.materials.Length; i++)
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit) && hit.transform.gameObject == this.gameObject)
             {
-                //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
-                m_meshRenderer.materials[i].shader = Shader.Find("DS/OutlineShader");
-                m_meshRenderer.materials[i].SetFloat("_OutlineThickness", 0.02f);
+                for (int i = 0; i < m_meshRenderer.materials.Length; i++)
+                {
+                    //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                    m_meshRenderer.materials[i].shader = Shader.Find("DS/OutlineShader");
+                    m_meshRenderer.materials[i].SetFloat("_OutlineThickness", 0.02f);
+                }
             }
-        }
-        else if (m_meshRenderer.material.shader == Shader.Find("DS/OutlineShader"))
-        {
-            for (int i = 0; i < m_meshRenderer.materials.Length; i++)
+            else if (m_meshRenderer.material.shader == Shader.Find("DS/OutlineShader"))
             {
-                m_meshRenderer.materials[i].shader = Shader.Find("Standard");
+                for (int i = 0; i < m_meshRenderer.materials.Length; i++)
+                {
+                    m_meshRenderer.materials[i].shader = Shader.Find("Standard");
+                }
             }
         }
     }
