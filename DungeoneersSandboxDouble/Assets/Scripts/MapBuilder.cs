@@ -24,6 +24,8 @@ public class MapBuilder : MonoBehaviour
     [SerializeField]
     InputField m_levelInput;
     [SerializeField]
+    InputField m_addLevels;
+    [SerializeField]
     GameObject m_newMapMenu;
     [SerializeField]
     GameObject m_baseTile;
@@ -64,13 +66,28 @@ public class MapBuilder : MonoBehaviour
             m_cameraController.Mobility = false;
         }
 
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile"))
             {
-                Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
+                if (!m_selected.Contains(new Vector3Int((int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (int)hit.transform.parent.position.y))) {
+                    Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
+                }
+				else
+				{
+                    Deselect((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z);
+				}
             }
+        }
+
+        if((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.H))
+		{
+            ShowAll();
+		}
+        else if (Input.GetKeyDown(KeyCode.H))
+        {
+            Hide();        
         }
     }
 
@@ -149,9 +166,9 @@ public class MapBuilder : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Adds a level to the map
     /// </summary>
-    /// <param name="l"></param>
+    /// <param name="l">At which level the new level will be added at</param>
     void AddLevel(int l)
 	{
         if(l > m_level + 1 || l < 0)
@@ -171,24 +188,61 @@ public class MapBuilder : MonoBehaviour
                 {
                     if (z == l) {
                         //oldTiles[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
+                        m_map[(int)x, (int)y, (int)z] = new Tile();
                         m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
                         m_map[(int)x, (int)y, (int)z].tile.SetActive(true);
                         m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                     }
                     else if(z < l)
 					{
+                        m_map[(int)x, (int)y, (int)z] = new Tile();
                         m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z].tile;
+                        m_map[(int)x, (int)y, (int)z].tile.SetActive(true);
 
                     }
                     else
 					{
+                        m_map[(int)x, (int)y, (int)z] = new Tile();
                         m_map[(int)x, (int)y, (int)z].tile = oldTiles[(int)x, (int)y, (int)z - 1].tile;
                         m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
+                        m_map[(int)x, (int)y, (int)z].tile.SetActive(true);
                     }
                 }
             }
 
         }
+    }
+
+    /// <summary>
+    /// Function called on the add level confirmation
+    /// </summary>
+    public void AddLevels()
+	{
+        AddLevels(int.Parse(m_addLevels.text));
+	}
+
+    /// <summary>
+    /// Adds a given number of levels at the position of currently selected levels
+    /// </summary>
+    /// <param name="ls"></param>
+    void AddLevels(int ls)
+	{
+        List<int> levels = new List<int>();
+        for (int i = 0; i < m_selected.Count; i++)
+        {
+            if (!levels.Contains(m_selected[i].z))
+            {
+                levels.Add(m_selected[i].z);
+            }
+        }
+        for (int j = 0; j < levels.Count; j++)
+        {
+            for(int k = 0; k < ls; k++)
+			{
+                AddLevel(levels[j]);
+			}
+        }
+        DeselectAll();
     }
 
     /// <summary>
@@ -297,7 +351,34 @@ public class MapBuilder : MonoBehaviour
     /// </summary>
     public void Hide()
 	{
-        ParseCommand("/hide " + GetComponentInChildren<InputField>().text);
+        for (int i = 0; i < m_selected.Count; i++)
+        {
+            m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.SetActive(false);
+        }
+        //string tile = string.Empty;
+        //if (currentTool == MAP_TOOLS.LEVEL_SELECT)
+        //{
+        //    List<int> levels = new List<int>();
+        //    for (int i = 0; i < m_selected.Count; i++)
+        //    {
+        //        if (!levels.Contains(m_selected[i].z))
+        //        {
+        //            levels.Add(m_selected[i].z);
+        //        }
+        //    }
+        //    for (int j = 0; j < levels.Count; j++)
+        //    {
+        //        tile += "L" + levels[j].ToString() + ((j + 1 == levels.Count) ? "" : ", ");
+        //    }
+        //}
+        //else if (currentTool == MAP_TOOLS.TILE_SELECT)
+        //{
+        //    for (int i = 0; i < m_selected.Count; i++)
+        //    {
+        //        tile += "T(" + m_selected[i].x.ToString() + ", " + m_selected[i].y.ToString() + ", " + m_selected[i].z.ToString() + ")" + ((i + 1 == m_selected.Count) ? "" : ", ");
+        //    }
+        //}
+        //ParseCommand("/hide " + tile /*GetComponentInChildren<InputField>().text*/);
     }
 
     /// <summary>
@@ -305,32 +386,71 @@ public class MapBuilder : MonoBehaviour
     /// </summary>
     public void Show()
 	{
-        ParseCommand("/show " + GetComponentInChildren<InputField>().text);
+        for(int i = 0; i < m_selected.Count; i++)
+		{
+            m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.SetActive(true);
+		}
+  //      string tile = string.Empty;
+  //      if(currentTool == MAP_TOOLS.LEVEL_SELECT)
+		//{
+  //          List<int> levels = new List<int>();
+  //          for (int i = 0; i < m_selected.Count; i++)
+		//	{
+  //              if (!levels.Contains(m_selected[i].z))
+  //              {
+  //                  levels.Add(m_selected[i].z);
+  //              }
+  //          }
+  //          for(int j = 0; j < levels.Count; j++)
+		//	{
+  //              tile += "L" + levels[j].ToString() + ((j+1 == levels.Count) ? "" : ", ");
+		//	}
+		//}
+  //      else if(currentTool == MAP_TOOLS.TILE_SELECT)
+		//{
+  //          for(int i = 0; i < m_selected.Count; i++)
+		//	{
+  //              tile += "T(" + m_selected[i].x.ToString() + ", " + m_selected[i].y.ToString() + ", " + m_selected[i].z.ToString() + ")" + ((i + 1 == m_selected.Count) ? "" : ", ");
+  //          }
+		//}
+        //ParseCommand("/show " + tile /*GetComponentInChildren<InputField>().text*/);
     }
 
     /// <summary>
-    /// Resisters tile(s) selected by user
+    /// Shows all the tiles and levels in the command line
     /// </summary>
-    /// <param name="l"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="shift"></param>
+    public void ShowAll()
+    {
+        string tile = string.Empty;
+        for(int z = 0; z < m_level; z++)
+		{
+            for(int y = 0; y < m_height; y++)
+			{
+                for(int x = 0; x < m_width; x++)
+				{
+                    if(!m_map[x, y, z].tile.activeSelf)
+					{
+                        m_map[x, y, z].tile.SetActive(true);
+                    }
+				}
+			}
+		}
+    }
+
+    /// <summary>
+    /// Registers tile(s) selected by user
+    /// </summary>
+    /// <param name="l">Level of the tile(s) selected</param>
+    /// <param name="x">x-coordinate of the tile selected</param>
+    /// <param name="y">y-coordinate of the tile selected</param>
+    /// <param name="shift">Boolean indicating if shift is being held</param>
     void Select(int l, int x = -1, int y = -1, bool shift = false)
 	{
 		if (currentTool == MAP_TOOLS.LEVEL_SELECT || currentTool == MAP_TOOLS.TILE_SELECT)
 		{
             if (!shift)
             {
-                foreach (Vector3Int t in m_selected)
-                {
-                    m_map[t.x, t.y, t.z].tile.GetComponentInChildren<OnHoverHighlight>().Selected = false;
-                    MeshRenderer mr = m_map[t.x, t.y, t.z].tile.GetComponentInChildren<MeshRenderer>();
-                    for (int i = 0; i < mr.materials.Length; i++)
-                    {
-                        mr.materials[i].shader = Shader.Find("Standard");
-                    }
-                }
-                m_selected.Clear();
+                DeselectAll();
             }
             switch (currentTool)
 			{
@@ -377,6 +497,55 @@ public class MapBuilder : MonoBehaviour
 			}
 		}
 	}
+
+    void Deselect(int l, int x = -1, int y = -1)
+	{
+        if (currentTool == MAP_TOOLS.TILE_SELECT) {
+            if (m_selected.Contains(new Vector3Int(x, y, l)))
+            {
+                m_map[x, y, l].tile.GetComponentInChildren<OnHoverHighlight>().Selected = false;
+                MeshRenderer mr = m_map[x, y, l].tile.GetComponentInChildren<MeshRenderer>();
+                for (int j = 0; j < mr.materials.Length; j++)
+                {
+                    //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                    mr.materials[j].shader = Shader.Find("Standard");
+                }
+                m_selected.Remove(new Vector3Int(x, y, l));
+            }
+        }
+        else if(currentTool == MAP_TOOLS.LEVEL_SELECT)
+		{
+            for(int i = m_selected.Count - 1; i >= 0; i--)
+			{
+                if(m_selected[i].z == l)
+				{
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponentInChildren<OnHoverHighlight>().Selected = false;
+                    MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponentInChildren<MeshRenderer>();
+                    for (int j = 0; j < mr.materials.Length; j++)
+                    {
+                        //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                        mr.materials[j].shader = Shader.Find("Standard");
+                    }
+                    m_selected.Remove(m_selected[i]);
+                }
+			}
+		}
+	}
+
+    void DeselectAll()
+	{
+        for(int i = 0; i < m_selected.Count; i++)
+		{
+            m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponentInChildren<OnHoverHighlight>().Selected = false;
+            MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponentInChildren<MeshRenderer>();
+            for (int j = 0; j < mr.materials.Length; j++)
+            {
+                //Color temp = new Color(m_meshRenderer.materials[i].color.r, m_meshRenderer.materials[i].color.g, m_meshRenderer.materials[i].color.b);
+                mr.materials[j].shader = Shader.Find("Standard");
+            }
+        }
+        m_selected.Clear();
+    }
 
     /// <summary>
     /// Parses and executes the commands in the command line
@@ -896,9 +1065,16 @@ public class MapBuilder : MonoBehaviour
                 }
                 break;
         }
-        GetComponentInChildren<InputField>().SetTextWithoutNotify(string.Empty);
+        if (GetComponentInChildren<InputField>() != null) 
+        {
+            GetComponentInChildren<InputField>().SetTextWithoutNotify(string.Empty);
+        }
 	}
 
+    /// <summary>
+    /// Sets the current tool
+    /// </summary>
+    /// <param name="t">Intiger representing the tool type</param>
     public void SetCurrentTool(int t)
 	{
         currentTool = (MAP_TOOLS)t;
