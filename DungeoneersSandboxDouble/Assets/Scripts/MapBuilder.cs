@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,11 +25,19 @@ public class MapBuilder : MonoBehaviour
     [SerializeField]
     InputField m_levelInput;
     [SerializeField]
+    InputField m_spaceInput;
+    [SerializeField]
     InputField m_addLevels;
+    [SerializeField]
+    InputField[] m_posInputs = new InputField[3];
+    [SerializeField]
+    InputField[] m_lightInputs = new InputField[3];
     [SerializeField]
     GameObject m_newMapMenu;
     [SerializeField]
     GameObject m_baseTile;
+    [SerializeField]
+    Light[] m_baseLights = new Light[2];
     //[SerializeField]
     //Transform m_startingPos;
     [SerializeField]
@@ -46,6 +55,31 @@ public class MapBuilder : MonoBehaviour
     int m_height;
     int m_level;
     List<float> m_spacing = new List<float>();
+    bool m_pointLight = true;
+    public bool PointLight { get { return m_pointLight; } set { m_pointLight = value; } }
+
+    //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
+    private void OnValidate()
+	{
+        //Make sure array size for m_posInputs can not be changed in editor
+        if (m_posInputs.Length != 3)
+        {
+            Array.Resize(ref m_posInputs, 3);
+        }
+
+        //Make sure array size for m_lightInputs can not be changed in editor
+        if (m_lightInputs.Length != 3)
+        {
+            Array.Resize(ref m_lightInputs, 3);
+        }
+
+        //Make sure array size for m_baseLights can not be changed in editor
+        if (m_baseLights.Length != 2)
+        {
+            Array.Resize(ref m_baseLights, 2);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -154,7 +188,7 @@ public class MapBuilder : MonoBehaviour
                 for (float x = 0.0f; x < m_width; x++)
                 {
                     m_map[(int)x, (int)y, (int)z] = new Tile();
-                    m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+                    m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent.parent);
                     m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                 }
             }
@@ -189,7 +223,7 @@ public class MapBuilder : MonoBehaviour
                     if (z == l) {
                         //oldTiles[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                         m_map[(int)x, (int)y, (int)z] = new Tile();
-                        m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+                        m_map[(int)x, (int)y, (int)z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent.parent);
                         m_map[(int)x, (int)y, (int)z].tile.SetActive(true);
                         m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
                     }
@@ -245,6 +279,14 @@ public class MapBuilder : MonoBehaviour
         DeselectAll();
     }
 
+    public void AddLight()
+	{
+        m_lights.Add(Instantiate(m_baseLights[(m_pointLight) ? 0:1].gameObject, m_baseTile.transform.parent.parent).GetComponent<Light>());
+        m_lights.Last().transform.position = new Vector3(float.Parse(m_lightInputs[0].text), float.Parse(m_lightInputs[1].text), float.Parse(m_lightInputs[2].text));
+        m_lights.Last().gameObject.SetActive(true);
+
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -283,6 +325,11 @@ public class MapBuilder : MonoBehaviour
 		}
 	}
 
+    public void AddTile()
+	{
+        AddTile(int.Parse(m_posInputs[0].text), int.Parse(m_posInputs[1].text), int.Parse(m_posInputs[2].text));
+	}
+
     /// <summary>
     /// 
     /// </summary>
@@ -293,11 +340,20 @@ public class MapBuilder : MonoBehaviour
     {
         if(m_map[x,y,z].tile == null)
 		{
-            m_map[x, y, z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent);
+            m_map[x, y, z].tile = Instantiate(m_baseTile, m_baseTile.transform.parent.parent);
             m_map[x, y, z].tile.SetActive(true);
             m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, z, y);
         }
     }
+
+    public void Delete()
+	{
+        for(int i = m_selected.Count - 1; i >= 0; i--)
+		{
+            DeleteTile(m_selected[i].x, m_selected[i].y, m_selected[i].z);
+		}
+        m_selected.Clear();
+	}
 
     /// <summary>
     /// 
@@ -314,6 +370,97 @@ public class MapBuilder : MonoBehaviour
 
         }
 	}
+
+    public void OnConfirmPosWindow()
+	{
+
+	}
+
+    public void SetPosInputType(int ct)
+	{
+        m_posInputs[0].contentType = m_posInputs[1].contentType = m_posInputs[2].contentType = (InputField.ContentType)ct;
+        m_posInputs[0].text = m_posInputs[1].text = m_posInputs[2].text = "0";
+    }
+
+    public void IncrumentSpacing(bool minus)
+	{
+        m_spaceInput.SetTextWithoutNotify((float.Parse(m_spaceInput.text) + ((minus) ? -1 : 1)).ToString()); 
+	}
+
+    public void Spacing()
+	{
+        AddSpacing(float.Parse(m_spaceInput.text));
+	}
+
+    /// <summary>
+    /// Adds spacing to the selected levels
+    /// </summary>
+    /// <param name="s">Value of spacing to be added</param>
+    void AddSpacing(float s)
+	{
+        List<int> levels = new List<int>();
+        for (int i = 0; i < m_selected.Count; i++)
+        {
+            if (!levels.Contains(m_selected[i].z))
+            {
+                levels.Add(m_selected[i].z);
+            }
+        }
+        for (int i = 0; i < levels.Count; i++)
+        {
+            m_spacing[levels[i]] += s;
+            if (m_spacing[levels[i]] < 1)
+            {
+                m_spacing[levels[i]] = 1;
+            }
+            for (float z = (float)levels[i] + 1.0f; z < m_level; z++)
+            {
+                float nSpace = m_spacing.GetRange(0, ((int)(z))).ToArray().Sum();
+                for (float y = 0.0f; y < m_height; y++)
+                {
+                    for (float x = 0.0f; x < m_width; x++)
+                    {
+                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the spacing of the selected levels
+    /// </summary>
+    /// <param name="s">VAlue of the spacing to be set</param>
+    void SetSpacing(float s)
+	{
+        List<int> levels = new List<int>();
+        for (int i = 0; i < m_selected.Count; i++)
+        {
+            if (!levels.Contains(m_selected[i].z))
+            {
+                levels.Add(m_selected[i].z);
+            }
+        }
+        for (int i = 0; i < levels.Count; i++)
+        {
+            m_spacing[levels[i]] = s;
+            if (m_spacing[levels[i]] < 1)
+            {
+                m_spacing[levels[i]] = 1;
+            }
+            for (float z = (float)levels[i] + 1.0f; z < m_level; z++)
+            {
+                float nSpace = m_spacing.GetRange(0, ((int)(z - 1.0f))).ToArray().Sum();
+                for (float y = 0.0f; y < m_height; y++)
+                {
+                    for (float x = 0.0f; x < m_width; x++)
+                    {
+                        m_map[(int)x, (int)y, (int)z].tile.transform.position = new Vector3(x, nSpace, y);
+                    }
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// Resets all the new map GUI values to default
