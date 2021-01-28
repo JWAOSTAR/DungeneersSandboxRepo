@@ -19,6 +19,8 @@ public class MapBuilder : MonoBehaviour
 	}
 
     [SerializeField]
+    TransformTool m_transformTool;
+    [SerializeField]
     InputField m_widthInput;
     [SerializeField]
     InputField m_heightInput;
@@ -49,6 +51,7 @@ public class MapBuilder : MonoBehaviour
     MAP_TOOLS currentTool = MAP_TOOLS.TILE_SELECT;
     //public MAP_TOOLS CurrentTools { get { return currentTool; } set { currentTool = value; } }
     List<Vector3Int> m_selected = new List<Vector3Int>();
+    List<Transform> m_selectedLights = new List<Transform>();
     List<ParticleSystem> m_particleEffects = new List<ParticleSystem>();
 
     int m_width;
@@ -103,15 +106,51 @@ public class MapBuilder : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile"))
-            {
-                if (!m_selected.Contains(new Vector3Int((int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (int)hit.transform.parent.position.y))) {
-                    Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
+            if (Physics.Raycast(ray, out hit)) {
+                if (hit.transform.parent.gameObject.name.Contains("Tile"))
+                {
+                    if (!m_selected.Contains(new Vector3Int((int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (int)hit.transform.parent.position.y))) {
+                        Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
+                    }
+                    else
+                    {
+                        Deselect((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z);
+                    }
                 }
-				else
+                else if (hit.transform.gameObject.TryGetComponent<Light>(out Light l) && m_lights.Contains(l))
 				{
-                    Deselect((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z);
-				}
+                    if(!m_transformTool.gameObject.activeSelf)
+					{
+                        m_transformTool.gameObject.SetActive(true);
+                    }
+                    m_transformTool.transform.GetChild(1).gameObject.SetActive(true);
+                    m_transformTool.transform.GetChild(2).gameObject.SetActive(true);
+                    m_transformTool.transform.GetChild(3).gameObject.SetActive(true);
+
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    {
+                        m_selectedLights.Add(hit.transform);
+                    }
+					else
+					{
+                        for (int i = 0; i < m_selectedLights.Count; i++)
+                        {
+                            m_selectedLights[i].GetChild(0).gameObject.SetActive(false);
+                        }
+                        m_selectedLights.Clear();
+                        m_selectedLights.Add(hit.transform);
+
+                    }
+                    hit.transform.GetChild(0).gameObject.SetActive(true);
+
+                    Vector3 avg = Vector3.zero;
+                    for (int i = 0; i < m_selectedLights.Count; i++)
+                    {
+                        avg += new Vector3(m_selectedLights[i].position.x, m_selectedLights[i].position.y, m_selectedLights[i].position.z);
+                    }
+                    avg /= (float)m_selectedLights.Count;
+                    m_transformTool.transform.position = avg;
+                }
             }
         }
 
@@ -1225,5 +1264,13 @@ public class MapBuilder : MonoBehaviour
     public void SetCurrentTool(int t)
 	{
         currentTool = (MAP_TOOLS)t;
+	}
+
+    public void TransformSelectedLights(float x, float y, float z)
+	{
+        for(int i = 0; i < m_selectedLights.Count; i++)
+		{
+            m_selectedLights[i].position += new Vector3(x,y,z);
+        }
 	}
 }

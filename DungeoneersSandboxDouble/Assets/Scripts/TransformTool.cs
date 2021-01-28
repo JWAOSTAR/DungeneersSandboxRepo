@@ -248,13 +248,27 @@ public class TransformTool : MonoBehaviour
 				{
 					if (Input.GetAxis("Mouse X") < 0)
 					{
-                        CurrentGameObject.transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
+                        }
+                        else
+                        {
+                            m_OnPositionChange.Invoke(-0.05f, 0.0f, 0.0f);
+                        }
                         transform.position -= new Vector3(0.05f, 0.0f, 0.0f);
                         
                     }
                     else if(Input.GetAxis("Mouse X") > 0)
 					{
-                        CurrentGameObject.transform.position += new Vector3(0.05f, 0.0f, 0.0f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position += new Vector3(0.05f, 0.0f, 0.0f);
+                        }
+                        else
+                        {
+                            m_OnPositionChange.Invoke(0.05f, 0.0f, 0.0f);
+                        }
                         transform.position += new Vector3(0.05f, 0.0f, 0.0f);
                     }
 				}
@@ -262,12 +276,26 @@ public class TransformTool : MonoBehaviour
 				{
                     if (Input.GetAxis("Mouse Y") < 0)
                     {
-                        CurrentGameObject.transform.position -= new Vector3(0.0f, 0.05f, 0.0f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position -= new Vector3(0.0f, 0.05f, 0.0f);
+                        }
+                        else
+                        {
+                            m_OnPositionChange.Invoke(0.0f, -0.05f, 0.0f);
+                        }
                         transform.position -= new Vector3(0.0f, 0.05f, 0.0f);
                     }
                     else if (Input.GetAxis("Mouse Y") > 0)
                     {
-                        CurrentGameObject.transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+                        }
+                        else
+                        {
+                            m_OnPositionChange.Invoke(0.0f, 0.05f, 0.0f);
+                        }
                         transform.position += new Vector3(0.0f, 0.05f, 0.0f);
                     }
                 }
@@ -275,16 +303,33 @@ public class TransformTool : MonoBehaviour
 				{
                     if (Input.GetAxis("Mouse X") < 0)
                     {
-                        CurrentGameObject.transform.position -= new Vector3(0.0f, 0.0f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position -= new Vector3(0.0f, 0.0f, 0.05f);
+                        }
+                        else
+                        {
+                            m_OnPositionChange.Invoke(0.0f, 0.0f, -0.05f);
+                        }
                         transform.position -= new Vector3(0.0f, 0.0f, 0.05f);
                     }
                     else if (Input.GetAxis("Mouse X") > 0)
                     {
-                        CurrentGameObject.transform.position += new Vector3(0.0f, 0.0f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.position += new Vector3(0.0f, 0.0f, 0.05f);
+                        }
+                        else
+						{
+                            m_OnPositionChange.Invoke(0.0f, 0.0f, 0.05f);
+                        }
                         transform.position += new Vector3(0.0f, 0.0f, 0.05f);
                     }
                 }
-                m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
+                if (CurrentGameObject != null)
+                {
+                    m_OnPositionChange.Invoke(CurrentGameObject.transform.position.x, CurrentGameObject.transform.position.y, CurrentGameObject.transform.position.z);
+                }
             }
             else if(RotX.activeSelf)
 			{
@@ -292,36 +337,81 @@ public class TransformTool : MonoBehaviour
                 {
                     if (Input.GetAxis("Mouse Y") < 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(-0.5f, 0.0f, 0.0f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(-0.5f, 0.0f, 0.0f), Space.World);
+                        }
+                        else
+                        {
+                            m_OnRotationChange.Invoke(-0.5f, 0.0f, 0.0f);
+                        }
                     }
                     else if (Input.GetAxis("Mouse Y") > 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(0.5f, 0.0f, 0.0f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(0.5f, 0.0f, 0.0f), Space.World);
+                        }
+                        else
+						{
+                            m_OnRotationChange.Invoke(0.5f, 0.0f, 0.0f);
+                        }
                     }
                 }
                 if ((activeAxis & 2) == 2)
                 {
                     if (Input.GetAxis("Mouse X") < 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.5f, 0.0f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.5f, 0.0f), Space.World);
+                        }
+						else
+						{
+                            m_OnRotationChange.Invoke(0.0f, 0.5f, 0.0f);
+                        }
                     }
                     else if (Input.GetAxis("Mouse X") > 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, -0.5f, 0.0f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(0.0f, -0.5f, 0.0f), Space.World);
+                        }
+						else
+						{
+                            m_OnRotationChange.Invoke(0.0f, -0.5f, 0.0f);
+                        }
                     }
                 }
                 if ((activeAxis & 4) == 4)
                 {
                     if (Input.GetAxis("Mouse Y") < 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, -0.5f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, -0.5f), Space.World);
+                        }
+						else
+						{
+                            m_OnRotationChange.Invoke(0.0f, 0.0f, -0.5f);
+                        }
                     }
                     else if (Input.GetAxis("Mouse Y") > 0)
                     {
-                        CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, 0.5f), Space.World);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.Rotate(new Vector3(0.0f, 0.0f, 0.5f), Space.World);
+                        }
+						else
+						{
+                            m_OnRotationChange.Invoke(0.0f, 0.0f, 0.5f);
+                        }
                     }
                 }
-                m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.eulerAngles.x, CurrentGameObject.transform.rotation.eulerAngles.y, CurrentGameObject.transform.rotation.eulerAngles.z);
+                if (CurrentGameObject != null)
+                {
+                    m_OnRotationChange.Invoke(CurrentGameObject.transform.rotation.eulerAngles.x, CurrentGameObject.transform.rotation.eulerAngles.y, CurrentGameObject.transform.rotation.eulerAngles.z);
+                }
             }
             else if(SclX.activeSelf)
 			{
@@ -331,56 +421,132 @@ public class TransformTool : MonoBehaviour
                     {
                         if (Input.GetAxis("Mouse X") < 0)
                         {
-                            CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.0f, 0.0f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.0f, 0.0f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(-0.05f, 0.0f, 0.0f);
+                            }
                         }
                         else if (Input.GetAxis("Mouse X") > 0)
                         {
-                            CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.0f, 0.0f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.0f, 0.0f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(0.05f, 0.0f, 0.0f);
+                            }
                         }
                     }
                     if ((activeAxis & 2) == 2)
                     {
                         if (Input.GetAxis("Mouse Y") < 0)
                         {
-                            CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.05f, 0.0f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.05f, 0.0f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(0.0f, -0.05f, 0.0f);
+                            }
                         }
                         else if (Input.GetAxis("Mouse Y") > 0)
                         {
-                            CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.05f, 0.0f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.05f, 0.0f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(0.0f, 0.05f, 0.0f);
+                            }
                         }
                     }
                     if ((activeAxis & 4) == 4)
                     {
                         if (Input.GetAxis("Mouse X") < 0)
                         {
-                            CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.0f, 0.05f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale -= new Vector3(0.0f, 0.0f, 0.05f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(0.0f, 0.0f, -0.05f);
+                            }
                         }
                         else if (Input.GetAxis("Mouse X") > 0)
                         {
-                            CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.0f, 0.05f);
+                            if (CurrentGameObject != null)
+                            {
+                                CurrentGameObject.transform.localScale += new Vector3(0.0f, 0.0f, 0.05f);
+                            }
+                            else
+                            {
+                                m_OnScalingChange.Invoke(0.0f, 0.0f, 0.05f);
+                            }
                         }
                     }
-                    m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
+                    if (CurrentGameObject != null)
+                    {
+                        m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
+                    }
                 }
 				else
 				{
                     if (Input.GetAxis("Mouse X") < 0)
                     {
-                        CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                        }
+                        else
+                        {
+                            m_OnScalingChange.Invoke(-0.05f, -0.05f, -0.05f);
+                        }
                     }
                     else if (Input.GetAxis("Mouse Y") < 0)
 					{
-                        CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.localScale -= new Vector3(0.05f, 0.05f, 0.05f);
+                        }
+                        else
+                        {
+                            m_OnScalingChange.Invoke(-0.05f, -0.05f, -0.05f);
+                        }
                     }
                     else if (Input.GetAxis("Mouse X") > 0)
                     {
-                        CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                        }
+                        else
+                        {
+                            m_OnScalingChange.Invoke(0.05f, 0.05f, 0.05f);
+                        }
                     }
                     else if(Input.GetAxis("Mouse Y") > 0)
 					{
-                        CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                        if (CurrentGameObject != null)
+                        {
+                            CurrentGameObject.transform.localScale += new Vector3(0.05f, 0.05f, 0.05f);
+                        }
+                        else
+                        {
+                            m_OnScalingChange.Invoke(0.05f, 0.05f, 0.05f);
+                        }
                     }
-                    m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
+                    if (CurrentGameObject != null)
+                    {
+                        m_OnScalingChange.Invoke(CurrentGameObject.transform.localScale.x, CurrentGameObject.transform.localScale.y, CurrentGameObject.transform.localScale.z);
+                    }
                 }
             }
 		}
