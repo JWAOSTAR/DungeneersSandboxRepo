@@ -37,6 +37,8 @@ public class MapBuilder : MonoBehaviour
     [SerializeField]
     GameObject m_newMapMenu;
     [SerializeField]
+    GameObject m_lightEditorMenu;
+    [SerializeField]
     GameObject m_baseTile;
     [SerializeField]
     Light[] m_baseLights = new Light[2];
@@ -59,7 +61,44 @@ public class MapBuilder : MonoBehaviour
     int m_level;
     List<float> m_spacing = new List<float>();
     bool m_pointLight = true;
-    public bool PointLight { get { return m_pointLight; } set { m_pointLight = value; } }
+    public bool PointLight 
+    { 
+        get 
+        { 
+            return m_pointLight; 
+        } 
+        
+        set 
+        { 
+            m_pointLight = value;
+			if (m_pointLight)
+			{
+                for(int i = 0; i < m_selectedLights.Count; i++)
+				{
+                    m_selectedLights[i].GetComponent<Light>().type = LightType.Point;
+                    Transform t = Instantiate(m_baseLights[0].transform.GetChild(0), m_selectedLights[i]);
+                    t.gameObject.SetActive(m_selectedLights[i].GetChild(0).gameObject.activeSelf);
+                    t.localPosition = m_baseLights[0].transform.GetChild(0).localPosition;
+                    t.rotation = m_baseLights[0].transform.GetChild(0).rotation;
+                    Destroy(m_selectedLights[i].GetChild(0).gameObject);
+                    t.SetSiblingIndex(0);
+                }
+			}
+			else
+			{
+                for (int i = 0; i < m_selectedLights.Count; i++)
+                {
+                    m_selectedLights[i].GetComponent<Light>().type = LightType.Spot;
+                    Transform t = Instantiate(m_baseLights[1].transform.GetChild(0), m_selectedLights[i]);
+                    t.gameObject.SetActive(m_selectedLights[i].GetChild(0).gameObject.activeSelf);
+                    t.localPosition = m_baseLights[1].transform.GetChild(0).localPosition;
+                    t.rotation = m_baseLights[1].transform.GetChild(0).rotation;
+                    Destroy(m_selectedLights[i].GetChild(0).gameObject);
+                    t.SetSiblingIndex(0);
+                }
+            }
+        } 
+    }
 
     //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
@@ -161,6 +200,11 @@ public class MapBuilder : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.H))
         {
             Hide();        
+        }
+
+        if((m_selectedLights.Count > 0) && Input.GetKeyDown(KeyCode.Tab))
+		{
+            m_lightEditorMenu.SetActive(true);
         }
     }
 
@@ -1273,4 +1317,53 @@ public class MapBuilder : MonoBehaviour
             m_selectedLights[i].position += new Vector3(x,y,z);
         }
 	}
+
+    public void SetLightRange(string range)
+    {
+        if (float.TryParse(range, out float r))
+        {
+            SetLightRange(r);
+        }
+    }
+
+
+    void SetLightRange(float range)
+	{
+        for(int i = 0; i < m_selectedLights.Count; i++)
+		{
+            m_selectedLights[i].GetComponent<Light>().range = range;
+        }
+	}
+
+    public void SetLightIntensity(string intensity)
+	{
+        if (float.TryParse(intensity, out float i))
+        {
+            SetLightIntensity(i);
+        }
+    }
+
+    void SetLightIntensity(float intensity)
+	{
+        for (int i = 0; i < m_selectedLights.Count; i++)
+        {
+            m_selectedLights[i].GetComponent<Light>().intensity = intensity;
+        }
+    }
+
+    public void SetLightIndirectMultiplyer(string indirectMul)
+	{
+        if (float.TryParse(indirectMul, out float iM))
+        {
+            SetLightIndirectMultiplyer(iM);
+        }
+    }
+
+    void SetLightIndirectMultiplyer(float indirectMul)
+	{
+        for (int i = 0; i < m_selectedLights.Count; i++)
+        {
+            m_selectedLights[i].GetComponent<Light>().bounceIntensity = indirectMul;
+        }
+    }
 }
