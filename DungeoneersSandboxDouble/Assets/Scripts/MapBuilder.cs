@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MapBuilder : MonoBehaviour
@@ -145,7 +146,7 @@ public class MapBuilder : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit)) {
+            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit)) {
                 if (hit.transform.parent.gameObject.name.Contains("Tile"))
                 {
                     if (!m_selected.Contains(new Vector3Int((int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (int)hit.transform.parent.position.y))) {

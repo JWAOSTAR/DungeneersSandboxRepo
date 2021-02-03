@@ -13,8 +13,11 @@ public class Wall : MonoBehaviour
         InnerCorner
 	}
 
+    GameObject m_wall;
+
     [SerializeField]
     GameObject[] m_slices = new GameObject[4];
+
 
     //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
@@ -37,4 +40,9 @@ public class Wall : MonoBehaviour
     {
         
     }
+
+    public void GenerateOrigin()
+	{
+
+	}
 }

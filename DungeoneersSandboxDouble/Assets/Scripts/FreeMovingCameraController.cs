@@ -7,6 +7,7 @@ public class FreeMovingCameraController : MonoBehaviour
 {
     Vector2 previousRotation = Vector2.zero;
     float speed = 0.025f;
+    [SerializeField]
     bool moveable = false;
 
     public bool Mobility { get { return moveable; } set { moveable = value; } }
