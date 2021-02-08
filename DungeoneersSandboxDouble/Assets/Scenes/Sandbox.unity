@@ -370,6 +370,7 @@ MonoBehaviour:
   m_positionOffset: {x: 0, y: -0.0850001, z: 0}
   m_rotationOffset: {x: 0, y: 0, z: 0}
   m_scaleOffset: {x: 35.10357, y: 35.10357, z: 35.10357}
+  m_allowance: 0.15
 --- !u!1 &441231767
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,7 +1196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1768459854}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0.7000002}
+  m_LocalPosition: {x: 0, y: 0, z: -0.7}
   m_LocalScale: {x: 0.1, y: 0.10000001, z: 0.10000001}
   m_Children: []
   m_Father: {fileID: 271229235}
