@@ -153,7 +153,16 @@ public class Wall : MonoBehaviour
 		}
 	}
 
-    public void SetScaleWidth(float width, Vector3 midPoint)
+	public void ResetWall()
+	{
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.localPosition = new Vector3(m_positionOffset.x, m_positionOffset.y, m_positionOffset.z);
+            transform.GetChild(i).transform.localScale = new Vector3(m_scaleOffset.x, m_scaleOffset.y, m_scaleOffset.z);
+        }
+    }
+
+	public void SetScaleWidth(float width, Vector3 midPoint, bool west = false)
 	{
         if(midPoint == null)
 		{
@@ -163,19 +172,29 @@ public class Wall : MonoBehaviour
         m_originCenter.slice.transform.localScale = new Vector3(width*m_scaleOffset.x*3.0f, m_originCenter.slice.transform.localScale.y, m_originCenter.slice.transform.localScale.z);
         m_originCenter.Top.slice.transform.localScale = m_originCenter.Bottom.slice.transform.localScale = new Vector3(width*m_scaleOffset.x*3.0f, m_originCenter.Top.slice.transform.localScale.y, m_originCenter.Top.slice.transform.localScale.z);
 
-        m_originCenter.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + m_allowance, m_originCenter.slice.transform.position.y, midPoint.z + m_positionOffset.z);
-        m_originCenter.Bottom.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + m_allowance, m_originCenter.Bottom.slice.transform.position.y, m_originCenter.Bottom.slice.transform.position.z);
-        m_originCenter.Top.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + m_allowance, m_originCenter.Top.slice.transform.position.y, m_originCenter.Top.slice.transform.position.z);
+        m_originCenter.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + ((west ? -1 : 1) * m_allowance), m_originCenter.slice.transform.position.y, midPoint.z + m_positionOffset.z);
+        m_originCenter.Bottom.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + ((west ? -1 : 1) * m_allowance), m_originCenter.Bottom.slice.transform.position.y, m_originCenter.Bottom.slice.transform.position.z);
+        m_originCenter.Top.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x + ((west ? -1 : 1) * m_allowance), m_originCenter.Top.slice.transform.position.y, m_originCenter.Top.slice.transform.position.z);
 
-        float LR_distance = Vector3.Distance(m_originCenter.Right.slice.transform.position, m_originCenter.slice.transform.position);
+        if (!west) {
+            float LR_distance = Vector3.Distance(m_originCenter.Right.slice.transform.position, m_originCenter.slice.transform.position);
 
-        m_originCenter.Left.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.Left.slice.transform.position.y, m_originCenter.Left.slice.transform.position.z);
-        m_originCenter.TopLeft.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.TopLeft.slice.transform.position.y, m_originCenter.TopLeft.slice.transform.position.z);
-        m_originCenter.BottomLeft.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.BottomRight.slice.transform.position.y, m_originCenter.BottomLeft.slice.transform.position.z);
+            m_originCenter.Left.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.Left.slice.transform.position.y, m_originCenter.Left.slice.transform.position.z);
+            m_originCenter.TopLeft.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.TopLeft.slice.transform.position.y, m_originCenter.TopLeft.slice.transform.position.z);
+            m_originCenter.BottomLeft.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x + LR_distance, m_originCenter.BottomLeft.slice.transform.position.y, m_originCenter.BottomLeft.slice.transform.position.z);
+        }
+		else
+		{
+            float LR_distance = Vector3.Distance(m_originCenter.Left.slice.transform.position, m_originCenter.slice.transform.position);
+
+            m_originCenter.Right.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x - LR_distance, m_originCenter.Right.slice.transform.position.y, m_originCenter.Left.slice.transform.position.z);
+            m_originCenter.TopRight.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x - LR_distance, m_originCenter.TopRight.slice.transform.position.y, m_originCenter.TopLeft.slice.transform.position.z);
+            m_originCenter.BottomRight.slice.transform.position = new Vector3(m_originCenter.slice.transform.position.x - LR_distance, m_originCenter.BottomRight.slice.transform.position.y, m_originCenter.BottomRight.slice.transform.position.z);
+        }
     }
 
-    public void SetScaleHeight(float height, Vector3 midPoint)
-	{
+    public void SetScaleHeight(float height, Vector3 midPoint, bool north = false)
+    {
         if (midPoint == null)
         {
             midPoint = Vector3.zero;
@@ -184,14 +203,24 @@ public class Wall : MonoBehaviour
         m_originCenter.slice.transform.localScale = new Vector3(m_originCenter.slice.transform.localScale.x, height * m_scaleOffset.y * 3.0f, m_originCenter.slice.transform.localScale.z);
         m_originCenter.Right.slice.transform.localScale = m_originCenter.Left.slice.transform.localScale = new Vector3(height * m_scaleOffset.x * 3.0f, m_originCenter.Right.slice.transform.localScale.y, m_originCenter.Right.slice.transform.localScale.z);
 
-        m_originCenter.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x, m_originCenter.slice.transform.position.y, midPoint.z + m_positionOffset.z - m_allowance);
-        m_originCenter.Right.slice.transform.position = new Vector3(m_originCenter.Right.slice.transform.position.x, m_originCenter.Right.slice.transform.position.y, midPoint.z + m_positionOffset.z - m_allowance);
-        m_originCenter.Left.slice.transform.position = new Vector3(m_originCenter.Left.slice.transform.position.x, m_originCenter.Left.slice.transform.position.y, midPoint.z + m_positionOffset.z - m_allowance);
+        m_originCenter.slice.transform.position = new Vector3(midPoint.x + m_positionOffset.x, m_originCenter.slice.transform.position.y, midPoint.z + m_positionOffset.z + ((north ? 1 : -1)*m_allowance));
+        m_originCenter.Right.slice.transform.position = new Vector3(m_originCenter.Right.slice.transform.position.x, m_originCenter.Right.slice.transform.position.y, midPoint.z + m_positionOffset.z + ((north ? 1 : -1) * m_allowance));
+        m_originCenter.Left.slice.transform.position = new Vector3(m_originCenter.Left.slice.transform.position.x, m_originCenter.Left.slice.transform.position.y, midPoint.z + m_positionOffset.z + ((north ? 1 : -1) * m_allowance));
+        if (!north)
+        {
+            float TB_distance = m_originCenter.Bottom.slice.transform.position.z - m_originCenter.slice.transform.position.z;
 
-        float TB_distance = m_originCenter.Bottom.slice.transform.position.z - m_originCenter.slice.transform.position.z;
+            m_originCenter.Top.slice.transform.position = new Vector3(m_originCenter.Top.slice.transform.position.x, m_originCenter.Top.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+            m_originCenter.TopLeft.slice.transform.position = new Vector3(m_originCenter.TopLeft.slice.transform.position.x, m_originCenter.TopLeft.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+            m_originCenter.TopRight.slice.transform.position = new Vector3(m_originCenter.TopRight.slice.transform.position.x, m_originCenter.TopRight.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+        }
+		else
+		{
+            float TB_distance = m_originCenter.Top.slice.transform.position.z - m_originCenter.slice.transform.position.z;
 
-        m_originCenter.Top.slice.transform.position = new Vector3(m_originCenter.Top.slice.transform.position.x, m_originCenter.Top.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
-        m_originCenter.TopLeft.slice.transform.position = new Vector3(m_originCenter.TopLeft.slice.transform.position.x, m_originCenter.TopLeft.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
-        m_originCenter.TopRight.slice.transform.position = new Vector3(m_originCenter.TopRight.slice.transform.position.x, m_originCenter.TopRight.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+            m_originCenter.Bottom.slice.transform.position = new Vector3(m_originCenter.Bottom.slice.transform.position.x, m_originCenter.Bottom.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+            m_originCenter.BottomLeft.slice.transform.position = new Vector3(m_originCenter.BottomLeft.slice.transform.position.x, m_originCenter.BottomLeft.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+            m_originCenter.BottomRight.slice.transform.position = new Vector3(m_originCenter.BottomRight.slice.transform.position.x, m_originCenter.BottomRight.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
+        }
     }
 }
