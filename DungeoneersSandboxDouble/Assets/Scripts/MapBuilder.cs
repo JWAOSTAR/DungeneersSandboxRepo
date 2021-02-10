@@ -50,6 +50,13 @@ public class MapBuilder : MonoBehaviour
     [SerializeField]
     List<Light> m_lights = new List<Light>();
 
+    [SerializeField]
+    ContextMenu m_generalContextMenu;
+    [SerializeField]
+    ContextMenu m_tileContextMenu;
+    [SerializeField]
+    ContextMenu m_floorContextMenu;
+
     Tile[,,] m_map;
     MAP_TOOLS currentTool = MAP_TOOLS.TILE_SELECT;
     //public MAP_TOOLS CurrentTools { get { return currentTool; } set { currentTool = value; } }
@@ -62,6 +69,7 @@ public class MapBuilder : MonoBehaviour
     int m_level;
     List<float> m_spacing = new List<float>();
     bool m_pointLight = true;
+    bool m_windowOpen = false;
     public bool PointLight 
     { 
         get 
@@ -100,6 +108,7 @@ public class MapBuilder : MonoBehaviour
             }
         } 
     }
+    public bool WindowOpen { get { return m_windowOpen; } set { m_windowOpen = value; } }
 
     //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
@@ -143,9 +152,9 @@ public class MapBuilder : MonoBehaviour
             m_cameraController.Mobility = false;
         }
 
-        if (Input.GetMouseButtonDown(0)) {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
             if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit)) {
                 if (hit.transform.parent.gameObject.name.Contains("Tile"))
                 {
@@ -206,7 +215,27 @@ public class MapBuilder : MonoBehaviour
         if((m_selectedLights.Count > 0) && Input.GetKeyDown(KeyCode.Tab))
 		{
             m_lightEditorMenu.SetActive(true);
+            m_windowOpen = true;
         }
+
+        if((Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(0) && ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftControl)))) && !m_windowOpen)
+		{
+			if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile"))
+			{
+                if(currentTool == MAP_TOOLS.TILE_SELECT)
+				{
+                    m_tileContextMenu.ShowMenu();
+				}
+				else
+				{
+                    m_floorContextMenu.ShowMenu();
+				}
+			}
+			else
+			{
+                m_generalContextMenu.ShowMenu();
+			}
+		}
     }
 
     /// <summary>

@@ -42,7 +42,7 @@ public class WallTool : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButton(0) && m_currentHandle != null && m_currentPivot != null && m_currentWall != null)
+        if (Input.GetMouseButton(0) && m_currentHandle != null && m_currentPivot != null && m_currentWall != null)
 		{
             //TODO: Add handle movement
             dot /= Mathf.Abs(dot);
