@@ -58,17 +58,6 @@ public class Wall : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       GenerateOrigin();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void GenerateOrigin()
-	{
         m_originCenter.sliceNeighbors[0] = new Slice();
         m_originCenter.sliceNeighbors[1] = new Slice();
         m_originCenter.sliceNeighbors[2] = new Slice();
@@ -77,33 +66,6 @@ public class Wall : MonoBehaviour
         m_originCenter.sliceNeighbors[5] = new Slice();
         m_originCenter.sliceNeighbors[6] = new Slice();
         m_originCenter.sliceNeighbors[7] = new Slice();
-
-        m_originCenter.slice = Instantiate(m_slices[(int)TileScetion.Center], this.transform);
-        m_originCenter.TopLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.TopRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.TopRight.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
-        m_originCenter.BottomRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform); 
-        m_originCenter.BottomRight.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
-        m_originCenter.BottomLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.BottomLeft.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
-        m_originCenter.Top.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Right.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Right.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
-        m_originCenter.Bottom.slice  = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
-        m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
-
-        m_originCenter.slice.name = "Center";
-        m_originCenter.TopLeft.slice.name = "TopLeft";
-        m_originCenter.TopRight.slice.name = "TopRight";
-        m_originCenter.BottomRight.slice.name = "BottomRight";
-        m_originCenter.BottomLeft.slice.name =  "BottomLeft";
-        m_originCenter.Top.slice.name = "Top";
-        m_originCenter.Right.slice.name = "Right";
-        m_originCenter.Bottom.slice.name = "Bottom";
-        m_originCenter.Left.slice.name = "Left";
-
 
         m_originCenter.TopLeft.Right = m_originCenter.Top;
         m_originCenter.TopLeft.BottomRight = m_originCenter;
@@ -144,6 +106,42 @@ public class Wall : MonoBehaviour
         m_originCenter.Left.Right = m_originCenter;
         m_originCenter.Left.BottomRight = m_originCenter.Bottom;
         m_originCenter.Left.Bottom = m_originCenter.BottomLeft;
+        GenerateOrigin();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void GenerateOrigin()
+	{
+        m_originCenter.slice = Instantiate(m_slices[(int)TileScetion.Center], this.transform);
+        m_originCenter.TopLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+        m_originCenter.TopRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+        m_originCenter.TopRight.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+        m_originCenter.BottomRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform); 
+        m_originCenter.BottomRight.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+        m_originCenter.BottomLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+        m_originCenter.BottomLeft.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+        m_originCenter.Top.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+        m_originCenter.Right.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+        m_originCenter.Right.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+        m_originCenter.Bottom.slice  = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+        m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+        m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+        m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+
+        m_originCenter.slice.name = "Center";
+        m_originCenter.TopLeft.slice.name = "TopLeft";
+        m_originCenter.TopRight.slice.name = "TopRight";
+        m_originCenter.BottomRight.slice.name = "BottomRight";
+        m_originCenter.BottomLeft.slice.name =  "BottomLeft";
+        m_originCenter.Top.slice.name = "Top";
+        m_originCenter.Right.slice.name = "Right";
+        m_originCenter.Bottom.slice.name = "Bottom";
+        m_originCenter.Left.slice.name = "Left";
 
         for (int i = 0; i < transform.childCount; i++)
 		{

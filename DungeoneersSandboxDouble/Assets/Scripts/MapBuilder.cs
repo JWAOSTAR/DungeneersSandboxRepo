@@ -1396,4 +1396,9 @@ public class MapBuilder : MonoBehaviour
             m_selectedLights[i].GetComponent<Light>().bounceIntensity = indirectMul;
         }
     }
+
+    void UploadWallSlice(int t_sec)
+	{
+
+	}
 }
