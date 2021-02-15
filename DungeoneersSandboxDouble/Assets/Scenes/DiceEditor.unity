@@ -1340,6 +1340,7 @@ GameObject:
   - component: {fileID: 309121648}
   - component: {fileID: 309121650}
   - component: {fileID: 309121649}
+  - component: {fileID: 309121651}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -1384,7 +1385,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1a3df0d60d4a6624687415f495a934a8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 44e4da6c31cd8884588e8750a65ce9bc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1402,6 +1403,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 309121647}
   m_CullTransparentMesh: 0
+--- !u!114 &309121651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309121647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &314968106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2211,6 +2227,7 @@ GameObject:
   - component: {fileID: 547682958}
   - component: {fileID: 547682957}
   - component: {fileID: 547682956}
+  - component: {fileID: 547682959}
   m_Layer: 5
   m_Name: Cancel Button
   m_TagString: Untagged
@@ -2322,7 +2339,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5be4caeaa1d010d4fb0b8258a1470a39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2331,7 +2348,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &547682958
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2340,6 +2357,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547682954}
   m_CullTransparentMesh: 0
+--- !u!114 &547682959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547682954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &569710906 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8258573786587811429, guid: fc25e6573c724e24b83bfb03b231982a,
@@ -3094,6 +3126,7 @@ GameObject:
   - component: {fileID: 711480048}
   - component: {fileID: 711480050}
   - component: {fileID: 711480049}
+  - component: {fileID: 711480051}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -3138,7 +3171,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1a3df0d60d4a6624687415f495a934a8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 44e4da6c31cd8884588e8750a65ce9bc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3156,6 +3189,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711480047}
   m_CullTransparentMesh: 0
+--- !u!114 &711480051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711480047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &745974127
 GameObject:
   m_ObjectHideFlags: 0
@@ -3455,6 +3503,7 @@ GameObject:
   - component: {fileID: 798645201}
   - component: {fileID: 798645200}
   - component: {fileID: 798645199}
+  - component: {fileID: 798645202}
   m_Layer: 5
   m_Name: Save Button
   m_TagString: Untagged
@@ -3555,7 +3604,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5be4caeaa1d010d4fb0b8258a1470a39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3564,7 +3613,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &798645201
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3573,6 +3622,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 798645197}
   m_CullTransparentMesh: 0
+--- !u!114 &798645202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798645197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &816496642
 GameObject:
   m_ObjectHideFlags: 0

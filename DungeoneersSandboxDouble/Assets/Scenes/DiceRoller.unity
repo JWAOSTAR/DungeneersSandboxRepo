@@ -1363,6 +1363,7 @@ GameObject:
   - component: {fileID: 102063763}
   - component: {fileID: 102063762}
   - component: {fileID: 102063761}
+  - component: {fileID: 102063764}
   m_Layer: 5
   m_Name: Queue Reset Button
   m_TagString: Untagged
@@ -1462,7 +1463,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1471,7 +1472,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &102063763
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1480,6 +1481,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102063759}
   m_CullTransparentMesh: 0
+--- !u!114 &102063764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102063759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &118203294
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1602,6 +1618,7 @@ GameObject:
   - component: {fileID: 133343986}
   - component: {fileID: 133343985}
   - component: {fileID: 133343984}
+  - component: {fileID: 133343987}
   m_Layer: 5
   m_Name: Roll Button
   m_TagString: Untagged
@@ -1701,7 +1718,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1710,7 +1727,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &133343986
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1719,6 +1736,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133343982}
   m_CullTransparentMesh: 0
+--- !u!114 &133343987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133343982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &135825655
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,6 +2252,7 @@ GameObject:
   - component: {fileID: 222713632}
   - component: {fileID: 222713631}
   - component: {fileID: 222713630}
+  - component: {fileID: 222713633}
   m_Layer: 5
   m_Name: Switch View Button
   m_TagString: Untagged
@@ -2330,7 +2363,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2339,7 +2372,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &222713632
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2348,6 +2381,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222713628}
   m_CullTransparentMesh: 0
+--- !u!114 &222713633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 222713628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!224 &222729923 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 962263096222265719, guid: acb31cddc9fb03a4097ea94877025ea6,
@@ -2797,7 +2845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3687,6 +3735,7 @@ GameObject:
   - component: {fileID: 369026919}
   - component: {fileID: 369026918}
   - component: {fileID: 369026917}
+  - component: {fileID: 369026920}
   m_Layer: 5
   m_Name: 'Disadvantage Roll Button '
   m_TagString: Untagged
@@ -3786,7 +3835,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3795,7 +3844,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &369026919
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3804,6 +3853,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 369026915}
   m_CullTransparentMesh: 0
+--- !u!114 &369026920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369026915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &376544257
 GameObject:
   m_ObjectHideFlags: 0
@@ -7922,7 +7986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -9472,6 +9536,7 @@ GameObject:
   - component: {fileID: 846177479}
   - component: {fileID: 846177478}
   - component: {fileID: 846177477}
+  - component: {fileID: 846177480}
   m_Layer: 5
   m_Name: Clear Tray Button
   m_TagString: Untagged
@@ -9571,7 +9636,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9580,7 +9645,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &846177479
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9589,6 +9654,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 846177475}
   m_CullTransparentMesh: 0
+--- !u!114 &846177480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846177475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &849227654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11414,7 +11494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -12766,7 +12846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -13965,7 +14045,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -15426,6 +15506,7 @@ GameObject:
   - component: {fileID: 1433312527}
   - component: {fileID: 1433312526}
   - component: {fileID: 1433312525}
+  - component: {fileID: 1433312528}
   m_Layer: 5
   m_Name: Advantage Roll Button
   m_TagString: Untagged
@@ -15525,7 +15606,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 744e6d7b13930c54c8269d81734634b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15534,7 +15615,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 6.45
 --- !u!222 &1433312527
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15543,6 +15624,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433312523}
   m_CullTransparentMesh: 0
+--- !u!114 &1433312528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433312523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1442794284
 GameObject:
   m_ObjectHideFlags: 0
@@ -18568,7 +18664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

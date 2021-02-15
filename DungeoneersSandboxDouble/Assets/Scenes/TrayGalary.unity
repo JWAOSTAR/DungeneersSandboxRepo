@@ -3260,7 +3260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1015635902
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4098,9 +4098,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1340753547
 MonoBehaviour:
@@ -5221,7 +5221,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: NaN}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6604,6 +6604,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 904318777}
     m_Modifications:
+    - target: {fileID: 1874285989198075465, guid: ed2d079a9037c1f49a2576edee7fd7d5,
+        type: 3}
+      propertyPath: m_originalColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1874285989198075465, guid: ed2d079a9037c1f49a2576edee7fd7d5,
+        type: 3}
+      propertyPath: m_heighlightColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3716065607004849827, guid: ed2d079a9037c1f49a2576edee7fd7d5,
         type: 3}
       propertyPath: m_Text
@@ -6619,6 +6629,12 @@ PrefabInstance:
       propertyPath: m_Color.b
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3716065607643723319, guid: ed2d079a9037c1f49a2576edee7fd7d5,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 44e4da6c31cd8884588e8750a65ce9bc,
+        type: 3}
     - target: {fileID: 3716065608359542664, guid: ed2d079a9037c1f49a2576edee7fd7d5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6812,13 +6828,13 @@ PrefabInstance:
     - target: {fileID: 3716065608359542678, guid: ed2d079a9037c1f49a2576edee7fd7d5,
         type: 3}
       propertyPath: m_PixelsPerUnitMultiplier
-      value: 3
+      value: 6.45
       objectReference: {fileID: 0}
     - target: {fileID: 3716065608359542678, guid: ed2d079a9037c1f49a2576edee7fd7d5,
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 5be4caeaa1d010d4fb0b8258a1470a39,
+      objectReference: {fileID: 21300000, guid: 276e1a6869c175949a787ad5df47fd28,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed2d079a9037c1f49a2576edee7fd7d5, type: 3}
