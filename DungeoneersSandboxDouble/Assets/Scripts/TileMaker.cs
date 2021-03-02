@@ -407,7 +407,7 @@ public class TileMaker : MonoBehaviour
             {
                 m_tileMaterial.mainTexture = new Texture2D(baseTile.width, baseTile.height);
                 ((Texture2D)(m_tileMaterial.mainTexture)).SetPixels(Enumerable.Repeat(Color.clear, ((Texture2D)(m_tileMaterial.mainTexture)).GetPixels().Length).ToArray());
-                ((Texture2D)(m_tileMaterial.mainTexture)).alphaIsTransparency = true;
+                //((Texture2D)(m_tileMaterial.mainTexture)).alphaIsTransparency = true;
                 ((Texture2D)(m_tileMaterial.mainTexture)).filterMode = FilterMode.Bilinear;
                 ((Texture2D)(m_tileMaterial.mainTexture)).wrapMode = TextureWrapMode.Repeat;
                 FullTexture.sprite = Sprite.Create(((Texture2D)(m_tileMaterial.mainTexture)), new Rect(0.0f, 0.0f, m_tileMaterial.mainTexture.width, m_tileMaterial.mainTexture.height), Vector2.zero);
