@@ -5277,7 +5277,7 @@ PrefabInstance:
     - target: {fileID: 5244414893252154681, guid: 9ae026f05b0049f45ae7a749c773348d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: StudioMenu
+      value: Main
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ae026f05b0049f45ae7a749c773348d, type: 3}
