@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 using UnityEngine;
 
 public class Wall : MonoBehaviour
@@ -106,7 +108,7 @@ public class Wall : MonoBehaviour
         m_originCenter.Left.Right = m_originCenter;
         m_originCenter.Left.BottomRight = m_originCenter.Bottom;
         m_originCenter.Left.Bottom = m_originCenter.BottomLeft;
-        GenerateOrigin();
+        //GenerateOrigin();
     }
 
     // Update is called once per frame
@@ -117,38 +119,41 @@ public class Wall : MonoBehaviour
 
     public void GenerateOrigin()
 	{
-        m_originCenter.slice = Instantiate(m_slices[(int)TileScetion.Center], this.transform);
-        m_originCenter.TopLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.TopRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.TopRight.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
-        m_originCenter.BottomRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform); 
-        m_originCenter.BottomRight.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
-        m_originCenter.BottomLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
-        m_originCenter.BottomLeft.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
-        m_originCenter.Top.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Right.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Right.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
-        m_originCenter.Bottom.slice  = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
-        m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
-        m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+        if (m_slices[(int)TileScetion.Center] != null && m_slices[(int)TileScetion.Corner] != null && m_slices[(int)TileScetion.Edge] != null)
+        {
+            m_originCenter.slice = Instantiate(m_slices[(int)TileScetion.Center], this.transform);
+            m_originCenter.TopLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+            m_originCenter.TopRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+            m_originCenter.TopRight.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+            m_originCenter.BottomRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+            m_originCenter.BottomRight.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+            m_originCenter.BottomLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+            m_originCenter.BottomLeft.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+            m_originCenter.Top.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+            m_originCenter.Right.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+            m_originCenter.Right.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+            m_originCenter.Bottom.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+            m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+            m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+            m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
 
-        m_originCenter.slice.name = "Center";
-        m_originCenter.TopLeft.slice.name = "TopLeft";
-        m_originCenter.TopRight.slice.name = "TopRight";
-        m_originCenter.BottomRight.slice.name = "BottomRight";
-        m_originCenter.BottomLeft.slice.name =  "BottomLeft";
-        m_originCenter.Top.slice.name = "Top";
-        m_originCenter.Right.slice.name = "Right";
-        m_originCenter.Bottom.slice.name = "Bottom";
-        m_originCenter.Left.slice.name = "Left";
+            m_originCenter.slice.name = "Center";
+            m_originCenter.TopLeft.slice.name = "TopLeft";
+            m_originCenter.TopRight.slice.name = "TopRight";
+            m_originCenter.BottomRight.slice.name = "BottomRight";
+            m_originCenter.BottomLeft.slice.name = "BottomLeft";
+            m_originCenter.Top.slice.name = "Top";
+            m_originCenter.Right.slice.name = "Right";
+            m_originCenter.Bottom.slice.name = "Bottom";
+            m_originCenter.Left.slice.name = "Left";
 
-        for (int i = 0; i < transform.childCount; i++)
-		{
-            transform.GetChild(i).transform.localPosition = new Vector3(m_positionOffset.x, m_positionOffset.y, m_positionOffset.z);
-            transform.GetChild(i).transform.localScale = new Vector3(m_scaleOffset.x, m_scaleOffset.y, m_scaleOffset.z);
-            transform.GetChild(i).transform.Rotate(m_rotationOffset.x,m_rotationOffset.y,m_rotationOffset.z, Space.Self);
-		}
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).transform.localPosition = new Vector3(m_positionOffset.x, m_positionOffset.y, m_positionOffset.z);
+                transform.GetChild(i).transform.localScale = new Vector3(m_scaleOffset.x, m_scaleOffset.y, m_scaleOffset.z);
+                transform.GetChild(i).transform.Rotate(m_rotationOffset.x, m_rotationOffset.y, m_rotationOffset.z, Space.Self);
+            }
+        }
 	}
 
 	public void ResetWall()
@@ -220,5 +225,94 @@ public class Wall : MonoBehaviour
             m_originCenter.BottomLeft.slice.transform.position = new Vector3(m_originCenter.BottomLeft.slice.transform.position.x, m_originCenter.BottomLeft.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
             m_originCenter.BottomRight.slice.transform.position = new Vector3(m_originCenter.BottomRight.slice.transform.position.x, m_originCenter.BottomRight.slice.transform.position.y, m_originCenter.slice.transform.position.z - TB_distance);
         }
+    }
+
+    public void SetSlice(int i)
+	{
+        string file_path = string.Empty;
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog openFileDialog1 = new OpenFileDialog();
+        openFileDialog1.InitialDirectory = "C:/Users/" + Environment.UserName + "/";
+        openFileDialog1.Filter = "Wavefront files (*.obj)|*.obj|FBX files (*.fbx)|*.fbx|All files (*.*)|*.*";
+        openFileDialog1.FilterIndex = 0;
+        openFileDialog1.RestoreDirectory = false;
+
+        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            file_path = openFileDialog1.FileName;
+        }
+#endif
+        if (file_path != string.Empty && file_path != "")
+        {
+            switch (Path.GetExtension(file_path))
+            {
+                case ".obj":
+                    {
+                        OBJImporter.OBJ newOBJ = new OBJImporter.OBJ();
+                        OBJImporter.LoadOBJ(file_path, out newOBJ);
+                        MeshFilter filter;
+                        MeshRenderer renderer;
+                        MeshCollider collider;
+                        if (m_slices[i] == null)
+                        {
+                            m_slices[i] = new GameObject();
+                            filter = m_slices[i].AddComponent<MeshFilter>();
+                            renderer = m_slices[i].AddComponent<MeshRenderer>();
+                            collider = m_slices[i].AddComponent<MeshCollider>();
+                        }
+						else
+						{
+                            filter = m_slices[i].GetComponent<MeshFilter>();
+                            renderer = m_slices[i].GetComponent<MeshRenderer>();
+                            collider = m_slices[i].GetComponent<MeshCollider>();
+                        }
+                        //m_slices[i].transform.parent = this.transform;
+                        Mesh mesh = new Mesh();
+                        OBJImporter.OBJToMesh(newOBJ, out mesh);
+                        Material[] materials;
+                        OBJImporter.LoadMaterials(file_path, out materials);
+                        filter.mesh = mesh;
+                        collider.sharedMesh = mesh;
+                        renderer.materials = materials;
+                    }
+                    break;
+                case ".fbx":
+                    {
+                        FBXImporter.FBX newFBX;
+                        FBXImporter.LoadFBX(file_path, out newFBX);
+                        MeshFilter filter;
+                        MeshRenderer renderer;
+                        MeshCollider collider;
+                        if (m_slices[i] == null)
+                        {
+                            m_slices[i] = new GameObject();
+                            filter = m_slices[i].AddComponent<MeshFilter>();
+                            renderer = m_slices[i].AddComponent<MeshRenderer>();
+                            collider = m_slices[i].AddComponent<MeshCollider>();
+                        }
+                        else
+                        {
+                            filter = m_slices[i].GetComponent<MeshFilter>();
+                            renderer = m_slices[i].GetComponent<MeshRenderer>();
+                            collider = m_slices[i].GetComponent<MeshCollider>();
+                        }
+                        //newTile.transform.parent = m_tile.transform;
+                        //newTile.name = Path.GetFileName(file_path);
+                        Mesh _mesh;
+                        FBXImporter.FBXToMesh(newFBX, out _mesh);
+                        Material[] materials;
+                        FBXImporter.LoadMaterials(newFBX, out materials);
+                        filter.mesh = _mesh;
+                        collider.sharedMesh = _mesh;
+                        renderer.materials = materials;
+                    }
+                    break;
+                default:
+                    //return false;
+                    break;
+            }
+
+        }
+        //return true;
     }
 }
