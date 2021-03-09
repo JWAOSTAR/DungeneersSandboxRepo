@@ -43,7 +43,9 @@ public class Wall : MonoBehaviour
     Vector3 m_scaleOffset;
     [SerializeField]
     float m_allowance;
-    
+
+    [HideInInspector]
+    public GameObject uploadStorage;
     public Slice OriginCenter { get { return m_originCenter; } }
 
 
@@ -60,6 +62,9 @@ public class Wall : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        uploadStorage = GameObject.Find("HiddenObject");
+        uploadStorage.hideFlags = HideFlags.HideInHierarchy;
+
         m_originCenter.sliceNeighbors[0] = new Slice();
         m_originCenter.sliceNeighbors[1] = new Slice();
         m_originCenter.sliceNeighbors[2] = new Slice();
@@ -122,20 +127,38 @@ public class Wall : MonoBehaviour
         if (m_slices[(int)TileScetion.Center] != null && m_slices[(int)TileScetion.Corner] != null && m_slices[(int)TileScetion.Edge] != null)
         {
             m_originCenter.slice = Instantiate(m_slices[(int)TileScetion.Center], this.transform);
+            m_originCenter.slice.SetActive(true);
+
             m_originCenter.TopLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
+            m_originCenter.TopLeft.slice.SetActive(true);
+
             m_originCenter.TopRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
             m_originCenter.TopRight.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+            m_originCenter.TopRight.slice.SetActive(true);
+
             m_originCenter.BottomRight.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
             m_originCenter.BottomRight.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+            m_originCenter.BottomRight.slice.SetActive(true);
+
             m_originCenter.BottomLeft.slice = Instantiate(m_slices[(int)TileScetion.Corner], this.transform);
             m_originCenter.BottomLeft.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+            m_originCenter.BottomLeft.slice.SetActive(true);
+
             m_originCenter.Top.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
+            m_originCenter.Top.slice.SetActive(true);
+
             m_originCenter.Right.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
             m_originCenter.Right.slice.transform.Rotate(0.0f, 90.0f, 0.0f, Space.World);
+            m_originCenter.Right.slice.SetActive(true);
+
             m_originCenter.Bottom.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
             m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
+            m_originCenter.TopRight.slice.SetActive(true);
+
             m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
             m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
+            m_originCenter.Left.slice.SetActive(true);
+
 
             m_originCenter.slice.name = "Center";
             m_originCenter.TopLeft.slice.name = "TopLeft";
@@ -256,6 +279,8 @@ public class Wall : MonoBehaviour
                         if (m_slices[i] == null)
                         {
                             m_slices[i] = new GameObject();
+                            m_slices[i].transform.parent = uploadStorage.transform;
+                            m_slices[i].SetActive(false);
                             filter = m_slices[i].AddComponent<MeshFilter>();
                             renderer = m_slices[i].AddComponent<MeshRenderer>();
                             collider = m_slices[i].AddComponent<MeshCollider>();
@@ -286,6 +311,8 @@ public class Wall : MonoBehaviour
                         if (m_slices[i] == null)
                         {
                             m_slices[i] = new GameObject();
+                            m_slices[i].transform.parent = uploadStorage.transform;
+                            m_slices[i].SetActive(false);
                             filter = m_slices[i].AddComponent<MeshFilter>();
                             renderer = m_slices[i].AddComponent<MeshRenderer>();
                             collider = m_slices[i].AddComponent<MeshCollider>();
@@ -296,16 +323,17 @@ public class Wall : MonoBehaviour
                             renderer = m_slices[i].GetComponent<MeshRenderer>();
                             collider = m_slices[i].GetComponent<MeshCollider>();
                         }
-                        //newTile.transform.parent = m_tile.transform;
-                        //newTile.name = Path.GetFileName(file_path);
-                        Mesh _mesh;
-                        FBXImporter.FBXToMesh(newFBX, out _mesh);
-                        Material[] materials;
-                        FBXImporter.LoadMaterials(newFBX, out materials);
-                        filter.mesh = _mesh;
-                        collider.sharedMesh = _mesh;
-                        renderer.materials = materials;
-                    }
+						//newTile.transform.parent = m_tile.transform;
+						//newTile.name = Path.GetFileName(file_path);
+						//FBXImporter.OutputFBXToFile(newFBX, "C:/Users/JWAOSTAR/Desktop/");
+						Mesh _mesh;
+						FBXImporter.FBXToMesh(newFBX, out _mesh);
+						Material[] materials;
+						FBXImporter.LoadMaterials(newFBX, out materials);
+						filter.mesh = _mesh;
+						collider.sharedMesh = _mesh;
+						renderer.materials = materials;
+					}
                     break;
                 default:
                     //return false;

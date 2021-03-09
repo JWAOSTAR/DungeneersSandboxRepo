@@ -556,8 +556,121 @@ public static class FBXImporter
 		{
 			return false;
 		}
-		Console.ReadLine();
+		//Console.ReadLine();
 		return true;
+	}
+
+	public static void OutputFBXToFile(FBX _fbx, string path)
+	{
+		StreamWriter file = File.CreateText(path + "output.txt");
+		file.WriteLine(PrintNode(_fbx.node));
+		file.Close();
+	}
+
+	static string PrintNode(Node _node, int tab = 0)
+	{
+		string str = string.Concat(Enumerable.Repeat("\t", tab)) + _node.Name + ": ";
+		if (_node.properties != null)
+		{
+			for (int i = 0; i < _node.properties.Length; i++)
+			{
+				switch (_node.properties[i].TypeCode)
+				{
+					case 'Y':
+						str += BitConverter.ToUInt16(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'C':
+						str += BitConverter.ToChar(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'I':
+						str += BitConverter.ToInt32(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'F':
+						str += BitConverter.ToSingle(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'D':
+						str += BitConverter.ToDouble(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'L':
+						str += BitConverter.ToInt64(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'f':
+						{
+							float[] _data = new float[_node.properties[i].Data.Length / sizeof(float)];
+							Buffer.BlockCopy(_node.properties[i].Data, 0, _data, 0, _node.properties[i].Data.Length);
+							for(int j = 0; j < _data.Length; j++)
+							{
+								str += _data[j] + ((j + 1 != _data.Length) ? ", " : "");
+							}
+						}
+						break;
+					case 'd':
+						{
+							double[] _data = new double[_node.properties[i].Data.Length / sizeof(double)];
+							Buffer.BlockCopy(_node.properties[i].Data, 0, _data, 0, _node.properties[i].Data.Length);
+							for (int j = 0; j < _data.Length; j++)
+							{
+								str += _data[j] + ((j + 1 != _data.Length) ? ", " : "");
+							}
+						}
+						break;
+					case 'l':
+						{
+							long[] _data = new long[_node.properties[i].Data.Length / sizeof(long)];
+							Buffer.BlockCopy(_node.properties[i].Data, 0, _data, 0, _node.properties[i].Data.Length);
+							for (int j = 0; j < _data.Length; j++)
+							{
+								str += _data[j] + ((j + 1 != _data.Length) ? ", " : "");
+							}
+						}
+						break;
+					case 'i':
+						{
+							int[] _data = new int[_node.properties[i].Data.Length / sizeof(int)];
+							Buffer.BlockCopy(_node.properties[i].Data, 0, _data, 0, _node.properties[i].Data.Length);
+							for (int j = 0; j < _data.Length; j++)
+							{
+								str += _data[j] + ((j + 1 != _data.Length) ? ", " : "");
+							}
+						}
+						break;
+					case 'b':
+						{
+							bool[] _data = new bool[_node.properties[i].Data.Length / sizeof(bool)];
+							Buffer.BlockCopy(_node.properties[i].Data, 0, _data, 0, _node.properties[i].Data.Length);
+							for (int j = 0; j < _data.Length; j++)
+							{
+								str += _data[j] + ((j + 1 != _data.Length) ? ", " : "");
+							}
+						}
+						break;
+					case 'S':
+						str += "\"" + Encoding.ASCII.GetString(_node.properties[i].Data) + "\"" + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+					case 'R':
+						str += BitConverter.ToInt32(_node.properties[i].Data, 0).ToString() + ((i + 1 != _node.properties.Length) ? ", " : "");
+						break;
+				}
+			}
+		}
+
+		if (_node.NestedNodes.Count > 0)
+		{
+			str += "{\n";
+			int n_node_index = 0;
+			while(!_node.NestedNodes[n_node_index].isNull)
+			{
+				str += PrintNode(_node.NestedNodes[n_node_index], tab + 1);
+				n_node_index++;
+			}
+			str += "\n" + string.Concat(Enumerable.Repeat("\t", tab)) + "}\n";
+		}
+		else
+		{
+			str += "\n";
+		}
+
+		return str;
 	}
 
 	public static bool FBXToMesh(FBX _fbx, out Mesh _mesh)
@@ -583,8 +696,10 @@ public static class FBXImporter
 
 		for (int k = 0; k < MeshNode.Count; k++) {
 			submeshStarts.Add(vertexIndices.Length);
-			if (ModelNode[k].NestedNodes.Find(n => n.Name == "Properties70").NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data).Contains("Translation")) != null) {
-				vertexTranslation.Add(new Vector3((float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[4].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[5].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[6].Data, 0)));
+			if (MeshNode.Count > 1 && ModelNode[k].NestedNodes.Find(n => n.Name == "Properties70").NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data).Contains("Translation")) != null) {
+				Node translationNode = ModelNode[k].NestedNodes.Find(n => n.Name == "Properties70").NestedNodes.Find(n => n.properties != null && Encoding.ASCII.GetString(n.properties[0].Data).Contains("Translation"));
+				//vertexTranslation.Add(new Vector3((float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[4].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[5].Data, 0), (float)BitConverter.ToDouble(ModelNode[k].NestedNodes[1].NestedNodes[4].properties[6].Data, 0)));
+				vertexTranslation.Add(new Vector3((float)BitConverter.ToDouble(translationNode.properties[4].Data, 0), (float)BitConverter.ToDouble(translationNode.properties[5].Data, 0), (float)BitConverter.ToDouble(translationNode.properties[6].Data, 0)));
 			}
 			else
 			{
