@@ -153,7 +153,7 @@ public class Wall : MonoBehaviour
 
             m_originCenter.Bottom.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
             m_originCenter.Bottom.slice.transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
-            m_originCenter.TopRight.slice.SetActive(true);
+            m_originCenter.Bottom.slice.SetActive(true);
 
             m_originCenter.Left.slice = Instantiate(m_slices[(int)TileScetion.Edge], this.transform);
             m_originCenter.Left.slice.transform.Rotate(0.0f, 270.0f, 0.0f, Space.World);
@@ -333,14 +333,70 @@ public class Wall : MonoBehaviour
 						filter.mesh = _mesh;
 						collider.sharedMesh = _mesh;
 						renderer.materials = materials;
-					}
+                    }
                     break;
                 default:
                     //return false;
                     break;
             }
+            WallTool t = GetComponentInParent<WallTool>();
+            switch ((TileScetion)i)
+			{
+                case TileScetion.Corner:
+                    t.CornerSubmit.Invoke();
+                    break;
+                case TileScetion.Center:
+                    t.CenterSubmit.Invoke();
+                    break;
+                case TileScetion.Edge:
+                    t.EdgeSubmit.Invoke();
+                    break;
+                case TileScetion.InnerCorner:
+                    t.InnerEdgeSubmit.Invoke();
+                    break;
+			}
 
         }
         //return true;
+    }
+
+    public void ApplyOffsets(Vector3 position, Vector3 rotation, Vector3 scalling)
+	{
+        m_positionOffset = position;
+        m_rotationOffset = rotation;
+        m_scaleOffset = scalling;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.localPosition = position;
+            transform.GetChild(i).transform.localScale = scalling;
+            transform.GetChild(i).transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+            //transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
+        }
+    }
+
+    public void ApplyPositionOffset(float x, float y, float z)
+	{
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.localPosition = new Vector3(x, y, z);
+        }
+    }
+
+    public void ApplyRotationOffset(float x, float y, float z)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.rotation = Quaternion.Euler(x, y, z);
+            //transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
+        }
+    }
+
+    public void ApplyScallingOffset(float x, float y, float z)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.localScale = new Vector3(x, y, z);
+            //transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
+        }
     }
 }

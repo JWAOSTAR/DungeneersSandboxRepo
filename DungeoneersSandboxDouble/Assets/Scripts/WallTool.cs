@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class WallTool : MonoBehaviour
 {
@@ -15,6 +17,10 @@ public class WallTool : MonoBehaviour
         East,
         
 	}
+
+    [Serializable]
+    public class SubmitEvent : UnityEvent { }
+
     Wall m_currentWall = null;
     Transform m_currentPivot = null;
     Transform m_currentHandle = null;
@@ -22,6 +28,15 @@ public class WallTool : MonoBehaviour
     float dot;
     [SerializeField]
     GameObject[] m_handles = new GameObject[5];
+
+    [Header("Importer")]
+    [Space]
+    [SerializeField]
+    GameObject importer;
+    public SubmitEvent CornerSubmit = new SubmitEvent();
+    public SubmitEvent CenterSubmit = new SubmitEvent();
+    public SubmitEvent EdgeSubmit = new SubmitEvent();
+    public SubmitEvent InnerEdgeSubmit = new SubmitEvent();
 
     //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
@@ -36,7 +51,11 @@ public class WallTool : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        void textColor(int i) { importer.transform.GetChild(i*2).GetChild(0).GetComponent<Text>().color = Color.green; }
+        CornerSubmit.AddListener(delegate { textColor(0); });
+        EdgeSubmit.AddListener(delegate { textColor(1); });
+        CenterSubmit.AddListener(delegate { textColor(2); });
+        InnerEdgeSubmit.AddListener(delegate { textColor(3); });
     }
 
     // Update is called once per frame
