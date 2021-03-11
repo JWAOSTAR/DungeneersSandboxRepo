@@ -51,7 +51,7 @@ public class WallTool : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        void textColor(int i) { importer.transform.GetChild(i*2).GetChild(0).GetComponent<Text>().color = Color.green; }
+        void textColor(int i) { importer.transform.GetChild(i*3).GetChild(0).GetComponent<Text>().color = Color.green; }
         CornerSubmit.AddListener(delegate { textColor(0); });
         EdgeSubmit.AddListener(delegate { textColor(1); });
         CenterSubmit.AddListener(delegate { textColor(2); });

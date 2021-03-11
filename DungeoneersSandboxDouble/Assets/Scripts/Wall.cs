@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Wall : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class Wall : MonoBehaviour
     public GameObject uploadStorage;
     public Slice OriginCenter { get { return m_originCenter; } }
 
+    InputField[] offsetInputs = new InputField[9];
+
 
     //This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only)
     private void OnValidate()
@@ -64,6 +67,22 @@ public class Wall : MonoBehaviour
     {
         uploadStorage = GameObject.Find("HiddenObject");
         uploadStorage.hideFlags = HideFlags.HideInHierarchy;
+
+        offsetInputs[0] = GameObject.Find("Position Offset X").GetComponentInChildren<InputField>();
+        offsetInputs[1] = GameObject.Find("Position Offset Y").GetComponentInChildren<InputField>();
+        offsetInputs[2] = GameObject.Find("Position Offset Z").GetComponentInChildren<InputField>();
+
+        offsetInputs[3] = GameObject.Find("Rotation Offset X").GetComponentInChildren<InputField>();
+        offsetInputs[4] = GameObject.Find("Rotation Offset Y").GetComponentInChildren<InputField>();
+        offsetInputs[5] = GameObject.Find("Rotation Offset Z").GetComponentInChildren<InputField>();
+
+        offsetInputs[6] = GameObject.Find("Scalling Offset X").GetComponentInChildren<InputField>();
+        offsetInputs[7] = GameObject.Find("Scalling Offset Y").GetComponentInChildren<InputField>();
+        offsetInputs[8] = GameObject.Find("Scalling Offset Z").GetComponentInChildren<InputField>();
+
+        offsetInputs[0].transform.parent.parent.gameObject.SetActive(false);
+
+        m_scaleOffset = Vector3.one;
 
         m_originCenter.sliceNeighbors[0] = new Slice();
         m_originCenter.sliceNeighbors[1] = new Slice();
@@ -360,6 +379,11 @@ public class Wall : MonoBehaviour
         //return true;
     }
 
+    public void ApplyOffsets()
+	{
+        ApplyOffsets(new Vector3(float.Parse(offsetInputs[0].text), float.Parse(offsetInputs[1].text), float.Parse(offsetInputs[2].text)), new Vector3(float.Parse(offsetInputs[3].text), float.Parse(offsetInputs[4].text), float.Parse(offsetInputs[5].text)), new Vector3(float.Parse(offsetInputs[6].text), float.Parse(offsetInputs[7].text), float.Parse(offsetInputs[8].text)));
+	}
+
     public void ApplyOffsets(Vector3 position, Vector3 rotation, Vector3 scalling)
 	{
         m_positionOffset = position;
@@ -369,13 +393,14 @@ public class Wall : MonoBehaviour
         {
             transform.GetChild(i).transform.localPosition = position;
             transform.GetChild(i).transform.localScale = scalling;
-            transform.GetChild(i).transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-            //transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
+            //transform.GetChild(i).transform.rotation = Quaternion.Euler(rotation.x + transform.GetChild(i).transform.rotation.x, rotation.y + transform.GetChild(i).transform.rotation.y, rotation.z + transform.GetChild(i).transform.rotation.z);
+            transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
         }
     }
 
     public void ApplyPositionOffset(float x, float y, float z)
 	{
+        m_positionOffset = new Vector3(x, y, z);
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).transform.localPosition = new Vector3(x, y, z);
@@ -384,15 +409,17 @@ public class Wall : MonoBehaviour
 
     public void ApplyRotationOffset(float x, float y, float z)
     {
+        m_rotationOffset = new Vector3(x, y, z);
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).transform.rotation = Quaternion.Euler(x, y, z);
-            //transform.GetChild(i).transform.Rotate(rotation.x, rotation.y, rotation.z, Space.Self);
+            //transform.GetChild(i).transform.rotation = Quaternion.Euler(transform.GetChild(i).transform.rotation.x + x, transform.GetChild(i).transform.rotation.y + y, transform.GetChild(i).transform.rotation.z + z);
+            transform.GetChild(i).transform.Rotate(x, y, z, Space.Self);
         }
     }
 
     public void ApplyScallingOffset(float x, float y, float z)
     {
+        m_scaleOffset = new Vector3(x, y, z);
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).transform.localScale = new Vector3(x, y, z);
