@@ -49,12 +49,16 @@ public class Dice : MonoBehaviour
     [SerializeField]
     DiceEvent m_onStop = new DiceEvent();
     [SerializeField]
+    DiceEvent m_onCollision = new DiceEvent();
+    [SerializeField]
     DiceEvent m_onDiceDelete = new DiceEvent();
     [SerializeField]
     DiceEvent m_onMouseClick = new DiceEvent();
     [SerializeField]
     GameObject m_globalDiceUI;
     Transform m_diceUI;
+
+    bool m_mouseOver = false;
 
     // Start is called before the first frame update
     void Start()
@@ -81,6 +85,28 @@ public class Dice : MonoBehaviour
             m_isMoving = false;
             onStop();
         }
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, float.MaxValue))
+        {
+            if(hit.transform.gameObject == this.gameObject && Input.GetMouseButtonDown(0))
+			{
+                m_diceUI.GetChild(0).gameObject.SetActive(false);
+                //m_diceUI.GetChild(1).gameObject.SetActive(true);
+                FindObjectOfType<ContextMenu>().ShowMenu();
+                //m_globalDiceUI.SetActive(true);
+                m_globalDiceUI.GetComponent<DiceMenu>().SetDie(this);
+                m_mouseOver = true;
+            }
+        }
+        else if(m_mouseOver && hit.transform.gameObject != this.gameObject)
+		{
+            m_diceUI.gameObject.SetActive(m_diceUI.GetChild(1).gameObject.activeSelf);
+            m_mouseOver = false;
+        }
+
+
         m_diceUI.LookAt(GameObject.Find("Main Camera").transform);
         m_diceUI.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
     }
@@ -140,22 +166,23 @@ public class Dice : MonoBehaviour
         m_diceUI.gameObject.SetActive(true);
     }
 
-    //OnMouseOver is called every frame while the mouse is over the GUIElement or Colider
-    private void OnMouseOver()
-    {
-        Debug.Log("Mouse is over " + gameObject.name);
-        if(Input.GetMouseButtonDown(0))
-        {
-            m_diceUI.GetChild(0).gameObject.SetActive(false);
-            //m_diceUI.GetChild(1).gameObject.SetActive(true);
-            m_globalDiceUI.SetActive(true);
-            m_globalDiceUI.GetComponent<DiceMenu>().SetDie(this);
+	//OnMouseOver is called every frame while the mouse is over the GUIElement or Colider
+	private void OnMouseOver()
+	{
+		Debug.Log("Mouse is over " + gameObject.name);
+		if (Input.GetMouseButtonDown(0))
+		{
+			m_diceUI.GetChild(0).gameObject.SetActive(false);
+			//m_diceUI.GetChild(1).gameObject.SetActive(true);
+			FindObjectOfType<ContextMenu>().ShowMenu();
+			//m_globalDiceUI.SetActive(true);
+			m_globalDiceUI.GetComponent<DiceMenu>().SetDie(this);
 
-        }
-    }
+		}
+	}
 
-    //OnMouseExit is called when the mouse is no longer over the GUIElement or Colider
-    private void OnMouseExit()
+	//OnMouseExit is called when the mouse is no longer over the GUIElement or Colider
+	private void OnMouseExit()
     {
         Debug.Log("Mouse exit " + gameObject.name);
         m_diceUI.gameObject.SetActive(m_diceUI.GetChild(1).gameObject.activeSelf);
@@ -190,5 +217,10 @@ public class Dice : MonoBehaviour
         m_diceUI.SetPositionAndRotation(topNum.position + Vector3.up*0.236f, transform.rotation);
         m_diceUI.LookAt(GameObject.Find("Main Camera").transform);
         m_diceUI.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+    }
+
+	private void OnCollisionEnter(Collision collision)
+	{
+        m_onCollision.Invoke();
     }
 }

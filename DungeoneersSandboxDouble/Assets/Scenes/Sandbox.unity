@@ -1154,7 +1154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &271229235
 Transform:
   m_ObjectHideFlags: 0
@@ -6158,7 +6158,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1618806481
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7326,7 +7326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1957870190
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8490,11 +8490,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 882776827}
     m_Modifications:
-    - target: {fileID: 295928304849783536, guid: d66a2bdee2a675442b907c4a4bc2784b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 295928305732243132, guid: d66a2bdee2a675442b907c4a4bc2784b,
         type: 3}
       propertyPath: m_Name
@@ -8604,21 +8599,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 295928305732243135, guid: d66a2bdee2a675442b907c4a4bc2784b,
-        type: 3}
-      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 287251472}
-    - target: {fileID: 295928305732243135, guid: d66a2bdee2a675442b907c4a4bc2784b,
-        type: 3}
-      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetSlice
-      objectReference: {fileID: 0}
-    - target: {fileID: 295928305732243135, guid: d66a2bdee2a675442b907c4a4bc2784b,
-        type: 3}
-      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d66a2bdee2a675442b907c4a4bc2784b, type: 3}

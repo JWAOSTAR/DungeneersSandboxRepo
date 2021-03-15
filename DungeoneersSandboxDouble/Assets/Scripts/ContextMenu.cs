@@ -38,7 +38,9 @@ public class ContextMenu : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        for(int i = 0; i < m_items.Length; i++)
+        GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<RectTransform>().sizeDelta.x, (m_items.Length - 1) * m_baseButton.GetComponent<RectTransform>().rect.height);
+
+        for (int i = 0; i < m_items.Length; i++)
 		{
             m_items[i].button = Instantiate(m_baseButton.gameObject, this.transform).GetComponent<Button>();
             m_items[i].button.transform.GetChild(0).GetComponent<Text>().text = m_items[i].text;
@@ -53,11 +55,13 @@ public class ContextMenu : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-  //      if(Input.GetMouseButtonDown(1))
+        //Debug.Log("(" + Input.mousePosition.x.ToString("0.00") + ", " + Input.mousePosition.y.ToString("0.00") + ")");
+
+  //      if (Input.GetMouseButtonDown(1))
 		//{
-  //          ShowMenu();
+		//	ShowMenu();
 		//}
-        if(Input.GetKeyDown(KeyCode.Escape))
+		if (Input.GetKeyDown(KeyCode.Escape))
 		{
             HideMenu();
 		}
@@ -66,6 +70,22 @@ public class ContextMenu : MonoBehaviour
 	public void ShowMenu()
 	{
         //gameObject.SetActive(true);
+        if ((Input.mousePosition.x > Screen.width / 2) && (Input.mousePosition.y > Screen.height / 2))
+        {
+            GetComponent<RectTransform>().anchorMax = GetComponent<RectTransform>().anchorMin = GetComponent<RectTransform>().pivot = new Vector2(1, 1);
+        }
+        else if ((Input.mousePosition.x > Screen.width / 2) && (Input.mousePosition.y < Screen.height / 2))
+        {
+            GetComponent<RectTransform>().anchorMax = GetComponent<RectTransform>().anchorMin = GetComponent<RectTransform>().pivot = new Vector2(1, 0);
+        }
+        else if ((Input.mousePosition.x < Screen.width / 2) && (Input.mousePosition.y < Screen.height / 2))
+        {
+            GetComponent<RectTransform>().anchorMax = GetComponent<RectTransform>().anchorMin = GetComponent<RectTransform>().pivot = new Vector2(0, 0);
+        }
+        else if ((Input.mousePosition.x < Screen.width / 2) && (Input.mousePosition.y > Screen.height / 2))
+        {
+            GetComponent<RectTransform>().anchorMax = GetComponent<RectTransform>().anchorMin = GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+        }
         visible = true;
         for (int j = 1; j < transform.childCount; j++)
         {
