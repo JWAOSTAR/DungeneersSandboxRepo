@@ -88,9 +88,10 @@ public class Dice : MonoBehaviour
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, float.MaxValue))
+        Debug.DrawRay(ray.origin, ray.direction, Color.white);
+        if (Input.GetMouseButtonDown(0))
         {
-            if(hit.transform.gameObject == this.gameObject && Input.GetMouseButtonDown(0))
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity) && hit.collider.name == this.gameObject.name)
 			{
                 m_diceUI.GetChild(0).gameObject.SetActive(false);
                 //m_diceUI.GetChild(1).gameObject.SetActive(true);
@@ -100,7 +101,7 @@ public class Dice : MonoBehaviour
                 m_mouseOver = true;
             }
         }
-        else if(m_mouseOver && hit.transform.gameObject != this.gameObject)
+        if(m_mouseOver /*&& hit.transform.gameObject != this.gameObject*/)
 		{
             m_diceUI.gameObject.SetActive(m_diceUI.GetChild(1).gameObject.activeSelf);
             m_mouseOver = false;
