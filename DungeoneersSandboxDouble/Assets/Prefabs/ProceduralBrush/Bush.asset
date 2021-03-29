@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb05c1e6f550a0c49be0f1e6df46b67c, type: 3}
+  m_Name: Bush
+  m_EditorClassIdentifier: 
+  singleObject: 0
+  objectOptions:
+  - {fileID: 6216176869134795448, guid: 390cb6423a5f75d44a0d252046610b5f, type: 3}
+  - {fileID: 1352533516705711452, guid: dd5b49e6adddb6e45961b98f1f04321a, type: 3}
+  - {fileID: 4052239329497934788, guid: 1b1cf2c549ad35b43b8e5f56c3b5cea1, type: 3}
+  materialOptions: []
+  tileVolume: 1
+  varientHeight: 0
+  height: 1
+  singleColor: 1
+  tileColors:
+  - {r: 0, g: 0, b: 0, a: 0}
+  tileTexture: {fileID: 0}
+  tileNormal: {fileID: 0}
+  tileAmbientOcclusion: {fileID: 0}
