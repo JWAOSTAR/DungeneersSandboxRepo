@@ -22,6 +22,4 @@ MonoBehaviour:
   singleColor: 1
   tileColors:
   - {r: 0, g: 0, b: 0, a: 0}
-  tileTexture: {fileID: 0}
-  tileNormal: {fileID: 0}
-  tileAmbientOcclusion: {fileID: 0}
+  tileMaterial: {fileID: 2100000, guid: e135d08c72733dc478ec80059d25c684, type: 2}

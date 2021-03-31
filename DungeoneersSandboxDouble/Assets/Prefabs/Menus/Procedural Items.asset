@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c777b9493e36c174ca786ecff018bdd5, type: 3}
+  m_Name: Procedural Items
+  m_EditorClassIdentifier: 
+  itmes:
+  - text: Bush
+    item: {fileID: 11400000, guid: 43b193a9875e04043879ddfb53f8ca17, type: 2}
+  - text: Grass
+    item: {fileID: 11400000, guid: b3eaa3a6b56d0564bbc9e93917823dcd, type: 2}
+  - text: Forest Tree
+    item: {fileID: 11400000, guid: acb7f0e0c90b3c8478e50352449129ff, type: 2}
+  - text: Pine Tree
+    item: {fileID: 11400000, guid: 37ecb23637cec284090257fef983b48b, type: 2}
+  - text: Door
+    item: {fileID: 11400000, guid: 171dd0f8184d14141a885971cbf2d474, type: 2}
+  - text: Pillar
+    item: {fileID: 11400000, guid: 1402db7e85b21a5448a361fcb1f31ebc, type: 2}
+  - text: Stair_0
+    item: {fileID: 11400000, guid: 27614b33fa31f5e499fdfb1028c207cc, type: 2}
+  - text: Stair_1
+    item: {fileID: 11400000, guid: b2a1447c22ef70d45a1c3bba1926c0bd, type: 2}
+  - text: Stairs_0
+    item: {fileID: 11400000, guid: c83658095ed7b6b47aef0c3c48f56ae8, type: 2}
+  - text: Stairs_1
+    item: {fileID: 11400000, guid: c83658095ed7b6b47aef0c3c48f56ae8, type: 2}

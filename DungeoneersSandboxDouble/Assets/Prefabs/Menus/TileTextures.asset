@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c777b9493e36c174ca786ecff018bdd5, type: 3}
+  m_Name: TileTextures
+  m_EditorClassIdentifier: 
+  itmes:
+  - text: Wood
+    item: {fileID: 2100000, guid: e135d08c72733dc478ec80059d25c684, type: 2}
+  - text: Cobblestone
+    item: {fileID: 2100000, guid: 48f847b62ee806c4ba4911d33d7dbeac, type: 2}

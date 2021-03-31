@@ -23,7 +23,5 @@ MonoBehaviour:
   height: 1
   singleColor: 1
   tileColors:
-  - {r: 0, g: 0, b: 0, a: 0}
-  tileTexture: {fileID: 0}
-  tileNormal: {fileID: 0}
-  tileAmbientOcclusion: {fileID: 0}
+  - {r: 0, g: 0.62352943, b: 0, a: 1}
+  tileMaterial: {fileID: 0}

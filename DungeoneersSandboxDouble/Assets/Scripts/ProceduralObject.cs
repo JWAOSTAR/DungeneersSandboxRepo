@@ -25,9 +25,7 @@ public class ProceduralObject : ScriptableObject
 	bool singleColor = true;
 	public Color[] tileColors = new Color[1];
 	[Space]
-	public Texture2D tileTexture;
-	public Texture2D tileNormal;
-	public Texture2D tileAmbientOcclusion;
+	public Material tileMaterial;
 
 	private void OnValidate()
 	{
