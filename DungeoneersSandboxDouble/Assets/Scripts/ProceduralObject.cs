@@ -8,7 +8,7 @@ public class ProceduralObject : ScriptableObject
 {
 	[SerializeField]
 	bool singleObject = false;
-	public GameObject[] objectOptions;
+	GameObject[] objectOptions;
 	[SerializeField]
 	Material[] materialOptions;
 	[Space]
@@ -26,6 +26,8 @@ public class ProceduralObject : ScriptableObject
 	public Color[] tileColors = new Color[1];
 	[Space]
 	public Material tileMaterial;
+
+	public bool SingleColor { get { return singleColor; } }
 
 	private void OnValidate()
 	{
@@ -46,5 +48,10 @@ public class ProceduralObject : ScriptableObject
 			Array.Resize(ref objectOptions, 1);
 			varientHeight = false;
 		}
+	}
+
+	public GameObject GetModel()
+	{
+		return objectOptions[UnityEngine.Random.Range(0,objectOptions.Length)];
 	}
 }

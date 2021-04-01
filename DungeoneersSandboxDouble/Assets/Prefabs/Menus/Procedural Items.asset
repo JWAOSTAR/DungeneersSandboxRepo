@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c777b9493e36c174ca786ecff018bdd5, type: 3}
   m_Name: Procedural Items
   m_EditorClassIdentifier: 
-  itmes:
+  items:
   - text: Bush
     item: {fileID: 11400000, guid: 43b193a9875e04043879ddfb53f8ca17, type: 2}
   - text: Grass
@@ -21,10 +21,6 @@ MonoBehaviour:
     item: {fileID: 11400000, guid: acb7f0e0c90b3c8478e50352449129ff, type: 2}
   - text: Pine Tree
     item: {fileID: 11400000, guid: 37ecb23637cec284090257fef983b48b, type: 2}
-  - text: Door
-    item: {fileID: 11400000, guid: 171dd0f8184d14141a885971cbf2d474, type: 2}
-  - text: Pillar
-    item: {fileID: 11400000, guid: 1402db7e85b21a5448a361fcb1f31ebc, type: 2}
   - text: Stair_0
     item: {fileID: 11400000, guid: 27614b33fa31f5e499fdfb1028c207cc, type: 2}
   - text: Stair_1
@@ -32,4 +28,11 @@ MonoBehaviour:
   - text: Stairs_0
     item: {fileID: 11400000, guid: c83658095ed7b6b47aef0c3c48f56ae8, type: 2}
   - text: Stairs_1
-    item: {fileID: 11400000, guid: c83658095ed7b6b47aef0c3c48f56ae8, type: 2}
+    item: {fileID: 11400000, guid: 15a11f7502aa3b8408ca10dc33eb3ddb, type: 2}
+  - text: Door
+    item: {fileID: 11400000, guid: 171dd0f8184d14141a885971cbf2d474, type: 2}
+  - text: Pillar
+    item: {fileID: 11400000, guid: 1402db7e85b21a5448a361fcb1f31ebc, type: 2}
+  onInvoke:
+    m_PersistentCalls:
+      m_Calls: []

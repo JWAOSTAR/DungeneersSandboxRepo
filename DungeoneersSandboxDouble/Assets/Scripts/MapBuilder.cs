@@ -51,11 +51,18 @@ public class MapBuilder : MonoBehaviour
     List<Light> m_lights = new List<Light>();
 
     [SerializeField]
+    ProceduralBrush m_proceduralBrush;
+
+    [SerializeField]
     ContextMenu m_generalContextMenu;
     [SerializeField]
     ContextMenu m_tileContextMenu;
     [SerializeField]
     ContextMenu m_floorContextMenu;
+
+    [SerializeField]
+    Menu[] m_menues;
+
 
     Tile[,,] m_map;
     MAP_TOOLS currentTool = MAP_TOOLS.TILE_SELECT;
@@ -138,6 +145,8 @@ public class MapBuilder : MonoBehaviour
         m_width = 1;
         m_height = 1;
         m_level = 1;
+        m_menues[0].onInvoke.AddListener(AddProceduralItem);
+        m_menues[1].onInvoke.AddListener(SetTileTexture);
     }
 
     // Update is called once per frame
@@ -398,6 +407,55 @@ public class MapBuilder : MonoBehaviour
         m_lights.Last().transform.position = new Vector3(float.Parse(m_lightInputs[0].text), float.Parse(m_lightInputs[1].text), float.Parse(m_lightInputs[2].text));
         m_lights.Last().gameObject.SetActive(true);
 
+    }
+
+    public void SetTileTexture(UnityEngine.Object _mat)
+	{
+        for(int i = 0; i < m_selected.Count; i++)
+		{
+            MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponent<MeshRenderer>();
+            for (int j = 0; j < mr.materials.Length; j++)
+			{
+                for(int k = 0; k < mr.materials.Length; k++)
+				{
+                    mr.materials[i] = (Material)_mat;
+				}
+			}
+
+        }
+	}
+
+    public void AddProceduralItem(UnityEngine.Object _item)
+	{
+        for (int i = 0; i < m_selected.Count; i++)
+        {
+            Instantiate(((ProceduralObject)_item).GetModel(), m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform);
+            
+            MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetChild(0).GetComponent<MeshRenderer>();
+            for (int j = 0; j < mr.materials.Length; j++)
+            {
+                if (((ProceduralObject)_item).SingleColor && ((ProceduralObject)_item).tileColors[0] != Color.clear)
+                {
+                    mr.materials[j].color = ((ProceduralObject)_item).tileColors[0];
+                }
+			    else if(((ProceduralObject)_item).tileColors[0] == Color.clear)
+			    {
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].color = Color.white;
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetTexture("_MainTex", ((ProceduralObject)_item).tileMaterial.mainTexture);
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetTexture("_BumpMap", ((ProceduralObject)_item).tileMaterial.GetTexture("_BumpMap"));
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetFloat("_BumpScale", ((ProceduralObject)_item).tileMaterial.GetFloat("_BumpScale"));
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetTexture("_OcclusionMap", ((ProceduralObject)_item).tileMaterial.GetTexture("_OcclusionMap"));
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetFloat("_OcclusionStrength", ((ProceduralObject)_item).tileMaterial.GetFloat("_OcclusionStrength"));
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetTexture("_ParallaxMap", ((ProceduralObject)_item).tileMaterial.GetTexture("_ParallaxMap"));
+                    m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.transform.GetComponentInChildren<MeshRenderer>().materials[j].SetFloat("_Parallax", ((ProceduralObject)_item).tileMaterial.GetFloat("_Parallax"));
+                }
+                else if(!((ProceduralObject)_item).SingleColor)
+			    {
+                    mr.materials[j].color = ((ProceduralObject)_item).tileColors[j];
+                }
+            }
+        }
+        DeselectAll();
     }
 
     /// <summary>
@@ -706,7 +764,7 @@ public class MapBuilder : MonoBehaviour
     /// <param name="shift">Boolean indicating if shift is being held</param>
     void Select(int l, int x = -1, int y = -1, bool shift = false)
 	{
-		if (currentTool == MAP_TOOLS.LEVEL_SELECT || currentTool == MAP_TOOLS.TILE_SELECT)
+		if (currentTool == MAP_TOOLS.LEVEL_SELECT || currentTool == MAP_TOOLS.TILE_SELECT && !m_proceduralBrush.ToolActive)
 		{
             if (!shift)
             {

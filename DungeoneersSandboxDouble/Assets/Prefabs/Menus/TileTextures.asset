@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c777b9493e36c174ca786ecff018bdd5, type: 3}
   m_Name: TileTextures
   m_EditorClassIdentifier: 
-  itmes:
-  - text: Wood
+  items:
+  - text: Wood Tile
     item: {fileID: 2100000, guid: e135d08c72733dc478ec80059d25c684, type: 2}
-  - text: Cobblestone
+  - text: Cobblestone Tile
     item: {fileID: 2100000, guid: 48f847b62ee806c4ba4911d33d7dbeac, type: 2}
