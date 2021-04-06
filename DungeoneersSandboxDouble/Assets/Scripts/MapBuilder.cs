@@ -49,7 +49,6 @@ public class MapBuilder : MonoBehaviour
     FreeMovingCameraController m_cameraController;
     [SerializeField]
     List<Light> m_lights = new List<Light>();
-
     [SerializeField]
     ProceduralBrush m_proceduralBrush;
 
@@ -69,6 +68,7 @@ public class MapBuilder : MonoBehaviour
     //public MAP_TOOLS CurrentTools { get { return currentTool; } set { currentTool = value; } }
     List<Vector3Int> m_selected = new List<Vector3Int>();
     List<Transform> m_selectedLights = new List<Transform>();
+    List<Transform> m_selectedProcedurals = new List<Transform>();
     List<ParticleSystem> m_particleEffects = new List<ParticleSystem>();
 
     int m_width;
@@ -206,10 +206,70 @@ public class MapBuilder : MonoBehaviour
                     {
                         avg += new Vector3(m_selectedLights[i].position.x, m_selectedLights[i].position.y, m_selectedLights[i].position.z);
                     }
-                    avg /= (float)m_selectedLights.Count;
+                    for(int p = 0; p < m_selectedProcedurals.Count; p++)
+					{
+                        avg += new Vector3(m_selectedProcedurals[p].position.x, m_selectedProcedurals[p].position.y, m_selectedProcedurals[p].position.z);
+                    }
+                    avg /= (float)m_selectedLights.Count + (float)m_selectedProcedurals.Count;
+                    m_transformTool.transform.position = avg;
+                }
+				else
+				{
+                    if (!m_transformTool.gameObject.activeSelf)
+                    {
+                        m_transformTool.gameObject.SetActive(true);
+                    }
+                    m_transformTool.transform.GetChild(1).gameObject.SetActive(true);
+                    m_transformTool.transform.GetChild(2).gameObject.SetActive(true);
+                    m_transformTool.transform.GetChild(3).gameObject.SetActive(true);
+
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    {
+                        m_selectedProcedurals.Add(hit.transform);
+                    }
+                    else
+                    {
+                        MeshRenderer mr;
+                        for (int i = 0; i < m_selectedProcedurals.Count; i++)
+                        {
+                            if(m_selectedProcedurals[i].TryGetComponent<MeshRenderer>(out mr))
+							{
+                                for(int j = 0; j < mr.materials.Length; j++)
+								{
+                                    mr.materials[j].shader = Shader.Find("Standard");
+                                }
+							}
+                        }
+                        m_selectedProcedurals.Clear();
+                        m_selectedProcedurals.Add(hit.transform);
+                        if (hit.transform.TryGetComponent<MeshRenderer>(out mr))
+                        {
+                            for (int j = 0; j < mr.materials.Length; j++)
+                            {
+                                mr.materials[j].shader = Shader.Find("DS/OutlineShader");
+                                mr.materials[j].SetFloat("_OutlineThickness", 0.02f);
+                            }
+                        }
+
+                    }
+
+                    Vector3 avg = Vector3.zero;
+                    for (int i = 0; i < m_selectedLights.Count; i++)
+                    {
+                        avg += new Vector3(m_selectedLights[i].position.x, m_selectedLights[i].position.y, m_selectedLights[i].position.z);
+                    }
+                    for (int p = 0; p < m_selectedProcedurals.Count; p++)
+                    {
+                        avg += new Vector3(m_selectedProcedurals[p].position.x, m_selectedProcedurals[p].position.y, m_selectedProcedurals[p].position.z);
+                    }
+                    avg /= (float)m_selectedLights.Count + (float)m_selectedProcedurals.Count;
                     m_transformTool.transform.position = avg;
                 }
             }
+			else if(!m_windowOpen)
+			{
+                DeselectAll();
+			}
         }
 
         if((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.H))
@@ -244,7 +304,8 @@ public class MapBuilder : MonoBehaviour
 			{
                 m_generalContextMenu.ShowMenu();
 			}
-		}
+            m_windowOpen = true;
+        }
     }
 
     /// <summary>
@@ -524,7 +585,20 @@ public class MapBuilder : MonoBehaviour
             DeleteTile(m_selected[i].x, m_selected[i].y, m_selected[i].z);
 		}
         m_selected.Clear();
-	}
+
+        for(int l = m_selectedLights.Count - 1; l >= 0; l--)
+		{
+            Destroy(m_selectedLights[l].gameObject);
+        }
+        m_selectedLights.Clear();
+
+        for(int p = m_selectedProcedurals.Count - 1; p >= 0; p--)
+		{
+            m_map[(int)m_selectedProcedurals[p].position.x, (int)m_selectedProcedurals[p].position.y, (int)m_selectedProcedurals[p].position.z].objects.Remove(m_selectedProcedurals[p].gameObject);
+            Destroy(m_selectedProcedurals[p].gameObject);
+		}
+        m_selectedProcedurals.Clear();
+    }
 
     /// <summary>
     /// 
@@ -538,9 +612,8 @@ public class MapBuilder : MonoBehaviour
         {
             Destroy(m_map[x, y, z].tile);
             m_map[x, y, z].tile = null;
-
         }
-	}
+    }
 
     public void OnConfirmPosWindow()
 	{
@@ -863,6 +936,28 @@ public class MapBuilder : MonoBehaviour
             }
         }
         m_selected.Clear();
+        if (m_transformTool.gameObject.activeSelf)
+        {
+            m_transformTool.gameObject.SetActive(false);
+        }
+		for (int l = 0; l < m_selectedLights.Count; l++)
+		{
+            m_selectedLights[l].GetChild(0).gameObject.SetActive(false);
+        }
+        m_selectedLights.Clear();
+        //TODO: Swap shader for deselect or tile objects
+        for (int i = 0; i < m_selectedProcedurals.Count; i++)
+        {
+            MeshRenderer mr;
+            if (m_selectedProcedurals[i].TryGetComponent<MeshRenderer>(out mr))
+            {
+                for (int j = 0; j < mr.materials.Length; j++)
+                {
+                    mr.materials[j].shader = Shader.Find("Standard");
+                }
+            }
+        }
+        m_selectedProcedurals.Clear();
     }
 
     /// <summary>
