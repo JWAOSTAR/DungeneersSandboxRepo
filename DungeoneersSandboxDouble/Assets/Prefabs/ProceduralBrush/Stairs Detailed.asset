@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb05c1e6f550a0c49be0f1e6df46b67c, type: 3}
   m_Name: Stairs Detailed
   m_EditorClassIdentifier: 
-  singleObject: 0
+  singleObject: 1
   objectOptions:
   - {fileID: 6756187997964152392, guid: 37bababe374ed87488e080de23b7cd22, type: 3}
-  materialOptions: []
+  materialOptions:
+  - {fileID: 2100000, guid: acc4d7261e0e7fd4d9ffa4bf486af2e2, type: 2}
+  - {fileID: 2100000, guid: e4969512de330e742a4a339b1e4c02c5, type: 2}
   tileVolume: 1
   varientHeight: 0
   height: 1

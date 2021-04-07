@@ -9652,7 +9652,7 @@ PrefabInstance:
     - target: {fileID: 774502679471935138, guid: fd5d1f2dcc4176e438332a9a9a17f392,
         type: 3}
       propertyPath: m_OnPositionChange.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: TransformSelectedLights
+      value: TransformSelectedLightsAndProcedurals
       objectReference: {fileID: 0}
     - target: {fileID: 774502679471935138, guid: fd5d1f2dcc4176e438332a9a9a17f392,
         type: 3}
@@ -9737,7 +9737,7 @@ PrefabInstance:
     - target: {fileID: 5211663220578919437, guid: fd5d1f2dcc4176e438332a9a9a17f392,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd5d1f2dcc4176e438332a9a9a17f392, type: 3}

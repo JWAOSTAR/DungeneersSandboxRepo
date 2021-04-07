@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!64 &7134742069612924362
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216176869134795448}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -7834297069049343546, guid: 6931625855cf3d44db771b2c275e79b1, type: 3}
 --- !u!1001 &2694743553041030065
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80,7 +94,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 6931625855cf3d44db771b2c275e79b1,
         type: 3}
       propertyPath: m_Name
-      value: Foliage_Bush_0
+      value: Foliage_Bush_0 Variant
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 6931625855cf3d44db771b2c275e79b1,
         type: 3}
@@ -89,3 +103,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6931625855cf3d44db771b2c275e79b1, type: 3}
+--- !u!1 &6216176869134795448 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 6931625855cf3d44db771b2c275e79b1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2694743553041030065}
+  m_PrefabAsset: {fileID: 0}

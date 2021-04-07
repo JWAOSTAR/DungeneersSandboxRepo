@@ -18,9 +18,11 @@ MonoBehaviour:
   - {fileID: 6896158476846454131, guid: 311321ab525ad1d45883a343ef3c5cd1, type: 3}
   - {fileID: 3729822064524225872, guid: 302b82826d0952448b25213171823b54, type: 3}
   - {fileID: 8442199284246588281, guid: 20b63249450922742a5d2ab9b4af9788, type: 3}
+  materialOptions: []
   tileVolume: 1
   varientHeight: 0
   height: 1
   singleColor: 1
   tileColors:
   - {r: 0, g: 0.625, b: 0, a: 1}
+  tileMaterial: {fileID: 0}

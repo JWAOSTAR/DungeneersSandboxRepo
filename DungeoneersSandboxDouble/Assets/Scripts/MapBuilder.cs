@@ -165,7 +165,7 @@ public class MapBuilder : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButtonDown(0) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
             if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit)) {
-                if (hit.transform.parent.gameObject.name.Contains("Tile"))
+                if (hit.transform.parent.gameObject.name.Contains("Tile") && hit.transform.name == m_baseTile.transform.GetChild(0).name)
                 {
                     if (!m_selected.Contains(new Vector3Int((int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (int)hit.transform.parent.position.y))) {
                         Select((int)hit.transform.parent.position.y, (int)hit.transform.parent.position.x, (int)hit.transform.parent.position.z, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)));
@@ -213,7 +213,7 @@ public class MapBuilder : MonoBehaviour
                     avg /= (float)m_selectedLights.Count + (float)m_selectedProcedurals.Count;
                     m_transformTool.transform.position = avg;
                 }
-				else
+				else if (hit.transform.parent != null && hit.transform.parent.name.Contains("Tile"))
 				{
                     if (!m_transformTool.gameObject.activeSelf)
                     {
@@ -236,7 +236,8 @@ public class MapBuilder : MonoBehaviour
 							{
                                 for(int j = 0; j < mr.materials.Length; j++)
 								{
-                                    mr.materials[j].shader = Shader.Find("Standard");
+                                    //mr.materials[j].shader = Shader.Find("Standard");
+                                    mr.materials[j].DisableKeyword("_EMISSION");
                                 }
 							}
                         }
@@ -246,8 +247,10 @@ public class MapBuilder : MonoBehaviour
                         {
                             for (int j = 0; j < mr.materials.Length; j++)
                             {
-                                mr.materials[j].shader = Shader.Find("DS/OutlineShader");
-                                mr.materials[j].SetFloat("_OutlineThickness", 0.02f);
+                                //mr.materials[j].shader = Shader.Find("DS/OutlineShader");
+                                //mr.materials[j].SetFloat("_OutlineThickness", 0.02f);
+                                mr.materials[j].SetColor("_EmissionColor", new Color(1.0f, 0.25f, 0.0f));
+                                mr.materials[j].EnableKeyword("_EMISSION");
                             }
                         }
 
@@ -266,10 +269,10 @@ public class MapBuilder : MonoBehaviour
                     m_transformTool.transform.position = avg;
                 }
             }
-			else if(!m_windowOpen)
-			{
-                DeselectAll();
-			}
+			//else if(!m_windowOpen)
+			//{
+   //             DeselectAll();
+			//}
         }
 
         if((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.H))
@@ -953,7 +956,8 @@ public class MapBuilder : MonoBehaviour
             {
                 for (int j = 0; j < mr.materials.Length; j++)
                 {
-                    mr.materials[j].shader = Shader.Find("Standard");
+                    //mr.materials[j].shader = Shader.Find("Standard");
+                    mr.materials[j].DisableKeyword("_EMISSION");
                 }
             }
         }
@@ -1493,12 +1497,16 @@ public class MapBuilder : MonoBehaviour
         currentTool = (MAP_TOOLS)t;
 	}
 
-    public void TransformSelectedLights(float x, float y, float z)
+    public void TransformSelectedLightsAndProcedurals(float x, float y, float z)
 	{
         for(int i = 0; i < m_selectedLights.Count; i++)
 		{
             m_selectedLights[i].position += new Vector3(x,y,z);
         }
+        for(int j = 0; j < m_selectedProcedurals.Count; j++)
+		{
+            m_selectedProcedurals[j].position += new Vector3(x, y, z);
+		}
 	}
 
     public void SetLightRange(string range)

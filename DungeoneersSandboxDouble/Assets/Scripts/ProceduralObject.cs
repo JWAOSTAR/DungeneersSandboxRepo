@@ -8,6 +8,7 @@ public class ProceduralObject : ScriptableObject
 {
 	[SerializeField]
 	bool singleObject = false;
+	[SerializeField]
 	GameObject[] objectOptions;
 	[SerializeField]
 	Material[] materialOptions;
