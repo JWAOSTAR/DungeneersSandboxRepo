@@ -58,6 +58,8 @@ public class MapBuilder : MonoBehaviour
     ContextMenu m_tileContextMenu;
     [SerializeField]
     ContextMenu m_floorContextMenu;
+    [SerializeField]
+    ContextMenu m_proceduralContextMenu;
 
     [SerializeField]
     Menu[] m_menues;
@@ -240,6 +242,20 @@ public class MapBuilder : MonoBehaviour
                                     mr.materials[j].DisableKeyword("_EMISSION");
                                 }
 							}
+                            else if(m_selectedProcedurals[i].childCount > 0)
+							{
+                                for(int k = 0; k < m_selectedProcedurals[i].childCount; k++)
+								{
+                                    if(m_selectedProcedurals[i].GetChild(k).TryGetComponent<MeshRenderer>(out mr))
+									{
+                                        for (int j = 0; j < mr.materials.Length; j++)
+                                        {
+                                            //mr.materials[j].shader = Shader.Find("Standard");
+                                            mr.materials[j].DisableKeyword("_EMISSION");
+                                        }
+                                    }
+                                }
+							}
                         }
                         m_selectedProcedurals.Clear();
                         m_selectedProcedurals.Add(hit.transform);
@@ -251,6 +267,21 @@ public class MapBuilder : MonoBehaviour
                                 //mr.materials[j].SetFloat("_OutlineThickness", 0.02f);
                                 mr.materials[j].SetColor("_EmissionColor", new Color(1.0f, 0.25f, 0.0f));
                                 mr.materials[j].EnableKeyword("_EMISSION");
+                            }
+                        }
+                        else if (hit.transform.childCount > 0)
+                        {
+                            for (int k = 0; k < hit.transform.childCount; k++)
+                            {
+                                if (hit.transform.GetChild(k).TryGetComponent<MeshRenderer>(out mr))
+                                {
+                                    for (int j = 0; j < mr.materials.Length; j++)
+                                    {
+                                        //mr.materials[j].shader = Shader.Find("Standard");
+                                        mr.materials[j].SetColor("_EmissionColor", new Color(1.0f, 0.25f, 0.0f));
+                                        mr.materials[j].EnableKeyword("_EMISSION");
+                                    }
+                                }
                             }
                         }
 
@@ -292,21 +323,29 @@ public class MapBuilder : MonoBehaviour
 
         if((Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(0) && ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftControl)))) && !m_windowOpen)
 		{
-			if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile"))
-			{
-                if(currentTool == MAP_TOOLS.TILE_SELECT)
-				{
-                    m_tileContextMenu.ShowMenu();
-				}
-				else
-				{
-                    m_floorContextMenu.ShowMenu();
-				}
-			}
-			else
-			{
+            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile") && Physics.Raycast(ray, out hit) && hit.transform.parent.gameObject.name.Contains("Tile")) 
+            {
+                if (hit.transform.name == m_baseTile.transform.GetChild(0).name)
+			    {
+                    if (currentTool == MAP_TOOLS.TILE_SELECT)
+                    {
+                        m_tileContextMenu.ShowMenu();
+                    }
+                    else
+                    {
+                        m_floorContextMenu.ShowMenu();
+                    }
+                }
+                else
+                {
+                    //TODO: Add show for the procedural object menu
+                    m_proceduralContextMenu.ShowMenu();
+                }
+            }
+            else
+            {
                 m_generalContextMenu.ShowMenu();
-			}
+            }
             m_windowOpen = true;
         }
     }
@@ -477,14 +516,13 @@ public class MapBuilder : MonoBehaviour
 	{
         for(int i = 0; i < m_selected.Count; i++)
 		{
-            MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponent<MeshRenderer>();
+            MeshRenderer mr = m_map[m_selected[i].x, m_selected[i].y, m_selected[i].z].tile.GetComponentInChildren<MeshRenderer>();
+            Material[] newMat = new Material[mr.materials.Length];
             for (int j = 0; j < mr.materials.Length; j++)
 			{
-                for(int k = 0; k < mr.materials.Length; k++)
-				{
-                    mr.materials[i] = (Material)_mat;
-				}
+                newMat[j] = (Material)_mat;
 			}
+            mr.materials = newMat;
 
         }
 	}
@@ -601,6 +639,10 @@ public class MapBuilder : MonoBehaviour
             Destroy(m_selectedProcedurals[p].gameObject);
 		}
         m_selectedProcedurals.Clear();
+        if (m_transformTool.gameObject.activeSelf)
+        {
+            m_transformTool.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -958,6 +1000,20 @@ public class MapBuilder : MonoBehaviour
                 {
                     //mr.materials[j].shader = Shader.Find("Standard");
                     mr.materials[j].DisableKeyword("_EMISSION");
+                }
+            }
+            else if (m_selectedProcedurals[i].childCount > 0)
+            {
+                for (int k = 0; k < m_selectedProcedurals[i].childCount; k++)
+                {
+                    if (m_selectedProcedurals[i].GetChild(k).TryGetComponent<MeshRenderer>(out mr))
+                    {
+                        for (int j = 0; j < mr.materials.Length; j++)
+                        {
+                            //mr.materials[j].shader = Shader.Find("Standard");
+                            mr.materials[j].DisableKeyword("_EMISSION");
+                        }
+                    }
                 }
             }
         }
