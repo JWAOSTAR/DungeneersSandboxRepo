@@ -40,6 +40,8 @@ public class MapBuilder : MonoBehaviour
     [SerializeField]
     GameObject m_lightEditorMenu;
     [SerializeField]
+    GameObject m_proceduralBrushMenu;
+    [SerializeField]
     GameObject m_baseTile;
     [SerializeField]
     Light[] m_baseLights = new Light[2];
@@ -79,6 +81,8 @@ public class MapBuilder : MonoBehaviour
     List<float> m_spacing = new List<float>();
     bool m_pointLight = true;
     bool m_windowOpen = false;
+    int m_currentProceduralBrush = 0;
+    int m_brushSet = 0;
     public bool PointLight 
     { 
         get 
@@ -149,6 +153,21 @@ public class MapBuilder : MonoBehaviour
         m_level = 1;
         m_menues[0].onInvoke.AddListener(AddProceduralItem);
         m_menues[1].onInvoke.AddListener(SetTileTexture);
+        for (int i = 0; i < 4; i++)
+        {
+            if (m_brushSet + i < m_menues[0].itemListLength)
+            {
+                if (!m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.activeSelf) {
+                    m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(true);
+                }
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).GetChild(0).GetComponent<Text>().text = m_menues[0].GetItem(m_brushSet + i).text;
+            }
+            else
+            {
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(false);
+            }
+        }
+        m_proceduralBrushMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -1573,6 +1592,103 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+ //   public void PrevProceduralBrush()
+	//{
+ //       if((m_currentProceduralBrush - 1) < 0)
+	//	{
+ //           m_proceduralBrush.currentObject = (GameObject)m_menues[0].GetItem(--m_currentProceduralBrush).item;
+	//	}
+        //TODO: Add else{}
+	//}
+
+ //   public void NextProceduralBrush()
+	//{
+ //       if ((m_currentProceduralBrush + 1) >= m_menues[0].itemListLength)
+ //       {
+ //           m_proceduralBrush.currentObject = (GameObject)m_menues[0].GetItem(++m_currentProceduralBrush).item;
+ //       }
+          //TODO: Add else{}
+ //   }
+
+    public void PrevBrushSet()
+	{
+        if (m_brushSet - 4 >= 0) {
+            m_brushSet -= 4;
+        }
+		else
+        {
+            m_brushSet = m_menues[0].itemListLength - (m_menues[0].itemListLength%4);
+            if(m_brushSet == m_menues[0].itemListLength)
+			{
+                m_brushSet = m_menues[0].itemListLength - 4;
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (m_brushSet + i < m_menues[0].itemListLength)
+            {
+                if (!m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.activeSelf)
+                {
+                    m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(true);
+                }
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).GetChild(0).GetComponent<Text>().text = m_menues[0].GetItem(m_brushSet + i).text;
+            }
+            else
+			{
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(false);
+            }
+        }
+
+    }
+
+    public void NextBrushSet()
+	{
+        if (m_brushSet + 4 < m_menues[0].itemListLength)
+        {
+            m_brushSet += 4;
+        }
+        else
+        {
+            m_brushSet = 0;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (m_brushSet + i < m_menues[0].itemListLength)
+            {
+                if (!m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.activeSelf)
+                {
+                    m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(true);
+                }
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).GetChild(0).GetComponent<Text>().text = m_menues[0].GetItem(m_brushSet + i).text;
+            }
+            else
+            {
+                m_proceduralBrushMenu.transform.GetChild(1).GetChild(i).gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void BrushButtonDown(int i)
+	{
+        SetProceduralBrush(i+m_brushSet);
+    }
+
+    public void SetProceduralBrush(int i)
+	{
+        if(i >= 0 && i < m_menues[0].itemListLength)
+		{
+            m_proceduralBrush.currentObject = Instantiate(((ProceduralObject)m_menues[0].GetItem((m_currentProceduralBrush = i)).item).GetModel());
+            if(m_proceduralBrush.currentObject.TryGetComponent<MeshCollider>(out MeshCollider mc))
+			{
+                mc.enabled = false;
+			}
+            else if(m_proceduralBrush.currentObject.TryGetComponent<BoxCollider>(out BoxCollider bc))
+			{
+                bc.enabled = false;
+            }
+            //m_proceduralBrush.currentObject.SetActive(true);
+        }
+	}
 
     void SetLightRange(float range)
 	{

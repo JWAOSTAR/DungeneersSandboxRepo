@@ -31,6 +31,15 @@ public class ProceduralBrush : MonoBehaviour
                 currentObject.transform.position = new Vector3(hit.collider.transform.parent.position.x, hit.collider.transform.parent.position.y + 0.05f, hit.collider.transform.parent.position.z);
                 if(Input.GetMouseButtonDown(0))
 				{
+                    if (currentObject.TryGetComponent<MeshCollider>(out MeshCollider mc))
+                    {
+                        mc.enabled = true;
+                    }
+                    else if (currentObject.TryGetComponent<BoxCollider>(out BoxCollider bc))
+                    {
+                        bc.enabled = true;
+                    }
+                    currentObject.transform.parent = hit.collider.transform.parent;
                     currentObject = null;
                     ToolActive = false;
                     //FindObjectOfType<MapBuilder>()
