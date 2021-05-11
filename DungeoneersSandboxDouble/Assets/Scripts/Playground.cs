@@ -9,6 +9,7 @@ using System;
 
 public class Playground : MonoBehaviourPunCallbacks
 {
+
 	[SerializeField]
 	GameObject LoadingScreen;
 	[SerializeField]
@@ -23,12 +24,18 @@ public class Playground : MonoBehaviourPunCallbacks
 	Text RoomTitle;
 	[SerializeField]
 	GameObject FaildToConnectScreen;
+	[SerializeField]
+	Sprite m_defaultPlayerImage;
 
 	GameObject roomListContent;
 
-	public static Dictionary<string, RoomInfo> rooms;
+	Player current;
+
+	//public static Dictionary<string, RoomInfo> rooms;
+	//public static Dictionary<string, PlayerListItem> players;
 
 	bool connectionTimeOut = false;
+	static bool firstConnect = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,12 +48,13 @@ public class Playground : MonoBehaviourPunCallbacks
 			LoadingScreen.SetActive(true);
 			StartCoroutine(WaitForConnection());
 		}
-		if(rooms == null)
+		if(GlobalVariables.rooms == null)
 		{
-			rooms = new Dictionary<string, RoomInfo>();
+			GlobalVariables.rooms = new Dictionary<string, RoomInfo>();
 		}
 
 		roomListContent = RoomList.GetComponentInChildren<VerticalLayoutGroup>().gameObject;
+		
 	}
 
 	// Update is called once per frame
@@ -91,17 +99,26 @@ public class Playground : MonoBehaviourPunCallbacks
 		PhotonNetwork.JoinRoom(_room.text);
 	}
 
-	void ConnectToRoom(string _room)
+	public void ConnectToRoom(string _room)
 	{
 		PhotonNetwork.JoinRoom(_room);
+	}
+
+	public void DisconnectFromRoom()
+	{
+		PhotonNetwork.LeaveRoom();
 	}
 
 	public override void OnConnectedToMaster()
 	{
 		Debug.Log("CONNECTED TO SERVER");
 		LoadingScreen.SetActive(false);
-		ConnectScreen.SetActive(true);
-		StartCoroutine("ConnectScreenTimeOut");
+		if (!firstConnect)
+		{
+			ConnectScreen.SetActive(true);
+			StartCoroutine("ConnectScreenTimeOut");
+			firstConnect = true;
+		}
         PhotonNetwork.JoinLobby();
 	}
 
@@ -113,7 +130,7 @@ public class Playground : MonoBehaviourPunCallbacks
 	public override void OnJoinedRoom()
 	{
 		Debug.Log("WELCOME TO THE " + PhotonNetwork.CurrentRoom.Name.ToUpper() + " ROOM!");
-		RoomTitle.gameObject.SetActive(true);
+		RoomTitle.transform.parent.parent.gameObject.SetActive(true);
 		RoomTitle.text = PhotonNetwork.CurrentRoom.Name;
 	}
 
@@ -129,8 +146,9 @@ public class Playground : MonoBehaviourPunCallbacks
 		{
 			if (roomList[i].RemovedFromList) 
 			{
-				rooms.Remove(roomList[i].Name);
+				GlobalVariables.rooms.Remove(roomList[i].Name);
 				Destroy(Array.Find(roomListContent.transform.GetComponentsInChildren<Text>(), p => p.text == roomList[i].Name).transform.parent.gameObject);
+				i--;
 			}
 			else
 			{
@@ -149,8 +167,9 @@ public class Playground : MonoBehaviourPunCallbacks
 						break;
 					}
 				}
-				newEntry.GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(roomList[i].Name); });
-				rooms[roomList[i].Name] = roomList[i];
+				string roomName = roomList[i].Name;
+				newEntry.GetComponent<Button>().onClick.AddListener(delegate { ConnectToRoom(roomName); RoomList.SetActive(false); });
+				GlobalVariables.rooms[roomList[i].Name] = roomList[i];
 			}
 		}
 		base.OnRoomListUpdate(roomList);
@@ -159,6 +178,19 @@ public class Playground : MonoBehaviourPunCallbacks
 	public override void OnDisconnected(DisconnectCause cause)
 	{
 		Debug.Log("DISCONNECTED FROM SERVER: " + cause.ToString());
+		firstConnect = false;
+	}
+
+	public override void OnLeftLobby()
+	{
+		
+	}
+
+	public override void OnLeftRoom()
+	{
+		Debug.Log("SEE YOU LATER!");
+		RoomTitle.transform.parent.parent.gameObject.SetActive(false);
+		RoomTitle.text = "Room";
 	}
 
 	IEnumerator ConnectScreenTimeOut()
