@@ -8,7 +8,6 @@ using Photon.Realtime;
 public class PlayerListItem : MonoBehaviour
 {
 
-
     [SerializeField]
     Image m_playerImage;
 
@@ -26,7 +25,9 @@ public class PlayerListItem : MonoBehaviour
             playerName.text = value.NickName;
         } 
     }
+    public string PlayerName { get { return playerName.text; } }
 
+    public int playerType = 0;
     // Start is called before the first frame update
     void Start()
     {

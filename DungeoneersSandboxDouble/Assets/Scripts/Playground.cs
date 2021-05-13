@@ -15,9 +15,15 @@ public class Playground : MonoBehaviourPunCallbacks
 	[SerializeField]
 	GameObject ConnectScreen;
 	[SerializeField]
+	Text ErrorScreen;
+	[SerializeField]
 	GameObject RoomList;
 	[SerializeField]
+	GameObject PlayerList;
+	[SerializeField]
 	GameObject RoomListItem;
+	[SerializeField]
+	GameObject PlayerListItem;
 	[SerializeField]
 	GameObject CreateRoomDialog;
 	[SerializeField]
@@ -28,6 +34,7 @@ public class Playground : MonoBehaviourPunCallbacks
 	Sprite m_defaultPlayerImage;
 
 	GameObject roomListContent;
+	GameObject playerListContent;
 
 	Player current;
 
@@ -39,6 +46,10 @@ public class Playground : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+		if(GlobalVariables.userImage == null || (GlobalVariables.userName == null || GlobalVariables.userName == string.Empty))
+		{
+			GlobalVariables.LoadSettings();
+		}
 		RoomList.SetActive(false);
 		RoomListItem.SetActive(false);
 		if (!PhotonNetwork.IsConnected)
@@ -54,7 +65,7 @@ public class Playground : MonoBehaviourPunCallbacks
 		}
 
 		roomListContent = RoomList.GetComponentInChildren<VerticalLayoutGroup>().gameObject;
-		
+		playerListContent = PlayerList.GetComponentInChildren<VerticalLayoutGroup>().gameObject;
 	}
 
 	// Update is called once per frame
@@ -125,6 +136,7 @@ public class Playground : MonoBehaviourPunCallbacks
 	public override void OnJoinedLobby()
 	{
 		//TODO SET UP MAP AND TILES
+		PhotonNetwork.NickName = GlobalVariables.userName;
 	}
 
 	public override void OnJoinedRoom()
@@ -132,6 +144,43 @@ public class Playground : MonoBehaviourPunCallbacks
 		Debug.Log("WELCOME TO THE " + PhotonNetwork.CurrentRoom.Name.ToUpper() + " ROOM!");
 		RoomTitle.transform.parent.parent.gameObject.SetActive(true);
 		RoomTitle.text = PhotonNetwork.CurrentRoom.Name;
+		PlayerList.SetActive(true);
+		if (GlobalVariables.players == null) 
+		{
+			GlobalVariables.players = new Dictionary<string, PlayerListItem>();
+		}
+		//TODO: Add all existing players to list;
+		foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
+		{
+			GameObject newEntry = Instantiate(PlayerListItem, playerListContent.transform);
+			PlayerListItem newPLI = newEntry.GetComponent<PlayerListItem>();
+			newPLI.player = player.Value; 
+			if (player.Value.NickName == PhotonNetwork.NickName)
+			{
+				newPLI.PlayerImage = GlobalVariables.userImage.sprite;
+				newPLI.playerType |= GlobalVariables.YOU;
+			}
+			else
+			{
+
+			}
+
+			if(PhotonNetwork.CurrentRoom.MasterClientId == player.Value.ActorNumber)
+			{
+				newPLI.playerType |= GlobalVariables.SERVER_HOST;
+			}
+			//TODO: Add check for DM after establishing custom properties
+
+			GlobalVariables.players[newPLI.PlayerName] = newPLI;
+		}
+		//GlobalVariables.players
+	}
+
+	public override void OnPlayerEnteredRoom(Player newPlayer)
+	{
+		GameObject newEntry = Instantiate(PlayerListItem, playerListContent.transform);
+		newEntry.GetComponent<PlayerListItem>().player = newPlayer;
+		GlobalVariables.players[newPlayer.NickName] = newEntry.GetComponent<PlayerListItem>();
 	}
 
 	public override void OnCreatedRoom()
@@ -179,6 +228,12 @@ public class Playground : MonoBehaviourPunCallbacks
 	{
 		Debug.Log("DISCONNECTED FROM SERVER: " + cause.ToString());
 		firstConnect = false;
+	}
+
+	public override void OnCreateRoomFailed(short returnCode, string message)
+	{
+		ErrorScreen.text = "- - ERROR CODE " + returnCode.ToString() + ": " + message + " - -";
+		ErrorScreen.transform.parent.gameObject.SetActive(true);
 	}
 
 	public override void OnLeftLobby()

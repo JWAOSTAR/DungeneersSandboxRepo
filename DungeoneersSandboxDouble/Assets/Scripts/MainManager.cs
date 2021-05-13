@@ -112,9 +112,9 @@ public class MainManager : MonoBehaviour
         file.Write(ProfilePicture.color.b);
         file.Close();
 
-        GlobalVariables.userName = Username.text = name;
+        GlobalVariables.userName = Username.text;
         GlobalVariables.userImage = ProfilePicture;
-    }        
+    }
 
     public void OnCancel()
 	{
