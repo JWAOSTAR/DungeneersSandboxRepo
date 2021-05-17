@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-
 public static class GlobalVariables
 {
-	public static string userName;
+    public static string userName;
 	public static Image userImage;
 	public static Dictionary<string, RoomInfo> rooms;
-	public static Dictionary<string, PlayerListItem> players;
-    public static const int YOU = 1;
-    public static const int DUNGEON_MASTER = 2;
-    public static const int SERVER_HOST = 4;
+	public static Dictionary<int, PlayerListItem> players;
+
+    public const int YOU = 1;
+    public const int DUNGEON_MASTER = 2;
+    public const int SERVER_HOST = 4;
 
     public static void LoadSettings()
 	{

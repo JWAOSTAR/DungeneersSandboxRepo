@@ -7,9 +7,11 @@ using Photon.Realtime;
 using UnityEngine.UI;
 using System;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using System.Text;
+
 public class Playground : MonoBehaviourPunCallbacks
 {
-
 	[SerializeField]
 	GameObject LoadingScreen;
 	[SerializeField]
@@ -137,6 +139,12 @@ public class Playground : MonoBehaviourPunCallbacks
 	{
 		//TODO SET UP MAP AND TILES
 		PhotonNetwork.NickName = GlobalVariables.userName;
+		Hashtable playerProperties = new Hashtable();
+		byte[] userImage = GlobalVariables.userImage.sprite.texture.EncodeToJPG();
+		playerProperties["playerImage"] = userImage;
+		bool DM = false;
+		playerProperties["isDM"] = DM;
+		PhotonNetwork.LocalPlayer.CustomProperties = playerProperties;
 	}
 
 	public override void OnJoinedRoom()
@@ -147,7 +155,7 @@ public class Playground : MonoBehaviourPunCallbacks
 		PlayerList.SetActive(true);
 		if (GlobalVariables.players == null) 
 		{
-			GlobalVariables.players = new Dictionary<string, PlayerListItem>();
+			GlobalVariables.players = new Dictionary<int, PlayerListItem>();
 		}
 		//TODO: Add all existing players to list;
 		foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
@@ -155,10 +163,10 @@ public class Playground : MonoBehaviourPunCallbacks
 			GameObject newEntry = Instantiate(PlayerListItem, playerListContent.transform);
 			PlayerListItem newPLI = newEntry.GetComponent<PlayerListItem>();
 			newPLI.player = player.Value; 
-			if (player.Value.NickName == PhotonNetwork.NickName)
+			if (player.Value.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
 			{
 				newPLI.PlayerImage = GlobalVariables.userImage.sprite;
-				newPLI.playerType |= GlobalVariables.YOU;
+				newPLI.PlayerType |= GlobalVariables.YOU;
 			}
 			else
 			{
@@ -167,11 +175,23 @@ public class Playground : MonoBehaviourPunCallbacks
 
 			if(PhotonNetwork.CurrentRoom.MasterClientId == player.Value.ActorNumber)
 			{
-				newPLI.playerType |= GlobalVariables.SERVER_HOST;
+				newPLI.PlayerType |= GlobalVariables.SERVER_HOST;
 			}
 			//TODO: Add check for DM after establishing custom properties
 
-			GlobalVariables.players[newPLI.PlayerName] = newPLI;
+			GlobalVariables.players[newPLI.UniqueID] = newPLI;
+		}
+		for (int i = playerListContent.transform.childCount - 2, j = playerListContent.transform.childCount - 1; i >= 0; i--)
+		{
+			if (playerListContent.transform.GetChild(i).GetComponent<PlayerListItem>().UniqueID > playerListContent.transform.GetChild(j).GetComponent<PlayerListItem>().UniqueID)
+			{
+				playerListContent.transform.GetChild(j).SetSiblingIndex(i);
+				j = i;
+			}
+			else
+			{
+				break;
+			}
 		}
 		//GlobalVariables.players
 	}
@@ -180,7 +200,23 @@ public class Playground : MonoBehaviourPunCallbacks
 	{
 		GameObject newEntry = Instantiate(PlayerListItem, playerListContent.transform);
 		newEntry.GetComponent<PlayerListItem>().player = newPlayer;
-		GlobalVariables.players[newPlayer.NickName] = newEntry.GetComponent<PlayerListItem>();
+		GlobalVariables.players[newPlayer.ActorNumber] = newEntry.GetComponent<PlayerListItem>();
+		if (newPlayer.ActorNumber == PhotonNetwork.MasterClient.ActorNumber)
+		{
+			GlobalVariables.players[newPlayer.ActorNumber].PlayerType |= GlobalVariables.SERVER_HOST;
+		}
+		for (int i = playerListContent.transform.childCount - 2; i >= 0; i--)
+		{
+			if (playerListContent.transform.GetChild(i).GetComponent<PlayerListItem>().UniqueID > newPlayer.ActorNumber)
+			{
+				GlobalVariables.players[newPlayer.ActorNumber].transform.SetSiblingIndex(i);
+			}
+			else
+			{
+				break;
+			}
+		}
+		//TODO: Add check for DM after establishing custom properties
 	}
 
 	public override void OnCreatedRoom()
@@ -246,6 +282,17 @@ public class Playground : MonoBehaviourPunCallbacks
 		Debug.Log("SEE YOU LATER!");
 		RoomTitle.transform.parent.parent.gameObject.SetActive(false);
 		RoomTitle.text = "Room";
+		foreach (KeyValuePair<int, PlayerListItem> player in GlobalVariables.players)
+		{
+			Destroy(player.Value.gameObject);
+		}
+		PlayerList.SetActive(false);
+	}
+
+	public override void OnPlayerLeftRoom(Player otherPlayer)
+	{
+		Destroy(GlobalVariables.players[otherPlayer.ActorNumber].gameObject);
+		GlobalVariables.players.Remove(otherPlayer.ActorNumber);
 	}
 
 	IEnumerator ConnectScreenTimeOut()
