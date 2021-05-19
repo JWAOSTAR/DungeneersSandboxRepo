@@ -90,6 +90,7 @@ public class MainManager : MonoBehaviour
         GlobalVariables.userImage.sprite = Sprite.Create(cpyTex, new Rect(0, 0, cpyTex.width, cpyTex.height), Vector2.zero);
         GlobalVariables.userImage.color = new Color(ProfilePicture.color.r, ProfilePicture.color.g, ProfilePicture.color.b, 1.0f);
     }
+
     public void SaveGameSettings()
 	{
         string path;

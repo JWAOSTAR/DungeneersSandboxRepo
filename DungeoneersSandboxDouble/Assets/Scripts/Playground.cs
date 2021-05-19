@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine.UI;
-using System;
+using RedExtentions;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using System.Text;
 
 public class Playground : MonoBehaviourPunCallbacks
 {
@@ -45,6 +46,10 @@ public class Playground : MonoBehaviourPunCallbacks
 
 	bool connectionTimeOut = false;
 	static bool firstConnect = false;
+
+	bool joiningAsDM = false;
+
+	public bool JoinAsDM { get { return joiningAsDM; } set { joiningAsDM = value; } }
     // Start is called before the first frame update
     void Start()
     {
@@ -93,7 +98,12 @@ public class Playground : MonoBehaviourPunCallbacks
 	public void CreateRoom(Text _roomName)
 	{
 		//WaitForConnection();
+		if (joiningAsDM)
+		{
+			PhotonNetwork.LocalPlayer.CustomProperties["isDM"] = joiningAsDM;
+		}
 		PhotonNetwork.CreateRoom(_roomName.text);
+		//joiningAsDM = true;
 	}
 
 	public void ConnectToRoom()
@@ -109,11 +119,19 @@ public class Playground : MonoBehaviourPunCallbacks
 
 	public void ConnectToRoom(Text _room)
 	{
+		if (joiningAsDM)
+		{
+			PhotonNetwork.LocalPlayer.CustomProperties["isDM"] = joiningAsDM;
+		}
 		PhotonNetwork.JoinRoom(_room.text);
 	}
 
 	public void ConnectToRoom(string _room)
 	{
+		if (joiningAsDM)
+		{
+			PhotonNetwork.LocalPlayer.CustomProperties["isDM"] = joiningAsDM;
+		}
 		PhotonNetwork.JoinRoom(_room);
 	}
 
@@ -140,7 +158,10 @@ public class Playground : MonoBehaviourPunCallbacks
 		//TODO SET UP MAP AND TILES
 		PhotonNetwork.NickName = GlobalVariables.userName;
 		Hashtable playerProperties = new Hashtable();
-		byte[] userImage = GlobalVariables.userImage.sprite.texture.EncodeToJPG();
+		Texture2D scaledPic = new Texture2D(2, 2);
+		scaledPic.LoadImage(GlobalVariables.userImage.sprite.texture.EncodeToPNG());
+		scaledPic.ScaleBilinear(128,128);
+		byte[] userImage = scaledPic.EncodeToJPG();
 		playerProperties["playerImage"] = userImage;
 		bool DM = false;
 		playerProperties["isDM"] = DM;
@@ -157,7 +178,6 @@ public class Playground : MonoBehaviourPunCallbacks
 		{
 			GlobalVariables.players = new Dictionary<int, PlayerListItem>();
 		}
-		//TODO: Add all existing players to list;
 		foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
 		{
 			GameObject newEntry = Instantiate(PlayerListItem, playerListContent.transform);
@@ -178,6 +198,14 @@ public class Playground : MonoBehaviourPunCallbacks
 				newPLI.PlayerType |= GlobalVariables.SERVER_HOST;
 			}
 			//TODO: Add check for DM after establishing custom properties
+			//if(PhotonNetwork.CurrentRoom.masterClientId == player.Value.ActorNumber && joiningAsDM)
+			//{
+			//	newPLI.PlayerType |= GlobalVariables.DUNGEON_MASTER;
+			//}
+			if((bool)player.Value.CustomProperties["isDM"])
+			{
+				newPLI.PlayerType |= GlobalVariables.DUNGEON_MASTER;
+			}
 
 			GlobalVariables.players[newPLI.UniqueID] = newPLI;
 		}
@@ -193,6 +221,10 @@ public class Playground : MonoBehaviourPunCallbacks
 				break;
 			}
 		}
+		GlobalVariables.players[PhotonNetwork.CurrentRoom.masterClientId].transform.SetSiblingIndex(0);
+		
+
+		
 		//GlobalVariables.players
 	}
 
