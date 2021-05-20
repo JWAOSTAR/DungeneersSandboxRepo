@@ -15,6 +15,7 @@ public static class GlobalVariables
     public const int YOU = 1;
     public const int DUNGEON_MASTER = 2;
     public const int SERVER_HOST = 4;
+    public const int ADMIN = 8;
 
     public static void LoadSettings()
 	{

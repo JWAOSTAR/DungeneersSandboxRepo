@@ -41,6 +41,8 @@ public class PlayerListItem : MonoBehaviour
     }
     public string PlayerName { get { return playerName.text; } }
 
+    public Color NameColor { get { return playerName.color; } set { playerName.color = value; } }
+
     int playerType = 0;
 
     public int PlayerType 
@@ -57,10 +59,18 @@ public class PlayerListItem : MonoBehaviour
             DMIcon.SetActive((playerType & GlobalVariables.DUNGEON_MASTER) == GlobalVariables.DUNGEON_MASTER);
         } 
     }
+
+    void Awake()
+	{
+        if (GameObject.FindObjectOfType<Playground>() != null)
+        {
+            gameObject.GetComponent<Button>().onClick.AddListener(delegate { FindObjectOfType<Playground>().SelectPlayer(this); });
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
