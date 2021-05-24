@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -64,8 +65,20 @@ public class PlayerListItem : MonoBehaviour
 	{
         if (GameObject.FindObjectOfType<Playground>() != null)
         {
-            gameObject.GetComponent<Button>().onClick.AddListener(delegate { FindObjectOfType<Playground>().SelectPlayer(this); });
+            gameObject.GetComponent<Button>().onClick.AddListener(delegate { FindObjectOfType<PlayerSettings>().SelectPlayer(this); });
         }
+        if(TryGetComponent<EventTrigger>(out EventTrigger et))
+		{
+            EventTrigger.Entry func = new EventTrigger.Entry();
+            func.eventID = EventTriggerType.PointerEnter;
+            func.callback.AddListener((data) => { FindObjectOfType<PlayerSettings>().OverPlayer = true; });
+            func.callback.AddListener((data) => { FindObjectOfType<PlayerSettings>().hoverPlayer = this; });
+            et.triggers.Add(func);
+            func = new EventTrigger.Entry();
+            func.eventID = EventTriggerType.PointerExit;
+            func.callback.AddListener((data) => { FindObjectOfType<PlayerSettings>().hoverPlayer = null; });
+            et.triggers.Add(func);
+		}
     }
 
     // Start is called before the first frame update

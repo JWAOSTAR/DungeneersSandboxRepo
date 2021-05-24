@@ -23,6 +23,11 @@ public class ContextMenu : MonoBehaviour
         public ItemClickEvent onItemClick { get { return m_onItemClicked; } set { onItemClick = value; } }
 	}
 
+    public class ConditionalItem
+	{
+        
+	}
+
     [SerializeField]
     Button m_baseButton;
     [SerializeField]

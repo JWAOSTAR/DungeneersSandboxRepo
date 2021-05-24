@@ -36,13 +36,9 @@ public class Playground : MonoBehaviourPunCallbacks
 	GameObject FaildToConnectScreen;
 	[SerializeField]
 	Sprite m_defaultPlayerImage;
-	[SerializeField]
-	PlayerSettings PlayerSettingsUI;
 
 	GameObject roomListContent;
 	GameObject playerListContent;
-
-	PlayerListItem selectedPlayer;
 
 
 	//public static Dictionary<string, RoomInfo> rooms;
@@ -86,32 +82,6 @@ public class Playground : MonoBehaviourPunCallbacks
 		{
 			Instantiate(RoomListItem, RoomListItem.transform.parent);
 		}
-		if(Input.GetMouseButtonDown(1))
-		{
-			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			if(!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out hit))
-			{
-				if (hit.collider.gameObject.transform.TryGetComponent<PlayerListItem>(out selectedPlayer))
-				{
-
-				}
-			}
-		}
-	}
-
-	public void SelectPlayer(PlayerListItem _pli)
-	{
-		PlayerSettingsUI.GetComponentInChildren<Image>().sprite = Sprite.Create(_pli.PlayerImage.texture, new Rect(0,0,_pli.PlayerImage.texture.width, _pli.PlayerImage.texture.height), Vector2.zero);
-		PlayerSettingsUI.GetComponentInChildren<InputField>().text = _pli.PlayerName;
-		//TODO: Add the load for dice set, tray, miniture
-		PlayerSettingsUI.gameObject.SetActive(true);
-		selectedPlayer = _pli;
-	}
-
-	public void SetPlayerLableColor(Color _col)
-	{
-		selectedPlayer.NameColor = _col;
 	}
 
 	public void CreateRoom()
