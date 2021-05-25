@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -33,16 +35,10 @@ public class PlayerSettings : MonoBehaviour
     [HideInInspector]
     public PlayerListItem hoverPlayer;
     bool m_overPlayer = false;
-    public bool OverPlayer { 
-        get 
-        { 
-            return m_overPlayer; 
-        } 
-        set 
-        { 
-            m_overPlayer = value;
-        } 
-    }
+
+    public bool OverPlayer { get { return m_overPlayer; } set { m_overPlayer = value;} }
+
+    public bool UIActive { get { return UI.activeSelf; } set { UI.SetActive(value); } }
 
     // Start is called before the first frame update
     void Start()
@@ -91,6 +87,30 @@ public class PlayerSettings : MonoBehaviour
 	public void SetPlayerLableColor(Color _col)
     {
         selectedPlayer.NameColor = _col;
+        //TODO: Notify other clients of change
+    }
+
+    public void SetPlayerLable(string _name)
+	{
+        selectedPlayer.PlayerName = _name;
+        //TODO: Notify other clients of change
+    }
+
+    public void SetPlayerImage()
+	{
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+        OpenFileDialog UserPicOpenDialog = new OpenFileDialog();
+        UserPicOpenDialog.Filter = "PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg|JPEG files (*.jpeg)|*.jpeg|All files (*.*)|*.*";
+        UserPicOpenDialog.FilterIndex = 0;
+        UserPicOpenDialog.RestoreDirectory = true;
+        if (UserPicOpenDialog.ShowDialog() == DialogResult.OK)
+        {
+            Texture2D newTex = new Texture2D(2, 2);
+            newTex.LoadImage(File.ReadAllBytes(UserPicOpenDialog.FileName));
+            m_playerPic.sprite = selectedPlayer.PlayerImage = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), Vector2.zero);
+        }
+#endif
+        //TODO: Notify other clients of change
     }
 
     public void SelectPlayer(PlayerListItem _pli)
@@ -100,5 +120,15 @@ public class PlayerSettings : MonoBehaviour
         //TODO: Add the load for dice set, tray, miniture
         //UI.gameObject.SetActive(true);
         selectedPlayer = _pli;
+    }
+
+    public void ShowUI()
+	{
+        UI.SetActive(true);
+        if (selectedPlayer)
+        {
+            m_playerPic.sprite = Sprite.Create(selectedPlayer.PlayerImage.texture, new Rect(0, 0, selectedPlayer.PlayerImage.texture.width, selectedPlayer.PlayerImage.texture.height), Vector2.zero);
+            m_playerName.text = selectedPlayer.PlayerName;
+        }
     }
 }

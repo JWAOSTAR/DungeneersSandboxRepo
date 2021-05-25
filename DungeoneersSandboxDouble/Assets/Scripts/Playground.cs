@@ -36,6 +36,8 @@ public class Playground : MonoBehaviourPunCallbacks
 	GameObject FaildToConnectScreen;
 	[SerializeField]
 	Sprite m_defaultPlayerImage;
+	[SerializeField]
+	GameObject BaseMiniture;
 
 	GameObject roomListContent;
 	GameObject playerListContent;
@@ -48,6 +50,7 @@ public class Playground : MonoBehaviourPunCallbacks
 	static bool firstConnect = false;
 
 	bool joiningAsDM = false;
+	bool joiningAsPlayer = false;
 
 	public bool JoinAsDM { get { return joiningAsDM; } set { joiningAsDM = value; } }
     // Start is called before the first frame update

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class MinitureControll : MonoBehaviour
+public class MinitureControler : MonoBehaviour
 {
 	bool m_moving;
 
@@ -37,6 +37,5 @@ public class MinitureControll : MonoBehaviour
 	void MoveConfirmed()
 	{
 		int pos = ((int)(this.gameObject.transform.position.x * ((int)Mathf.Pow(10.0f, 2.0f))) + (int)(this.gameObject.transform.position.y * ((int)Mathf.Pow(10.0f, 5.0f))) + (int)(this.gameObject.transform.position.z * ((int)Mathf.Pow(10.0f, 8.0f))));
-		//TODO: Send pos
 	}
 }
