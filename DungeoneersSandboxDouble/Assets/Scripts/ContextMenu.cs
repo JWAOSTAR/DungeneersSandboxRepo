@@ -23,15 +23,26 @@ public class ContextMenu : MonoBehaviour
         public ItemClickEvent onItemClick { get { return m_onItemClicked; } set { onItemClick = value; } }
 	}
 
+    [Serializable]
+    public class ItemCondition : UnityEvent { }
+
+    [Serializable]
     public class ConditionalItem
 	{
-        
-	}
+        [HideInInspector]
+        public Button button;
+        [SerializeField]
+        public string text;
+        [SerializeField]
+        public ItemClickEvent m_onItemClicked = new ItemClickEvent();
+    }
 
     [SerializeField]
     Button m_baseButton;
     [SerializeField]
     Item[] m_items;
+    [SerializeField]
+    ConditionalItem[] conditionalItems;
 
     bool visible;
 
@@ -70,9 +81,11 @@ public class ContextMenu : MonoBehaviour
 		{
             HideMenu();
 		}
-	}
+        //TODO: Add code to check if one of the conditions are met to show the conditional button
+        conditionalItems[0].m_onItemClicked.GetPersistentTarget(0).GetType().GetMethod(conditionalItems[0].m_onItemClicked.GetPersistentMethodName(0)).Invoke(conditionalItems[0].m_onItemClicked.GetPersistentTarget(0), null);
+    }
 
-	public void ShowMenu()
+    public void ShowMenu()
 	{
         //gameObject.SetActive(true);
         if ((Input.mousePosition.x > Screen.width / 2) && (Input.mousePosition.y > Screen.height / 2))

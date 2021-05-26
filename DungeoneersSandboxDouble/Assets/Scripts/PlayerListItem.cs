@@ -7,9 +7,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Photon.Pun;
-using Photon.Realtime
+using Photon.Realtime;
 
-[RequireComponent(typeof(PhotonView))]
+//[RequireComponent(typeof(PhotonView))]
 public class PlayerListItem : MonoBehaviour
 {
 
@@ -46,7 +46,7 @@ public class PlayerListItem : MonoBehaviour
         { 
             m_playerImage.sprite = value;
             if (m_photonView != null) {
-                m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, 'p', m_playerImage.sprite.texture.EncodeToJPG());
+                m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, (int)'p', m_playerImage.sprite.texture.EncodeToJPG());
             }
         } 
     }
@@ -76,7 +76,7 @@ public class PlayerListItem : MonoBehaviour
             BinaryFormatter binConverter = new BinaryFormatter();
             MemoryStream stream = new MemoryStream();
             binConverter.Serialize(stream, playerName.text);
-            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, 'n', stream.ToArray());
+            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, (int)'n', stream.ToArray());
         } 
     }
 
@@ -91,8 +91,8 @@ public class PlayerListItem : MonoBehaviour
             playerName.color = value;
             BinaryFormatter binConverter = new BinaryFormatter();
             MemoryStream stream = new MemoryStream();
-            binConverter.Serialize(stream, playerName.color);
-            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, 'c', stream.ToArray());
+            binConverter.Serialize(stream, new float[] { playerName.color.r, playerName.color.g, playerName.color.b });
+            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, (int)'c', stream.ToArray());
         } 
     }
 
@@ -113,7 +113,7 @@ public class PlayerListItem : MonoBehaviour
             BinaryFormatter binConverter = new BinaryFormatter();
             MemoryStream stream = new MemoryStream();
             binConverter.Serialize(stream, playerType);
-            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, 't', stream.ToArray());
+            m_photonView.RPC("RecivePlayerUpdate", RpcTarget.Others, uniqueID, (int)'t', stream.ToArray());
         } 
     }
 
@@ -137,12 +137,16 @@ public class PlayerListItem : MonoBehaviour
             func.callback.AddListener((data) => { FindObjectOfType<PlayerSettings>().hoverPlayer = null; });
             et.triggers.Add(func);
 		}
+        m_photonView = FindObjectOfType<Playground>().gameObject.GetComponent<PhotonView>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        m_photonView = gameObject.GetComponent<PhotonView>();
+        if (m_photonView == null)
+        {
+            m_photonView = FindObjectOfType<Playground>().gameObject.GetComponent<PhotonView>();
+        }
     }
 
     // Update is called once per frame
@@ -155,31 +159,32 @@ public class PlayerListItem : MonoBehaviour
     //{
     //    Color test = Color.white;
     //}
-
-    [PunRPC]
-    void RecivePlayerUpdate(int playerID, char code, byte[] data, PhotonMessageInfo info)
+    public void RecivePlayerUpdate(int code, byte[] data, PhotonMessageInfo info)
 	{
         MemoryStream stream = new MemoryStream();
         stream.Write(data, 0, data.Length);
         stream.Seek(0, SeekOrigin.Begin);
         BinaryFormatter binConverter = new BinaryFormatter();
-        switch (code)
+        switch ((char)code)
 		{
             case 'c':
-                GlobalVariables.players[playerID].playerName.color = (Color)binConverter.Deserialize(stream);
+                {
+                    float[] color = (float[])binConverter.Deserialize(stream);
+                    playerName.color = new Color(color[0], color[1], color[2], 1.0f);
+                }
                 break;
             case 'n':
-                GlobalVariables.players[playerID].playerName.text = (string)binConverter.Deserialize(stream);
+                playerName.text = (string)binConverter.Deserialize(stream);
                 break;
             case 'p':
 				{
                     Texture2D newTex = new Texture2D(2, 2);
                     newTex.LoadImage(data);
-                    GlobalVariables.players[playerID].m_playerImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), Vector2.zero);
+                    m_playerImage.sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), Vector2.zero);
                 }
                 break;
             case 't':
-                GlobalVariables.players[playerID].playerType = (int)binConverter.Deserialize(stream);
+                playerType = (int)binConverter.Deserialize(stream);
                 break;
             default:
                 break;

@@ -161,10 +161,10 @@ public class Playground : MonoBehaviourPunCallbacks
 		//TODO SET UP MAP AND TILES
 		PhotonNetwork.NickName = GlobalVariables.userName;
 		Hashtable playerProperties = new Hashtable();
-		Texture2D scaledPic = new Texture2D(2, 2);
-		scaledPic.LoadImage(GlobalVariables.userImage.sprite.texture.EncodeToPNG());
-		scaledPic.ScaleBilinear(128,128);
-		byte[] userImage = scaledPic.EncodeToJPG();
+		//Texture2D scaledPic = new Texture2D(2, 2);
+		//scaledPic.LoadImage(GlobalVariables.userImage.sprite.texture.EncodeToPNG());
+		//scaledPic.ScaleBilinear(128,128);
+		byte[] userImage = GlobalVariables.userImage.sprite.texture.EncodeToJPG();
 		playerProperties["playerImage"] = userImage;
 		bool DM = false;
 		playerProperties["isDM"] = DM;
@@ -329,6 +329,12 @@ public class Playground : MonoBehaviourPunCallbacks
 	{
 		Destroy(GlobalVariables.players[otherPlayer.ActorNumber].gameObject);
 		GlobalVariables.players.Remove(otherPlayer.ActorNumber);
+	}
+
+	[PunRPC]
+	public void RecivePlayerUpdate(int playerID, int code, byte[] data, PhotonMessageInfo info)
+	{
+		GlobalVariables.players[playerID].RecivePlayerUpdate(code, data, info);
 	}
 
 	IEnumerator ConnectScreenTimeOut()

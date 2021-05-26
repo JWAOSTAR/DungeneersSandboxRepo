@@ -117,6 +117,7 @@ public class PlayerSettings : MonoBehaviour
     {
         m_playerPic.sprite = Sprite.Create(_pli.PlayerImage.texture, new Rect(0, 0, _pli.PlayerImage.texture.width, _pli.PlayerImage.texture.height), Vector2.zero);
         m_playerName.text = _pli.PlayerName;
+        m_playerName.textComponent.color = _pli.NameColor;
         //TODO: Add the load for dice set, tray, miniture
         //UI.gameObject.SetActive(true);
         selectedPlayer = _pli;
@@ -129,6 +130,17 @@ public class PlayerSettings : MonoBehaviour
         {
             m_playerPic.sprite = Sprite.Create(selectedPlayer.PlayerImage.texture, new Rect(0, 0, selectedPlayer.PlayerImage.texture.width, selectedPlayer.PlayerImage.texture.height), Vector2.zero);
             m_playerName.text = selectedPlayer.PlayerName;
+            m_playerName.textComponent.color = selectedPlayer.NameColor;
         }
+    }
+
+    public void AddRole(int _roleID)
+	{
+        selectedPlayer.PlayerType |= _roleID;
+	}
+
+    public void RemoveRole(int _roleID)
+	{
+        selectedPlayer.PlayerType ^= _roleID;
     }
 }
