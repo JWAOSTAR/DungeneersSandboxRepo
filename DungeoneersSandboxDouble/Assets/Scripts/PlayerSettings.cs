@@ -40,6 +40,10 @@ public class PlayerSettings : MonoBehaviour
 
     public bool UIActive { get { return UI.activeSelf; } set { UI.SetActive(value); } }
 
+    //public bool SelelectedIsAdmin { get { return PlayerHasRole(GlobalVariables.ADMIN); } set { } }
+    //public bool SelelectedIsDM { get { return PlayerHasRole(GlobalVariables.DUNGEON_MASTER); } set { } }
+    //public bool SelelectedIsHost { get { return PlayerHasRole(GlobalVariables.SERVER_HOST); } set { } }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -133,6 +137,26 @@ public class PlayerSettings : MonoBehaviour
             m_playerName.textComponent.color = selectedPlayer.NameColor;
         }
     }
+
+    public bool PlayerIsAdmin()
+	{
+        return PlayerHasRole(GlobalVariables.ADMIN);
+	}
+
+    public bool PlayerIsDM()
+	{
+        return PlayerHasRole(GlobalVariables.DUNGEON_MASTER);
+	}
+
+    public bool PlayerIsHost()
+	{
+        return PlayerHasRole(GlobalVariables.SERVER_HOST);
+	}
+
+    public bool PlayerHasRole(int _roleID)
+	{
+        return ((selectedPlayer != null) && ((_roleID == GlobalVariables.YOU) || (_roleID == GlobalVariables.DUNGEON_MASTER) || (_roleID == GlobalVariables.SERVER_HOST) || (_roleID == GlobalVariables.ADMIN)) && ((selectedPlayer.PlayerType & _roleID) == _roleID));
+	}    
 
     public void AddRole(int _roleID)
 	{

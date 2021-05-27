@@ -83,7 +83,7 @@ public class Playground : MonoBehaviourPunCallbacks
 	{
 		if(Input.GetKeyDown(KeyCode.N))
 		{
-			Instantiate(RoomListItem, RoomListItem.transform.parent);
+			Instantiate(RoomListItem, roomListContent.transform).SetActive(true);
 		}
 	}
 
