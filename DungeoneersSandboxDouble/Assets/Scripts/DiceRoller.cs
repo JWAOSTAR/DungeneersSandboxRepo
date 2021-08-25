@@ -186,6 +186,29 @@ public class DiceRoller : MonoBehaviour
                 else if((matType & 8) == 8)
                 {
                     //TODO: Add in file reading when shader is written
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    Vector2 scales = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    Vector2 offsets = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    Color bg_col = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                    tempTex.LoadImage(newTex.EncodeToPNG());
+                    for (int y = 0; y < tempTex.height; y++)
+                    {
+                        for (int x = 0; x < tempTex.width; x++)
+                        {
+                            if (tempTex.GetPixel(x, y).a == 0.0f)
+                            {
+                                tempTex.SetPixel(x, y, bg_col);
+                            }
+                        }
+                    }
+                    tempTex.Apply();
+                    m_trayMaterials.materials[1].color = Color.white;
+                    m_trayMaterials.materials[1].SetTexture("_MainTex", tempTex);
+                    m_trayMaterials.materials[1].SetTextureScale("_MainTex", scales);
+                    m_trayMaterials.materials[1].SetTextureOffset("_MainTex", offsets);
                 }
                 else
                 {
@@ -203,6 +226,29 @@ public class DiceRoller : MonoBehaviour
                 else if((matType & 2) == 2)
                 {
                     //TODO: Add in file reading when shader is written
+                    int arraySize = file.ReadInt32();
+                    Texture2D newTex = new Texture2D(file.ReadInt32(), file.ReadInt32());
+                    newTex.LoadImage(file.ReadBytes(arraySize));
+                    Vector2 scales = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    Vector2 offsets = new Vector2(file.ReadSingle(), file.ReadSingle());
+                    Color bg_col = new Color(file.ReadSingle(), file.ReadSingle(), file.ReadSingle(), file.ReadSingle());
+                    Texture2D tempTex = new Texture2D(newTex.width, newTex.height);
+                    tempTex.LoadImage(newTex.EncodeToPNG());
+                    for (int y = 0; y < tempTex.height; y++)
+                    {
+                        for (int x = 0; x < tempTex.width; x++)
+                        {
+                            if (tempTex.GetPixel(x, y).a == 0.0f)
+                            {
+                                tempTex.SetPixel(x, y, bg_col);
+                            }
+                        }
+                    }
+                    tempTex.Apply();
+                    m_trayMaterials.materials[0].color = Color.white;
+                    m_trayMaterials.materials[0].SetTexture("_MainTex", tempTex);
+                    m_trayMaterials.materials[0].SetTextureScale("_MainTex", scales);
+                    m_trayMaterials.materials[0].SetTextureOffset("_MainTex", offsets);
                 }
                 else
                 {

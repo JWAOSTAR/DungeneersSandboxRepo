@@ -5,40 +5,40 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: 7fa38b85256ffcf42aeaeddd69813039
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/DiceTraySelection.unity
     guid: e44f1f4fbe8b9704fa85ac8926ae7949
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/DiceSetSelector.unity
     guid: 92d3d5225f81cc64aaa63bf54be7afa6
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/DiceSelection.unity
     guid: 30cb56f06e33b3843965d29a9ad90f40
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/DiceRoller.unity
     guid: 77ed4b3fec169274cbd1dc5b15c956b9
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/DiceEditor.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Dice Galery.unity
     guid: 76a32f520a5bdbd468aca765df1eff3c
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/StudioMenu.unity
     guid: 3b82d8b1a520bd24498cb6e927fd4707
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/PlaygroundMenu.unity
     guid: 1225a29add5055448af63565bcb9a0b1
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TrayGalary.unity
     guid: 7e48bc6277d56584684c1b82f32f73d4
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: b0fa4591968a82c4cbf5c91b0df31c8c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Sandbox.unity
     guid: 55259df84fc6c64478fc3851dd7e1edd
   m_configObjects: {}
